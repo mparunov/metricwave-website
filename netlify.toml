@@ -5,9 +5,6 @@
   # Publish directory (root since we have static HTML files)
   publish = "."
 
-  # No build command needed for static HTML sites
-  command = ""
-
 # Redirect rules for clean URLs (optional)
 [[redirects]]
   from = "/*"
