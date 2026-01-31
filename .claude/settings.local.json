@@ -3,7 +3,9 @@
     "allow": [
       "Bash(open index.html)",
       "Bash(open:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(python3:*)",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -37,3 +37,7 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Netlify Functions configuration
+[functions]
+  directory = "netlify/functions"

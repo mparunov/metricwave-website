@@ -28,10 +28,31 @@
             <ul class="nav-links">
                 <li><a href="index.html" data-i18n="nav.home">Home</a></li>
                 <li><a href="about.html" data-i18n="nav.about">About</a></li>
-                <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+                <li class="nav-dropdown">
+                    <a href="services.html" data-i18n="nav.services">Services</a>
+                    <ul class="nav-dropdown-menu">
+                        <li><a href="services.html#business-analytics" data-i18n="home.service1Title">Business Analytics</a></li>
+                        <li><a href="services.html#bi-storytelling" data-i18n="home.service2Title">BI & Data Storytelling</a></li>
+                        <li><a href="services.html#process-optimization" data-i18n="home.service3Title">Process Analytics</a></li>
+                        <li><a href="services.html#data-strategy" data-i18n="home.service4Title">Data Strategy</a></li>
+                        <li><a href="services.html#data-literacy" data-i18n="home.service5Title">Data Literacy Programs</a></li>
+                        <li><a href="services.html#decision-intelligence" data-i18n="home.service6Title">Decision Intelligence</a></li>
+                    </ul>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="industries.html">Industries</a>
+                    <ul class="nav-dropdown-menu">
+                        <li><a href="industries.html#logistics">Logistics & Transportation</a></li>
+                        <li><a href="industries.html#technology">Technology & SaaS</a></li>
+                        <li><a href="industries.html#gaming">Gaming & Entertainment</a></li>
+                        <li><a href="industries.html#government">Government & Public Sector</a></li>
+                        <li><a href="industries.html#education">Education & Research</a></li>
+                        <li><a href="industries.html#nonprofit">Non-Profit & Social Impact</a></li>
+                    </ul>
+                </li>
                 <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
                 <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
-                <li><a href="contact.html" class="nav-cta active" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="contact.html" class="nav-cta" data-i18n="nav.contact">Contact</a></li>
                 <li class="language-switcher">
                     <button class="lang-btn" aria-label="Language selector">
                         <img src="Logos_Languages/en_logo.png" alt="EN" class="lang-flag" id="current-flag">
@@ -110,9 +131,11 @@
                     <h2>Send Us a Message</h2>
                     <p class="form-intro">Fill out the form below and we'll get back to you shortly to schedule your consultation.</p>
 
-                    <form id="contactForm" class="custom-contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-                        <!-- Hidden field for spam protection -->
+                    <form id="contactForm" class="custom-contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-recaptcha="true">
+                        <!-- Hidden fields for Netlify -->
                         <input type="hidden" name="form-name" value="contact">
+                        <input type="hidden" name="subject" value="New Contact Form Submission - MetricWave">
+                        <input type="hidden" name="_autoresponse" value="Thank you for contacting MetricWave! We have successfully received your inquiry and will reach out within 24 hours.">
                         <p style="display: none;">
                             <label>Don't fill this out: <input name="bot-field"></label>
                         </p>
@@ -357,7 +380,78 @@
         </div>
     </footer>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent-banner" class="cookie-consent-banner">
+        <div class="container">
+            <div class="cookie-banner-content">
+                <div class="cookie-banner-text">
+                    <h3>We Value Your Privacy</h3>
+                    <p>We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. By clicking "Accept All", you consent to our use of cookies. <a href="cookie-policy.html">Learn more</a></p>
+                </div>
+                <div class="cookie-banner-actions">
+                    <button id="cookie-accept-all" class="cookie-btn cookie-btn-accept">Accept All</button>
+                    <button id="cookie-necessary-only" class="cookie-btn cookie-btn-necessary">Necessary Only</button>
+                    <button id="cookie-customize" class="cookie-btn cookie-btn-customize">Customize</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Preferences Modal -->
+    <div id="cookie-modal" class="cookie-modal">
+        <div class="cookie-modal-content">
+            <div class="cookie-modal-header">
+                <h2>Cookie Preferences</h2>
+                <button id="cookie-modal-close" class="cookie-modal-close" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="cookie-category">
+                <div class="cookie-category-header">
+                    <h3>Necessary Cookies</h3>
+                    <label class="cookie-toggle">
+                        <input type="checkbox" checked disabled>
+                        <span class="cookie-toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="cookie-category-description">
+                    Essential cookies required for the website to function. These cookies enable core functionality such as security, network management, and accessibility. You cannot opt-out of necessary cookies.
+                </p>
+            </div>
+
+            <div class="cookie-category">
+                <div class="cookie-category-header">
+                    <h3>Analytics Cookies</h3>
+                    <label class="cookie-toggle">
+                        <input type="checkbox" id="cookie-analytics">
+                        <span class="cookie-toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="cookie-category-description">
+                    Help us understand how visitors interact with our website. We collect anonymous data on page views, navigation paths, time on site, scroll depth, and user engagement to improve our services.
+                </p>
+            </div>
+
+            <div class="cookie-category">
+                <div class="cookie-category-header">
+                    <h3>Marketing Cookies</h3>
+                    <label class="cookie-toggle">
+                        <input type="checkbox" id="cookie-marketing">
+                        <span class="cookie-toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="cookie-category-description">
+                    Used to track visitors across websites to display relevant advertisements. These cookies help us measure campaign effectiveness and deliver personalized marketing content.
+                </p>
+            </div>
+
+            <div class="cookie-modal-actions">
+                <button id="cookie-save-preferences" class="cookie-btn cookie-btn-accept">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
     <script src="translations.js"></script>
+    <script src="cookie-consent.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

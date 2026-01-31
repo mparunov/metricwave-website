@@ -356,6 +356,9 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        // Add submitted class to trigger validation styles
+        contactForm.classList.add('submitted');
+
         const submitButton = contactForm.querySelector('.form-submit');
         const buttonText = submitButton.querySelector('.button-text');
         const buttonLoader = submitButton.querySelector('.button-loader');
@@ -401,6 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formStatus.textContent = 'Thank you for your message! We\'ll get back to you within 24 hours.';
                 formStatus.className = 'form-status success';
                 contactForm.reset();
+                contactForm.classList.remove('submitted');
 
                 // Scroll to success message
                 formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -454,4 +458,62 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
+
+// Newsletter Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (!newsletterForm) return;
+
+    newsletterForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitButton = newsletterForm.querySelector('button[type="submit"]');
+        const subscribeText = submitButton.querySelector('.subscribe-text');
+        const subscribeLoader = submitButton.querySelector('.subscribe-loader');
+        const statusDiv = document.getElementById('newsletterStatus');
+        const emailInput = document.getElementById('newsletterEmail');
+
+        // Disable button and show loader
+        submitButton.disabled = true;
+        subscribeText.style.display = 'none';
+        subscribeLoader.style.display = 'inline-flex';
+        statusDiv.textContent = '';
+        statusDiv.className = 'newsletter-status';
+
+        try {
+            // Netlify Forms uses FormData
+            const form = e.target;
+            const netlifyFormData = new FormData(form);
+
+            const response = await fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(netlifyFormData).toString()
+            });
+
+            if (response.ok) {
+                // Success
+                statusDiv.textContent = 'Thanks for subscribing! Check your inbox for confirmation.';
+                statusDiv.className = 'newsletter-status success';
+                newsletterForm.reset();
+
+                // Scroll to success message
+                statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // Error
+                statusDiv.textContent = 'Failed to subscribe. Please try again or email us directly.';
+                statusDiv.className = 'newsletter-status error';
+            }
+        } catch (error) {
+            // Network error
+            statusDiv.textContent = 'Connection error. Please try again later.';
+            statusDiv.className = 'newsletter-status error';
+        } finally {
+            // Re-enable button and hide loader
+            submitButton.disabled = false;
+            subscribeText.style.display = 'inline';
+            subscribeLoader.style.display = 'none';
+        }
+    });
 });
