@@ -1,15 +1,8 @@
 # Netlify Configuration for MetricWave
-# This file optimizes your site deployment on Netlify
+# Static site configuration
 
 [build]
-  # Publish directory (root since we have static HTML files)
   publish = "."
-
-# Redirect rules for clean URLs (optional)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 404
 
 # Headers for security and performance
 [[headers]]
