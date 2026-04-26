@@ -360,7 +360,30 @@ a:hover {
 }
 
 /* ===================================
-   Hero Section
+   Hero Banner (iframe-based)
+   =================================== */
+
+.hero-banner {
+    width: 100%;
+    height: calc(100vh - 76px);
+    overflow: hidden;
+}
+
+.hero-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: none;
+}
+
+/* Light mode (default): show light iframe */
+.hero-iframe--light { display: block; }
+
+[data-theme="dark"] .hero-iframe--light { display: none; }
+[data-theme="dark"] .hero-iframe--dark  { display: block; }
+
+/* ===================================
+   Hero Section (kept for other uses)
    =================================== */
 
 .hero {
@@ -1287,6 +1310,20 @@ a:hover {
     margin-bottom: 1rem;
 }
 
+.service-tag-badge {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+[data-theme="light"] .service-tag-badge {
+    color: var(--teal-dark);
+}
+
 .service-detail-title {
     color: var(--white);
     margin-bottom: 1.5rem;
@@ -2206,10 +2243,12 @@ a:hover {
 }
 
 .newsletter-status.success {
-    background-color: rgba(34, 197, 94, 0.2);
+    background-color: rgba(255, 255, 255, 0.95);
     border: 2px solid #22c55e;
     color: #22c55e;
     display: block;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .newsletter-status.error {
@@ -2376,6 +2415,103 @@ a:hover {
     .pricing-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ===================================
+   Theme Toggle Button
+   =================================== */
+
+.theme-toggle-item {
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--dark-gray);
+    padding: 0.45rem;
+    border-radius: 5px;
+    color: var(--light-gray);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 34px;
+    flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+/* Dark mode (default): show sun to indicate "switch to light" */
+.theme-toggle .icon-sun  { display: block; }
+.theme-toggle .icon-moon { display: none;  }
+
+/* ===================================
+   Light Mode
+   =================================== */
+
+[data-theme="light"] {
+    --black:      #FFFFFF;
+    --charcoal:   #F4F4F6;
+    --dark-gray:  #E8E8EC;
+    --medium-gray:#C8C8D4;
+    --light-gray: #404050;
+    --white:      #0D0D10;
+
+    /* Teal shifted 2 shades darker for legibility on white */
+    --teal:       #0D9488;
+    --teal-dark:  #0F766E;
+    --teal-light: #14B8A6;
+}
+
+/* Light mode: show moon to indicate "switch to dark" */
+[data-theme="light"] .theme-toggle .icon-sun  { display: none;  }
+[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+
+/* Header uses a hardcoded rgba — override it */
+[data-theme="light"] .header {
+    background-color: rgba(255, 255, 255, 0.93);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Client logos band has a hardcoded #f5f5f5 — keep it distinct */
+[data-theme="light"] .client-logos {
+    background-color: var(--charcoal);
+}
+
+[data-theme="light"] .client-logos .section-title {
+    color: var(--white);
+}
+
+/* Logo images need darker filter to stay visible on white */
+[data-theme="light"] .logo-item img {
+    filter: grayscale(100%) brightness(0.25) opacity(0.55);
+}
+
+[data-theme="light"] .logo-item:hover img {
+    filter: grayscale(0%) brightness(1) opacity(1);
+}
+
+/* Soften dark dropdown shadows */
+[data-theme="light"] .nav-dropdown-menu {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .lang-dropdown {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth theme transition — applied briefly via JS during switch */
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition: background-color 0.3s ease, color 0.3s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
 /* ===================================
@@ -2561,4 +2697,210 @@ a:hover {
     padding: 0;
     border-radius: 0;
     border: none;
+}
+
+/* ===================================
+   Service Detail Pages
+   =================================== */
+
+/* Button group in service sections */
+.service-btn-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+/* Teal-outline "Learn More" for dark service sections */
+.btn-teal-outline {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    border-radius: 5px;
+    transition: var(--transition);
+    cursor: pointer;
+    border: 2px solid var(--teal);
+    color: var(--teal);
+    background: transparent;
+    text-decoration: none;
+}
+
+.btn-teal-outline:hover {
+    background-color: var(--teal);
+    color: var(--black);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(45, 212, 191, 0.3);
+}
+
+/* Breadcrumb back link */
+.service-breadcrumb {
+    padding: 1.25rem 0 0;
+}
+
+.service-breadcrumb a {
+    color: var(--teal);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+}
+
+.service-breadcrumb a:hover {
+    color: var(--teal-light);
+}
+
+/* Tech stack section */
+.tech-stack-section {
+    padding: var(--spacing-lg) 0;
+    background-color: var(--charcoal);
+}
+
+.tech-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.tech-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--dark-gray);
+    border: 1px solid rgba(45, 212, 191, 0.2);
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--light-gray);
+    transition: var(--transition);
+}
+
+.tech-badge:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+    background-color: rgba(45, 212, 191, 0.08);
+}
+
+.tech-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--teal);
+    flex-shrink: 0;
+}
+
+/* Project snapshots section */
+.projects-section {
+    padding: var(--spacing-xl) 0;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+.project-card {
+    background-color: var(--charcoal);
+    border: 1px solid var(--medium-gray);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: var(--transition);
+}
+
+.project-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(45, 212, 191, 0.12);
+}
+
+.project-tag {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+}
+
+.project-card h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+    margin: 0;
+}
+
+.project-card p {
+    font-size: 0.9375rem;
+    color: var(--light-gray);
+    line-height: 1.6;
+    flex: 1;
+    margin: 0;
+}
+
+.project-metric {
+    display: inline-block;
+    background-color: rgba(45, 212, 191, 0.12);
+    border-left: 3px solid var(--teal);
+    padding: 0.5rem 0.875rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--teal);
+}
+
+/* Light mode overrides for service pages */
+[data-theme="light"] .tech-stack-section {
+    background-color: #f0f4f4;
+}
+
+[data-theme="light"] .tech-badge {
+    background-color: #ffffff;
+    border-color: rgba(20, 184, 166, 0.3);
+    color: #1a1a1a;
+}
+
+[data-theme="light"] .tech-badge:hover {
+    background-color: rgba(20, 184, 166, 0.08);
+    color: var(--teal-dark);
+    border-color: var(--teal-dark);
+}
+
+[data-theme="light"] .tech-badge-dot {
+    background-color: var(--teal-dark);
+}
+
+[data-theme="light"] .project-card {
+    background-color: #ffffff;
+    border-color: #e0e0e0;
+}
+
+[data-theme="light"] .project-card h3 {
+    color: #0a0a0a;
+}
+
+[data-theme="light"] .project-card p {
+    color: #444;
+}
+
+[data-theme="light"] .project-metric {
+    background-color: rgba(20, 184, 166, 0.1);
+    color: var(--teal-dark);
+}
+
+@media (max-width: 768px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-btn-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

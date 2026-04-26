@@ -2,6 +2,30 @@
    MetricWave - JavaScript
    =================================== */
 
+// Theme Toggle
+(function() {
+    var saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', function() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+
+        document.documentElement.classList.add('theme-transitioning');
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+
+        setTimeout(function() {
+            document.documentElement.classList.remove('theme-transitioning');
+        }, 350);
+    });
+});
+
 // Mobile Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
     const mobileToggle = document.querySelector('.mobile-toggle');
@@ -194,12 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function startDrag(e) {
         isDragging = true;
-        startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-        lastDragX = startX;
-        previousTranslate = currentTranslate;
+        lastDragX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
         carousel.style.cursor = 'grabbing';
-
-        // Stop any existing velocity
         velocity = 0;
     }
 
@@ -210,14 +230,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
         const diff = currentX - lastDragX;
 
-        // Update position with reduced sensitivity
-        currentTranslate = previousTranslate + (currentX - startX) * 0.3;
-
-        // Calculate velocity based on drag speed (scaled for smoother control)
-        velocity = diff * 0.02;
-
+        // Move only by the incremental diff to avoid compounding
+        currentTranslate += diff * 0.5;
+        velocity = diff * 0.015;
         lastDragX = currentX;
-        previousTranslate = currentTranslate;
     }
 
     function endDrag() {
@@ -225,9 +241,8 @@ document.addEventListener('DOMContentLoaded', function() {
         isDragging = false;
         carousel.style.cursor = 'grab';
 
-        // Apply momentum based on final velocity
-        // Clamp velocity to reasonable range
-        velocity = Math.max(-3, Math.min(3, velocity));
+        // Clamp post-drag momentum to a gentle range
+        velocity = Math.max(-1.5, Math.min(1.5, velocity));
 
         // Gradually return to default scroll speed if velocity is low
         let returnToDefault = setInterval(() => {

@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+    (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
+    </script>
 </head>
 <body>
     <!-- Sticky Navigation -->
@@ -31,12 +34,12 @@
                 <li class="nav-dropdown">
                     <a href="services.html" class="active" data-i18n="nav.services">Services</a>
                     <ul class="nav-dropdown-menu">
-                        <li><a href="services.html#business-analytics" data-i18n="home.service1Title">Business Analytics</a></li>
-                        <li><a href="services.html#bi-storytelling" data-i18n="home.service2Title">BI & Data Storytelling</a></li>
-                        <li><a href="services.html#process-optimization" data-i18n="home.service3Title">Process Analytics</a></li>
-                        <li><a href="services.html#data-strategy" data-i18n="home.service4Title">Data Strategy</a></li>
-                        <li><a href="services.html#data-literacy" data-i18n="home.service5Title">Data Literacy Programs</a></li>
-                        <li><a href="services.html#decision-intelligence" data-i18n="home.service6Title">Decision Intelligence</a></li>
+                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
+                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
+                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
+                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
+                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
@@ -66,6 +69,12 @@
                         <li><button data-lang="ru" data-flag="Logos_Languages/ru_logo.png"><img src="Logos_Languages/ru_logo.png" alt="RU" class="dropdown-flag">Русский</button></li>
                     </ul>
                 </li>
+                <li class="theme-toggle-item">
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+                        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                </li>
             </ul>
         </nav>
     </header>
@@ -73,251 +82,275 @@
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="container">
-            <h1 class="page-title">Analytics Solutions That Drive Real Results</h1>
-            <p class="page-subtitle">Comprehensive services designed to transform your data into business growth</p>
+            <h1 class="page-title">What We Do, and How We Do It Well</h1>
+            <p class="page-subtitle">Six connected services spanning analytics, engineering, automation, web, and strategy — so your business runs on data at every level.</p>
         </div>
     </section>
 
-    <!-- Service: Business Analytics -->
-    <section id="business-analytics" class="service-detail">
+    <!-- Service: Data Analytics & Business Intelligence -->
+    <section id="data-analytics-bi" class="service-detail">
         <div class="container">
             <div class="service-detail-grid">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Business Analytics</h2>
-                    <p class="service-detail-lead">Transform raw data into actionable insights that drive strategic decision-making and fuel sustainable business growth.</p>
+                    <p class="service-tag-badge">DASHBOARDS · KPIs · REPORTING</p>
+                    <h2 class="service-detail-title">Data Analytics &amp; Business Intelligence</h2>
+                    <p class="service-detail-lead">Stop managing reports manually. We connect every data source you have — GA4, CRM, revenue tools, ad platforms — into a single analytics layer and build dashboards your team actually uses to make decisions.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Comprehensive business performance analysis</li>
-                        <li>Predictive analytics and forecasting models</li>
-                        <li>Customer behavior and segmentation analysis</li>
-                        <li>Revenue optimization and profitability insights</li>
-                        <li>Market trend analysis and competitive intelligence</li>
-                        <li>Custom KPI frameworks aligned with business goals</li>
+                        <li>GA4, Meta Ads &amp; marketing channel tracking setup</li>
+                        <li>Custom BI dashboards (Looker Studio, Metabase, Tableau)</li>
+                        <li>Revenue, cohort &amp; funnel analysis</li>
+                        <li>Customer segmentation &amp; lifetime value modelling</li>
+                        <li>KPI frameworks aligned to your growth goals</li>
+                        <li>Automated insight reports delivered on your schedule</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Business owners seeking to understand their performance drivers, identify growth opportunities, and make strategic decisions backed by solid data analysis.</p>
+                    <p>SMBs and startups who want to stop guessing and start making data-backed decisions — whether for marketing spend, product direction, or operational priorities.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>Identify high-value opportunities 3x faster</li>
-                        <li>15-25% improvement in strategic decision accuracy</li>
-                        <li>Data-driven insights that drive revenue growth</li>
-                        <li>Clear visibility into business performance drivers</li>
+                        <li>Full visibility into what's driving (and draining) revenue</li>
+                        <li>Dashboards live within days, not months</li>
+                        <li>10–15 hours saved weekly on manual reporting</li>
+                        <li>Faster alignment across teams with shared, trusted data</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-analytics-bi.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_ba.png" alt="Business Analytics">
-                        <p>Business Analytics</p>
+                        <img src="Logos_Services/services_ba.png" alt="Data Analytics &amp; Business Intelligence">
+                        <p>Data Analytics &amp; BI</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service: Business Intelligence & Data Storytelling -->
-    <section id="bi-storytelling" class="service-detail alt-bg">
+    <!-- Service: Web Development & Maintenance -->
+    <section id="web-development" class="service-detail alt-bg">
         <div class="container">
             <div class="service-detail-grid reverse">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Business Intelligence (BI) & Data Storytelling</h2>
-                    <p class="service-detail-lead">Create compelling visualizations and dashboards that communicate your data's story clearly and drive informed decision-making.</p>
+                    <p class="service-tag-badge">DESIGN · BUILD · MAINTAIN</p>
+                    <h2 class="service-detail-title">Web Development &amp; Maintenance</h2>
+                    <p class="service-detail-lead">Your website should be your best-performing salesperson. We design, build, and maintain fast, conversion-optimised sites that are wired into your analytics stack from day one.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Custom interactive dashboards tailored to your needs</li>
-                        <li>Compelling data visualizations that tell your story</li>
-                        <li>Automated reporting with real-time updates</li>
-                        <li>Executive summary views for leadership</li>
-                        <li>Mobile-friendly access to insights anywhere</li>
-                        <li>Visual KPI tracking with intelligent alerts</li>
+                        <li>Custom website design and development</li>
+                        <li>Performance optimisation (Core Web Vitals, page speed)</li>
+                        <li>Analytics and tracking integration (GA4, pixels, events)</li>
+                        <li>SEO technical foundation and structured data</li>
+                        <li>Ongoing content updates and maintenance</li>
+                        <li>Hosting setup, deployment and uptime monitoring</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Organizations needing to communicate complex data insights effectively, teams drowning in spreadsheets, or leaders requiring clear visibility into business performance.</p>
+                    <p>Businesses that need a professional web presence that converts visitors, loads fast, and connects cleanly into their broader analytics and marketing infrastructure.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>10-15 hours saved per week on manual reporting</li>
-                        <li>Faster stakeholder alignment through clear visuals</li>
-                        <li>Improved decision-making with accessible insights</li>
-                        <li>Enhanced data communication across teams</li>
+                        <li>Measurable improvement in page load times and Core Web Vitals</li>
+                        <li>Full analytics visibility from first visit to conversion</li>
+                        <li>Zero-maintenance overhead for your internal team</li>
+                        <li>A site that grows with your business</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-web-development.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_bi.png" alt="Business Intelligence">
-                        <p>BI & Data Storytelling</p>
+                        <img src="Logos_Services/services_bi.png" alt="Web Development &amp; Maintenance">
+                        <p>Web Development &amp; Maintenance</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service: Process Analytics & Optimization -->
-    <section id="process-optimization" class="service-detail">
+    <!-- Service: Process Mining & Analytics -->
+    <section id="process-mining" class="service-detail">
         <div class="container">
             <div class="service-detail-grid">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Process Analytics & Optimization</h2>
-                    <p class="service-detail-lead">Identify bottlenecks, eliminate waste, and streamline operations using data-driven insights that boost efficiency and reduce costs.</p>
+                    <p class="service-tag-badge">DISCOVER · ANALYSE · OPTIMISE</p>
+                    <h2 class="service-detail-title">Process Mining &amp; Analytics</h2>
+                    <p class="service-detail-lead">Your processes have hidden leaks. We use event log data to show exactly where time and money disappear in your operations — not as a theory, but as a map.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Comprehensive workflow analysis and mapping</li>
-                        <li>Bottleneck identification and root cause analysis</li>
-                        <li>Data-backed optimization recommendations</li>
-                        <li>Process automation opportunities assessment</li>
-                        <li>Performance metrics and tracking dashboards</li>
-                        <li>Implementation roadmap with prioritized actions</li>
+                        <li>Event log analysis and process discovery</li>
+                        <li>Bottleneck and deviation detection</li>
+                        <li>End-to-end process flow visualisation</li>
+                        <li>Conformance checking against best practices</li>
+                        <li>Root cause analysis and improvement recommendations</li>
+                        <li>KPI monitoring dashboards for operations</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Organizations struggling with operational inefficiencies, teams spending excessive time on manual tasks, or businesses looking to scale operations effectively.</p>
+                    <p>Operations managers and founders who suspect their processes are slower or leakier than they should be — and want objective, data-backed evidence before deciding where to invest in change.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>20-40% reduction in process cycle times</li>
-                        <li>$50K-$100K+ in annual cost savings</li>
-                        <li>Improved team productivity and satisfaction</li>
-                        <li>Scalable operations ready for growth</li>
+                        <li>20–40% reduction in process cycle times</li>
+                        <li>Clear, prioritised list of highest-impact improvements</li>
+                        <li>Elimination of hidden bottlenecks that erode capacity</li>
+                        <li>Operations infrastructure ready to scale</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-process-mining.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_pa.png" alt="Process Analytics">
-                        <p>Process Analytics</p>
+                        <img src="Logos_Services/services_pa.png" alt="Process Mining &amp; Analytics">
+                        <p>Process Mining &amp; Analytics</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service: Data Strategy & Governance -->
-    <section id="data-strategy" class="service-detail alt-bg">
+    <!-- Service: Automation & AI Agents -->
+    <section id="automation-ai" class="service-detail alt-bg">
         <div class="container">
             <div class="service-detail-grid reverse">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Data Strategy & Governance</h2>
-                    <p class="service-detail-lead">Build a sustainable data foundation with proper governance frameworks that grow with your business and ensure data quality.</p>
+                    <p class="service-tag-badge">WORKFLOWS · AI AGENTS · LLMs</p>
+                    <h2 class="service-detail-title">Automation &amp; AI Agents</h2>
+                    <p class="service-detail-lead">Every hour your team spends on repetitive work is an hour not spent on growth. We design and deploy automation and AI agents that handle the routine so your people can focus on what matters.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Comprehensive data infrastructure assessment</li>
-                        <li>Custom data governance framework and policies</li>
-                        <li>Data quality management strategy</li>
-                        <li>Integration roadmap for disconnected systems</li>
-                        <li>Scalable data architecture design</li>
-                        <li>Documentation and best practices guidelines</li>
+                        <li>Workflow automation (Make, Zapier, n8n)</li>
+                        <li>AI agent design and deployment</li>
+                        <li>CRM and sales process automation</li>
+                        <li>Data pipeline and reporting automation</li>
+                        <li>Custom LLM / GPT integrations into existing tools</li>
+                        <li>Monitoring and maintenance of live automations</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Organizations with data scattered across multiple systems, inconsistent data quality issues, or those requiring regulatory compliance and proper data management.</p>
+                    <p>Teams spending hours each week on tasks a well-configured automation could handle in seconds — from data collection and reporting to lead follow-up and internal notifications.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>90%+ improvement in data accuracy and reliability</li>
-                        <li>Single source of truth across the organization</li>
-                        <li>Enhanced regulatory compliance and risk management</li>
-                        <li>Future-proof infrastructure ready to scale</li>
+                        <li>Hours of manual work eliminated every week</li>
+                        <li>Faster response times across sales and operations</li>
+                        <li>Fewer errors from manual data handling</li>
+                        <li>Teams focused on high-value work, not admin</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-automation-ai.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_ds.png" alt="Data Strategy">
-                        <p>Data Strategy & Governance</p>
+                        <img src="Logos_Services/services_ds.png" alt="Automation &amp; AI Agents">
+                        <p>Automation &amp; AI Agents</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service: Data Literacy & Culture Programs -->
-    <section id="data-literacy" class="service-detail">
+    <!-- Service: Business Strategy & Management -->
+    <section id="business-strategy" class="service-detail">
         <div class="container">
             <div class="service-detail-grid">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Data Literacy & Culture Programs</h2>
-                    <p class="service-detail-lead">Develop organizational data literacy and analytical thinking skills to build a sustainable data-driven culture across your teams.</p>
+                    <p class="service-tag-badge">PLANNING · OKRs · ADVISORY</p>
+                    <h2 class="service-detail-title">Business Strategy &amp; Management</h2>
+                    <p class="service-detail-lead">Good strategy without data is guesswork. We combine structured strategic thinking with financial modelling and performance analytics to give your leadership team a clearer, faster path to the right decisions.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Customized data literacy training programs</li>
-                        <li>Executive coaching on data-driven leadership</li>
-                        <li>Team workshops on analytical thinking</li>
-                        <li>Change management support for culture transformation</li>
-                        <li>Self-service analytics enablement</li>
-                        <li>Ongoing learning resources and community</li>
+                        <li>Strategic planning workshops and roadmap design</li>
+                        <li>OKR and KPI framework development</li>
+                        <li>Financial modelling and scenario planning</li>
+                        <li>Business performance reviews and management reporting</li>
+                        <li>Growth roadmap development and prioritisation</li>
+                        <li>Decision-support frameworks and governance structures</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Organizations looking to democratize data access, build analytical capabilities across teams, or transform into a truly data-driven culture from the ground up.</p>
+                    <p>Founders and leadership teams who need structured thinking, clear priorities, and data to back their strategic bets — without the overhead of a full-time strategy function.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>3x increase in data-informed decision-making</li>
-                        <li>Improved employee confidence with data tools</li>
-                        <li>Reduced dependency on data specialists</li>
-                        <li>Cultural shift toward evidence-based thinking</li>
+                        <li>Clear strategic direction aligned across the leadership team</li>
+                        <li>Financial models that make planning decisions obvious</li>
+                        <li>Faster identification of growth levers and risk areas</li>
+                        <li>Management reporting that saves hours each month</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-business-strategy.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_dl.png" alt="Data Literacy">
-                        <p>Data Literacy Programs</p>
+                        <img src="Logos_Services/services_dl.png" alt="Business Strategy &amp; Management">
+                        <p>Business Strategy &amp; Management</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service: Decision Intelligence & Advanced Analytics -->
-    <section id="decision-intelligence" class="service-detail alt-bg">
+    <!-- Service: Data Engineering & Integration -->
+    <section id="data-engineering" class="service-detail alt-bg">
         <div class="container">
             <div class="service-detail-grid reverse">
                 <div class="service-detail-content">
-                    <h2 class="service-detail-title">Decision Intelligence (DI) & Advanced Analytics</h2>
-                    <p class="service-detail-lead">Leverage advanced analytics, machine learning, and AI to enhance decision-making processes and unlock deeper insights from your data.</p>
+                    <p class="service-tag-badge">PIPELINES · WAREHOUSES · APIs</p>
+                    <h2 class="service-detail-title">Data Engineering &amp; Integration</h2>
+                    <p class="service-detail-lead">Analytics is only as good as the data underneath it. We build the pipelines, warehouses, and integrations that make every dashboard, report, and model you run accurate and reliable.</p>
 
                     <h3>What You Get</h3>
                     <ul class="service-feature-list">
-                        <li>Predictive modeling and forecasting solutions</li>
-                        <li>Machine learning model development and deployment</li>
-                        <li>Advanced statistical analysis and experimentation</li>
-                        <li>Decision automation frameworks</li>
-                        <li>AI-powered insights and recommendations</li>
-                        <li>Custom analytics solutions for complex problems</li>
+                        <li>Data pipeline design and build (ETL / ELT)</li>
+                        <li>Cloud data warehouse setup (BigQuery, Snowflake, Redshift)</li>
+                        <li>API and system integrations across your tech stack</li>
+                        <li>Data quality monitoring and alerting</li>
+                        <li>Source-to-destination mapping and schema design</li>
+                        <li>Documentation, lineage tracking and data cataloguing</li>
                     </ul>
 
                     <h3>Perfect For</h3>
-                    <p>Data-mature organizations ready to leverage advanced techniques, businesses facing complex decision challenges, or teams looking to automate and scale analytical capabilities.</p>
+                    <p>Organisations whose data lives in silos, making analytics unreliable or impossible. We build the foundation layer so every downstream report, dashboard, and model is built on clean, trustworthy data.</p>
 
                     <h3>Typical Results</h3>
                     <ul class="results-list">
-                        <li>40-60% improvement in forecast accuracy</li>
-                        <li>Automated decision-making at scale</li>
-                        <li>Discovery of hidden patterns and opportunities</li>
-                        <li>Competitive advantage through advanced analytics</li>
+                        <li>Single source of truth across all business systems</li>
+                        <li>Dashboards and reports that are always up to date</li>
+                        <li>Elimination of broken exports and manual data stitching</li>
+                        <li>Infrastructure that scales as your data volume grows</li>
                     </ul>
 
-                    <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                    <div class="service-btn-group">
+                        <a href="contact.html" class="btn-primary">Discuss This Service</a>
+                        <a href="service-data-engineering.html" class="btn-teal-outline">Learn More →</a>
+                    </div>
                 </div>
                 <div class="service-detail-image">
                     <div class="service-placeholder">
-                        <img src="Logos_Services/services_di.png" alt="Decision Intelligence">
-                        <p>Decision Intelligence</p>
+                        <img src="Logos_Services/services_di.png" alt="Data Engineering &amp; Integration">
+                        <p>Data Engineering &amp; Integration</p>
                     </div>
                 </div>
             </div>
@@ -391,12 +424,12 @@
                 <div class="footer-col">
                     <h4 data-i18n="footer.services">Services</h4>
                     <ul>
-                        <li><a href="services.html#business-analytics" data-i18n="home.service1Title">Business Analytics</a></li>
-                        <li><a href="services.html#bi-storytelling" data-i18n="home.service2Title">BI & Data Storytelling</a></li>
-                        <li><a href="services.html#process-optimization" data-i18n="home.service3Title">Process Analytics</a></li>
-                        <li><a href="services.html#data-strategy" data-i18n="home.service4Title">Data Strategy</a></li>
-                        <li><a href="services.html#data-literacy" data-i18n="home.service5Title">Data Literacy Programs</a></li>
-                        <li><a href="services.html#decision-intelligence" data-i18n="home.service6Title">Decision Intelligence</a></li>
+                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
+                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
+                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
+                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
+                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -498,7 +531,7 @@
         </div>
     </div>
 
-    <script src="translations.js"></script>
+    <script src="translations.js?v=2"></script>
     <script src="cookie-consent.js"></script>
     <script src="script.js"></script>
 </body>

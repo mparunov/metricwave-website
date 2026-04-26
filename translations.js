@@ -28,23 +28,23 @@ const translations = {
             servicesSubtitle: "Comprehensive analytics solutions designed for solo entrepreneurs and small business owners",
 
             // Service Cards
-            service1Title: "Business Analytics",
-            service1Desc: "Transform raw data into actionable insights that drive strategic decision-making and business growth.",
+            service1Title: "Data Analytics & Business Intelligence",
+            service1Desc: "Connect your data sources and turn them into dashboards, KPIs, and insight reports that drive real decisions.",
 
-            service2Title: "Business Intelligence (BI) & Data Storytelling",
-            service2Desc: "Create compelling visualizations and dashboards that communicate your data's story clearly and effectively.",
+            service2Title: "Web Development & Maintenance",
+            service2Desc: "Fast, conversion-optimised websites built clean and integrated with your analytics stack from day one.",
 
-            service3Title: "Process Analytics & Optimization",
-            service3Desc: "Identify bottlenecks, eliminate waste, and streamline operations using data-driven insights.",
+            service3Title: "Process Mining & Analytics",
+            service3Desc: "Map how your business actually operates and pinpoint exactly where time, money, and effort are being lost.",
 
-            service4Title: "Data Strategy & Governance",
-            service4Desc: "Build a sustainable data foundation with proper governance that grows with your business.",
+            service4Title: "Automation & AI Agents",
+            service4Desc: "Replace repetitive manual workflows with intelligent automation — from simple triggers to multi-step AI agents.",
 
-            service5Title: "Data Literacy & Culture Programs",
-            service5Desc: "Develop organizational data literacy and analytical thinking skills to build a data-driven culture.",
+            service5Title: "Business Strategy & Management",
+            service5Desc: "Data-informed strategic planning, OKR frameworks, financial modelling, and management reporting.",
 
-            service6Title: "Decision Intelligence (DI) & Advanced Analytics",
-            service6Desc: "Leverage advanced analytics and AI to enhance decision-making processes across your organization.",
+            service6Title: "Data Engineering & Integration",
+            service6Desc: "Build reliable pipelines, clean warehouses, and connected systems so your analytics are always accurate.",
 
             learnMore: "Learn More →",
 
@@ -118,23 +118,23 @@ const translations = {
             servicesSubtitle: "Solutions d'analyse complètes conçues pour les entrepreneurs individuels et les propriétaires de petites entreprises",
 
             // Service Cards
-            service1Title: "Analyse de Données",
-            service1Desc: "Transformez les données brutes en informations exploitables qui stimulent la prise de décision stratégique et la croissance.",
+            service1Title: "Analyse de Données & Business Intelligence",
+            service1Desc: "Connectez vos sources de données et transformez-les en tableaux de bord, KPIs et rapports qui orientent de vraies décisions.",
 
-            service2Title: "Business Intelligence (BI) & Narration de Données",
-            service2Desc: "Créez des visualisations et des tableaux de bord convaincants qui communiquent clairement et efficacement l'histoire de vos données.",
+            service2Title: "Développement Web & Maintenance",
+            service2Desc: "Sites web rapides et optimisés pour la conversion, intégrés à votre stack analytique dès le premier jour.",
 
-            service3Title: "Analyse & Optimisation des Processus",
-            service3Desc: "Identifiez les goulots d'étranglement, éliminez le gaspillage et rationalisez les opérations grâce aux informations basées sur les données.",
+            service3Title: "Process Mining & Analytique des Processus",
+            service3Desc: "Cartographiez le fonctionnement réel de votre entreprise et identifiez précisément où le temps, l'argent et les efforts sont perdus.",
 
-            service4Title: "Stratégie & Gouvernance des Données",
-            service4Desc: "Construisez une base de données durable avec une gouvernance appropriée qui évolue avec votre entreprise.",
+            service4Title: "Automatisation & Agents IA",
+            service4Desc: "Remplacez les workflows manuels répétitifs par une automatisation intelligente — des déclencheurs simples aux agents IA multi-étapes.",
 
-            service5Title: "Programmes de Littératie & Culture des Données",
-            service5Desc: "Développez la littératie des données organisationnelles et les compétences de pensée analytique pour bâtir une culture axée sur les données.",
+            service5Title: "Stratégie d'Entreprise & Management",
+            service5Desc: "Planification stratégique basée sur les données, cadres OKR, modélisation financière et reporting de gestion.",
 
-            service6Title: "Intelligence Décisionnelle (DI) & Analyse Avancée",
-            service6Desc: "Exploitez l'analyse avancée et l'IA pour améliorer les processus de prise de décision dans votre organisation.",
+            service6Title: "Ingénierie des Données & Intégration",
+            service6Desc: "Construisez des pipelines fiables, des entrepôts propres et des systèmes connectés pour des analyses toujours précises.",
 
             learnMore: "En Savoir Plus →",
 
@@ -208,23 +208,23 @@ const translations = {
             servicesSubtitle: "Uitgebreide analytics-oplossingen ontworpen voor solo-ondernemers en eigenaren van kleine bedrijven",
 
             // Service Cards
-            service1Title: "Bedrijfsanalyse",
-            service1Desc: "Transformeer ruwe data naar bruikbare inzichten die strategische besluitvorming en bedrijfsgroei stimuleren.",
+            service1Title: "Data-analyse & Business Intelligence",
+            service1Desc: "Verbind uw gegevensbronnen en zet ze om in dashboards, KPI's en inzichtrapportages die echte beslissingen sturen.",
 
-            service2Title: "Business Intelligence (BI) & Data Storytelling",
-            service2Desc: "Creëer overtuigende visualisaties en dashboards die het verhaal van uw data duidelijk en effectief communiceren.",
+            service2Title: "Webontwikkeling & Onderhoud",
+            service2Desc: "Snelle, conversie-geoptimaliseerde websites, gebouwd en geïntegreerd met uw analytische stack vanaf dag één.",
 
-            service3Title: "Procesanalyse & Optimalisatie",
-            service3Desc: "Identificeer knelpunten, elimineer verspilling en stroomlijn operaties met behulp van datagestuurde inzichten.",
+            service3Title: "Process Mining & Analytics",
+            service3Desc: "Breng in kaart hoe uw bedrijf echt opereert en identificeer precies waar tijd, geld en moeite verloren gaan.",
 
-            service4Title: "Datastrategie & Governance",
-            service4Desc: "Bouw een duurzaam datafundament met goede governance die meegroeit met uw bedrijf.",
+            service4Title: "Automatisering & AI-agenten",
+            service4Desc: "Vervang repetitieve handmatige workflows door intelligente automatisering — van eenvoudige triggers tot multi-stap AI-agenten.",
 
-            service5Title: "Data Literacy & Cultuurprogramma's",
-            service5Desc: "Ontwikkel organisatorische data literacy en analytische denkvaardigheden om een datagedreven cultuur op te bouwen.",
+            service5Title: "Bedrijfsstrategie & Management",
+            service5Desc: "Datagestuurde strategische planning, OKR-kaders, financiële modellering en managementrapportage.",
 
-            service6Title: "Beslissingsintelligentie (DI) & Geavanceerde Analytics",
-            service6Desc: "Benut geavanceerde analytics en AI om besluitvormingsprocessen in uw organisatie te verbeteren.",
+            service6Title: "Data Engineering & Integratie",
+            service6Desc: "Bouw betrouwbare pipelines, schone datawarehouses en verbonden systemen voor altijd nauwkeurige analyses.",
 
             learnMore: "Meer Informatie →",
 
@@ -298,23 +298,23 @@ const translations = {
             servicesSubtitle: "ყოვლისმომცველი ანალიტიკური გადაწყვეტილებები, შექმნილი სოლო მეწარმეებისა და მცირე ბიზნესის მფლობელებისთვის",
 
             // Service Cards
-            service1Title: "ბიზნეს ანალიტიკა",
-            service1Desc: "გარდაქმენით ნედლ მონაცემებს მოქმედ ინფორმაციად, რომელიც ხელს უწყობს სტრატეგიულ გადაწყვეტილებებსა და ბიზნეს ზრდას.",
+            service1Title: "მონაცემთა ანალიტიკა & ბიზნეს ინტელექტი",
+            service1Desc: "დაუკავშირეთ თქვენი მონაცემთა წყაროები და გარდაქმენით ისინი დაფებად, KPI-ებად და ანალიტიკურ ანგარიშებად.",
 
-            service2Title: "ბიზნეს ინტელექტი (BI) & მონაცემთა ისტორია",
-            service2Desc: "შექმენით დამაჯერებელი ვიზუალიზაციები და დაფები, რომლებიც თქვენი მონაცემების ისტორიას მკაფიოდ და ეფექტურად აცნობს.",
+            service2Title: "ვებ დეველოპმენტი & მოვლა",
+            service2Desc: "სწრაფი, კონვერსიაზე ოპტიმიზებული ვებ-საიტები, ინტეგრირებული თქვენი ანალიტიკური სტეკთან პირველი დღიდანვე.",
 
-            service3Title: "პროცესების ანალიტიკა & ოპტიმიზაცია",
-            service3Desc: "იდენტიფიცირეთ ბოთლნეკები, აღმოფხვრეთ ხარვეზები და გაამარტივეთ ოპერაციები მონაცემებზე დაფუძნებული ინფორმაციის გამოყენებით.",
+            service3Title: "პროცესების მაინინგი & ანალიტიკა",
+            service3Desc: "დაარუქეთ თქვენი ბიზნესის რეალური ოპერაციები და გამოავლინეთ, სად იკარგება დრო, ფული და ძალისხმევა.",
 
-            service4Title: "მონაცემთა სტრატეგია & მართვა",
-            service4Desc: "ააშენეთ მდგრადი მონაცემთა ფუნდამენტი სათანადო მართვით, რომელიც იზრდება თქვენს ბიზნესთან ერთად.",
+            service4Title: "ავტომატიზაცია & AI აგენტები",
+            service4Desc: "შეცვალეთ განმეორებადი სამუშაო პროცესები ინტელექტური ავტომატიზაციით — მარტივი ტრიგერებიდან AI აგენტებამდე.",
 
-            service5Title: "მონაცემთა წიგნიერება & კულტურის პროგრამები",
-            service5Desc: "განავითარეთ ორგანიზაციული მონაცემთა წიგნიერება და ანალიტიკური აზროვნების უნარები მონაცემებზე ორიენტირებული კულტურის ასაშენებლად.",
+            service5Title: "ბიზნეს სტრატეგია & მენეჯმენტი",
+            service5Desc: "მონაცემებზე დაფუძნებული სტრატეგიული დაგეგმვა, OKR ჩარჩოები, ფინანსური მოდელირება და მენეჯმენტის ანგარიშგება.",
 
-            service6Title: "გადაწყვეტილების ინტელექტი (DI) & მოწინავე ანალიტიკა",
-            service6Desc: "გამოიყენეთ მოწინავე ანალიტიკა და AI თქვენს ორგანიზაციაში გადაწყვეტილების მიღების პროცესების გასაუმჯობესებლად.",
+            service6Title: "მონაცემთა ინჟინერია & ინტეგრაცია",
+            service6Desc: "ააშენეთ საიმედო მილსადენები, სუფთა საცავები და დაკავშირებული სისტემები ზუსტი ანალიტიკისთვის.",
 
             learnMore: "გაიგეთ მეტი →",
 
@@ -388,23 +388,23 @@ const translations = {
             servicesSubtitle: "Комплексные аналитические решения, разработанные для индивидуальных предпринимателей и владельцев малого бизнеса",
 
             // Service Cards
-            service1Title: "Бизнес-аналитика",
-            service1Desc: "Превращайте сырые данные в действенные инсайты, которые стимулируют стратегические решения и рост бизнеса.",
+            service1Title: "Аналитика данных & Бизнес-интеллект",
+            service1Desc: "Соедините ваши источники данных и преобразуйте их в дашборды, KPI и аналитические отчёты для принятия решений.",
 
-            service2Title: "Бизнес-интеллект (BI) & Визуализация Данных",
-            service2Desc: "Создавайте убедительные визуализации и дашборды, которые ясно и эффективно рассказывают историю ваших данных.",
+            service2Title: "Веб-разработка & Техподдержка",
+            service2Desc: "Быстрые, оптимизированные для конверсии сайты, интегрированные с вашим аналитическим стеком с первого дня.",
 
-            service3Title: "Аналитика & Оптимизация Процессов",
-            service3Desc: "Выявляйте узкие места, устраняйте потери и оптимизируйте операции, используя инсайты на основе данных.",
+            service3Title: "Процессный майнинг & Аналитика",
+            service3Desc: "Составьте карту реальной работы вашего бизнеса и определите, где теряются время, деньги и усилия.",
 
-            service4Title: "Стратегия & Управление Данными",
-            service4Desc: "Постройте устойчивую основу данных с надлежащим управлением, которая растет вместе с вашим бизнесом.",
+            service4Title: "Автоматизация & AI-агенты",
+            service4Desc: "Замените повторяющиеся ручные процессы интеллектуальной автоматизацией — от простых триггеров до AI-агентов.",
 
-            service5Title: "Программы Грамотности & Культуры Данных",
-            service5Desc: "Развивайте организационную грамотность в области данных и навыки аналитического мышления для построения культуры, ориентированной на данные.",
+            service5Title: "Бизнес-стратегия & Управление",
+            service5Desc: "Стратегическое планирование на основе данных, OKR-фреймворки, финансовое моделирование и управленческая отчётность.",
 
-            service6Title: "Интеллект Решений (DI) & Продвинутая Аналитика",
-            service6Desc: "Используйте продвинутую аналитику и ИИ для улучшения процессов принятия решений в вашей организации.",
+            service6Title: "Инжиниринг данных & Интеграция",
+            service6Desc: "Создайте надёжные пайплайны, чистые хранилища и связанные системы для точной аналитики.",
 
             learnMore: "Узнать больше →",
 

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MetricWave delivers data analytics solutions for non-profit organizations, maximizing social impact and demonstrating value to stakeholders.">
-    <title>Non-Profit & Social Impact Analytics - MetricWave</title>
+    <meta name="description" content="MetricWave Automation & AI Agents — replace repetitive workflows with intelligent automation, from simple triggers to multi-step AI agents.">
+    <title>Automation & AI Agents - MetricWave</title>
     <link rel="icon" type="image/png" href="mwlogo.png">
     <link rel="stylesheet" href="styles.css?v=5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,6 @@
     </script>
 </head>
 <body>
-    <!-- Sticky Navigation -->
     <header class="header">
         <nav class="nav-container">
             <div class="logo">
@@ -32,7 +31,7 @@
                 <li><a href="index.html" data-i18n="nav.home">Home</a></li>
                 <li><a href="about.html" data-i18n="nav.about">About</a></li>
                 <li class="nav-dropdown">
-                    <a href="services.html" data-i18n="nav.services">Services</a>
+                    <a href="services.html" class="active" data-i18n="nav.services">Services</a>
                     <ul class="nav-dropdown-menu">
                         <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
                         <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
@@ -43,14 +42,14 @@
                     </ul>
                 </li>
                 <li class="nav-dropdown">
-                    <a href="industries.html" class="active">Industries</a>
+                    <a href="industries.html">Industries</a>
                     <ul class="nav-dropdown-menu">
-                        <li><a href="industry-logistics.html">Logistics & Transportation</a></li>
-                        <li><a href="industry-technology.html">Technology & SaaS</a></li>
-                        <li><a href="industry-gaming.html">Gaming & Entertainment</a></li>
-                        <li><a href="industry-government.html">Government & Public Sector</a></li>
-                        <li><a href="industry-education.html">Education & Research</a></li>
-                        <li><a href="industry-nonprofit.html">Non-Profit & Social Impact</a></li>
+                        <li><a href="industries.html#logistics">Logistics &amp; Transportation</a></li>
+                        <li><a href="industries.html#technology">Technology &amp; SaaS</a></li>
+                        <li><a href="industries.html#gaming">Gaming &amp; Entertainment</a></li>
+                        <li><a href="industries.html#government">Government &amp; Public Sector</a></li>
+                        <li><a href="industries.html#education">Education &amp; Research</a></li>
+                        <li><a href="industries.html#nonprofit">Non-Profit &amp; Social Impact</a></li>
                     </ul>
                 </li>
                 <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
@@ -79,113 +78,131 @@
         </nav>
     </header>
 
-    <!-- Industry Detail Section -->
-    <section class="industry-detail-section">
+    <!-- Page Hero -->
+    <section class="page-hero">
         <div class="container">
-            <!-- Header -->
-            <div class="industry-detail-header">
-                <div class="industry-detail-icon">❤️</div>
-                <h1 class="page-title">Non-Profit & Social Impact</h1>
-                <p class="page-subtitle">Mission-driven analytics for organizations creating positive change</p>
+            <div class="service-breadcrumb">
+                <a href="services.html#automation-ai">← Back to Services</a>
             </div>
+            <p class="service-tag-badge" style="margin-top:1rem">WORKFLOWS · AI AGENTS · LLMs</p>
+            <h1 class="page-title">Automation &amp; AI Agents</h1>
+            <p class="page-subtitle">Every hour spent on repetitive work is an hour not spent on growth.</p>
+        </div>
+    </section>
 
-            <!-- Overview -->
-            <div class="industry-overview">
-                <p>Non-profit organizations and social impact initiatives face unique challenges in measuring outcomes, demonstrating value to donors and stakeholders, and maximizing their impact with limited resources. MetricWave helps mission-driven organizations leverage data to tell compelling impact stories and make evidence-based decisions.</p>
-                <p>Our analytics solutions support everything from program effectiveness measurement and donor analytics to impact reporting and strategic planning that advances your mission.</p>
-            </div>
-
-            <!-- Solutions -->
-            <div class="solutions-section">
-                <h2 class="section-title">Our Solutions for Non-Profits</h2>
-                <div class="solutions-grid">
-                    <div class="solution-card">
-                        <h3>Impact Measurement</h3>
-                        <ul>
-                            <li>Program outcomes tracking</li>
-                            <li>Social impact assessment</li>
-                            <li>Beneficiary engagement metrics</li>
-                            <li>Theory of change validation</li>
-                            <li>Longitudinal impact studies</li>
-                        </ul>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3>Donor & Fundraising Analytics</h3>
-                        <ul>
-                            <li>Donor behavior and segmentation</li>
-                            <li>Retention and acquisition analysis</li>
-                            <li>Campaign performance tracking</li>
-                            <li>Lifetime value modeling</li>
-                            <li>Predictive fundraising insights</li>
-                        </ul>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3>Strategic Intelligence</h3>
-                        <ul>
-                            <li>Resource allocation optimization</li>
-                            <li>Program efficiency analysis</li>
-                            <li>Grant reporting and compliance</li>
-                            <li>Data storytelling for stakeholders</li>
-                            <li>Data literacy capacity building</li>
-                        </ul>
+    <!-- Overview -->
+    <section class="service-detail">
+        <div class="container">
+            <div class="service-detail-grid">
+                <div class="service-detail-content" style="grid-column: 1 / -1; max-width: 780px;">
+                    <p class="service-detail-lead">If your team is copy-pasting between tools, manually generating reports, chasing approvals, or doing the same data task every week — that's automation waiting to happen.</p>
+                    <p style="color:var(--light-gray);margin-bottom:1rem">We design and deploy automation workflows and AI agents that handle the routine end-to-end, without breaking when things change. From simple Zapier flows to multi-step AI agents that read, reason, and act — we build what the task actually requires, not what's easiest to demo.</p>
+                    <p style="color:var(--light-gray)">Every automation we build is documented, monitored, and maintainable. We don't hand you a black box — we hand you a system you understand, with a fallback for when things go wrong.</p>
+                    <div class="service-btn-group" style="margin-top:2rem">
+                        <a href="contact.html" class="btn-primary">Book a Consultation</a>
+                        <a href="services.html#automation-ai" class="btn-teal-outline">← Service Overview</a>
                     </div>
                 </div>
-            </div>
-
-            <!-- Clients -->
-            <div class="clients-showcase">
-                <h2 class="section-title">Clients We've Served</h2>
-                <div class="clients-grid">
-                    <div class="client-card">
-                        <div class="client-logo-container">
-                            <img src="Logos/irap_logo.png" alt="IRAP">
-                        </div>
-                        <h3>International Refugee Assistance Project</h3>
-                        <p>The International Refugee Assistance Project (IRAP) organizes law students and lawyers to develop and enforce a set of human rights for refugees and displaced persons. IRAP serves refugees, asylum seekers, and displaced people through direct legal aid, strategic litigation, and advocacy for systemic change.</p>
-                        <p><strong>Focus:</strong> Refugee Legal Assistance and Advocacy</p>
-                    </div>
-
-                    <div class="client-card">
-                        <div class="client-logo-container">
-                            <img src="Logos/tfs_logo.png" alt="The Future Society">
-                        </div>
-                        <h3>The Future Society</h3>
-                        <p>The Future Society is a think tank working to advance beneficial, sustainable, and inclusive AI. The organization bridges the gap between AI innovation and policy, working with governments, international organizations, and civil society to ensure AI development aligns with democratic values and human rights.</p>
-                        <p><strong>Focus:</strong> AI Governance and Policy Development</p>
-                    </div>
-
-                    <div class="client-card">
-                        <div class="client-logo-container">
-                            <img src="Logos/yl_logo.png" alt="Youth Legend">
-                        </div>
-                        <h3>Youth Legend</h3>
-                        <p>Youth Legend is a youth empowerment organization dedicated to developing leadership skills and creating opportunities for young people. The organization provides mentorship, training programs, and community engagement initiatives that help youth become positive change agents in their communities.</p>
-                        <p><strong>Focus:</strong> Youth Leadership and Community Development</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Back to Industries -->
-            <div style="text-align: center; margin-top: var(--spacing-lg);">
-                <a href="industries.html" class="btn-secondary">← Back to All Industries</a>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- Technologies -->
+    <section class="tech-stack-section">
+        <div class="container">
+            <h2 class="section-title">Technologies &amp; Tools We Use</h2>
+            <p class="section-subtitle">The platforms and frameworks we deploy for this service</p>
+            <div class="tech-grid">
+                <span class="tech-badge"><span class="tech-badge-dot"></span>Make (Integromat)</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Zapier</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>n8n</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>OpenAI API</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Claude API</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Python</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Airtable</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Slack</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>HubSpot</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Notion</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>Google Workspace</span>
+                    <span class="tech-badge"><span class="tech-badge-dot"></span>REST APIs</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Snapshots -->
+    <section class="projects-section">
+        <div class="container">
+            <h2 class="section-title">Project Snapshots</h2>
+            <p class="section-subtitle">A sample of work delivered across different clients and contexts</p>
+            <div class="project-grid">
+                <div class="project-card">
+                    <p class="project-tag">SALES · B2B</p>
+                    <h3>AI Lead Qualification Agent</h3>
+                    <p>Built a Claude-powered agent that reads inbound HubSpot leads, scores them against an ICP criteria set, drafts a personalised follow-up email, and flags high-priority leads in Slack — fully automated from form submission.</p>
+                    <span class="project-metric">8 hrs/week saved — sales team focuses on warm leads only</span>
+                </div>
+
+                <div class="project-card">
+                    <p class="project-tag">AGENCY · REPORTING</p>
+                    <h3>Automated Monthly Client Reporting</h3>
+                    <p>Replaced a manual monthly reporting process — pulling data from GA4, Google Sheets and ad platforms — with a Make pipeline that builds a formatted PDF report and emails it to clients automatically.</p>
+                    <span class="project-metric">Zero manual steps — runs every 1st of the month</span>
+                </div>
+
+                <div class="project-card">
+                    <p class="project-tag">E-COMMERCE · OPERATIONS</p>
+                    <h3>Inventory Alert & Auto-PO System</h3>
+                    <p>Built a Make workflow that monitors stock levels via Shopify API, triggers Slack alerts when thresholds are hit, and auto-drafts a purchase order in the supplier portal — ready for one-click approval.</p>
+                    <span class="project-metric">Stock-outs reduced by 70% in first quarter</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-we-work">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Our delivery process for this service</p>
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="process-number">Step 1</div>
+                    <h3>Map the Workflow</h3>
+                    <p>We document the current manual process step by step — inputs, outputs, decisions, exceptions — before writing a single line of automation.</p>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-number">Step 2</div>
+                    <h3>Design the Solution</h3>
+                    <p>We choose the right tool for the job (Make, n8n, Python, AI agent) based on complexity, reliability requirements and your existing stack.</p>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-number">Step 3</div>
+                    <h3>Build & Test</h3>
+                    <p>We build in a staging environment, test against real edge cases, and document error handling before going live.</p>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-number">Step 4</div>
+                    <h3>Monitor & Maintain</h3>
+                    <p>We set up monitoring for every automation. When something breaks upstream (and it will), we fix it — not you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
     <section class="cta-section">
         <div class="container">
             <div class="cta-content">
-                <h2>Ready to Amplify Your Social Impact?</h2>
-                <p>Let's discuss how data analytics can help you measure, communicate, and maximize your impact.</p>
-                <a href="contact.html" class="btn-primary btn-large">Get In Touch</a>
+                <h2>Ready to Get Started?</h2>
+                <p>Schedule a free consultation to discuss how Automation &amp; AI Agents can work for your business.</p>
+                <a href="contact.html" class="btn-primary btn-large">Book Your Consultation</a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -200,7 +217,6 @@
                         <li><a href="about.html" data-i18n="nav.about">About</a></li>
                         <li><a href="services.html" data-i18n="nav.services">Services</a></li>
                         <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
-                        <li><a href="industries.html">Industries</a></li>
                         <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
                         <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
                     </ul>
@@ -208,12 +224,12 @@
                 <div class="footer-col">
                     <h4 data-i18n="footer.services">Services</h4>
                     <ul>
-                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
-                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
-                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
-                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
-                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
-                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
+                        <li><a href="service-analytics-bi.html" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="service-web-development.html" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
+                        <li><a href="service-process-mining.html" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
+                        <li><a href="service-automation-ai.html" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
+                        <li><a href="service-business-strategy.html" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
+                        <li><a href="service-data-engineering.html" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -245,7 +261,6 @@
         </div>
     </footer>
 
-    <!-- Cookie Consent Banner -->
     <div id="cookie-consent-banner" class="cookie-consent-banner">
         <div class="container">
             <div class="cookie-banner-content">
@@ -258,59 +273,6 @@
                     <button id="cookie-necessary-only" class="cookie-btn cookie-btn-necessary">Necessary Only</button>
                     <button id="cookie-customize" class="cookie-btn cookie-btn-customize">Customize</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cookie Preferences Modal -->
-    <div id="cookie-modal" class="cookie-modal">
-        <div class="cookie-modal-content">
-            <div class="cookie-modal-header">
-                <h2>Cookie Preferences</h2>
-                <button id="cookie-modal-close" class="cookie-modal-close" aria-label="Close">&times;</button>
-            </div>
-
-            <div class="cookie-category">
-                <div class="cookie-category-header">
-                    <h3>Necessary Cookies</h3>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" checked disabled>
-                        <span class="cookie-toggle-slider"></span>
-                    </label>
-                </div>
-                <p class="cookie-category-description">
-                    Essential cookies required for the website to function. These cookies enable core functionality such as security, network management, and accessibility. You cannot opt-out of necessary cookies.
-                </p>
-            </div>
-
-            <div class="cookie-category">
-                <div class="cookie-category-header">
-                    <h3>Analytics Cookies</h3>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" id="cookie-analytics">
-                        <span class="cookie-toggle-slider"></span>
-                    </label>
-                </div>
-                <p class="cookie-category-description">
-                    Help us understand how visitors interact with our website. We collect anonymous data on page views, navigation paths, time on site, scroll depth, and user engagement to improve our services.
-                </p>
-            </div>
-
-            <div class="cookie-category">
-                <div class="cookie-category-header">
-                    <h3>Marketing Cookies</h3>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" id="cookie-marketing">
-                        <span class="cookie-toggle-slider"></span>
-                    </label>
-                </div>
-                <p class="cookie-category-description">
-                    Used to track visitors across websites to display relevant advertisements. These cookies help us measure campaign effectiveness and deliver personalized marketing content.
-                </p>
-            </div>
-
-            <div class="cookie-modal-actions">
-                <button id="cookie-save-preferences" class="cookie-btn cookie-btn-accept">Save Preferences</button>
             </div>
         </div>
     </div>

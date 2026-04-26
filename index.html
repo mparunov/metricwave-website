@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+    (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
+    </script>
 </head>
 <body>
     <!-- Sticky Navigation -->
@@ -32,12 +35,12 @@
                 <li class="nav-dropdown">
                     <a href="services.html" data-i18n="nav.services">Services</a>
                     <ul class="nav-dropdown-menu">
-                        <li><a href="services.html#business-analytics" data-i18n="home.service1Title">Business Analytics</a></li>
-                        <li><a href="services.html#bi-storytelling" data-i18n="home.service2Title">BI & Data Storytelling</a></li>
-                        <li><a href="services.html#process-optimization" data-i18n="home.service3Title">Process Analytics</a></li>
-                        <li><a href="services.html#data-strategy" data-i18n="home.service4Title">Data Strategy</a></li>
-                        <li><a href="services.html#data-literacy" data-i18n="home.service5Title">Data Literacy Programs</a></li>
-                        <li><a href="services.html#decision-intelligence" data-i18n="home.service6Title">Decision Intelligence</a></li>
+                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
+                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
+                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
+                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
+                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
@@ -67,23 +70,28 @@
                         <li><button data-lang="ru" data-flag="Logos_Languages/ru_logo.png"><img src="Logos_Languages/ru_logo.png" alt="RU" class="dropdown-flag">Русский</button></li>
                     </ul>
                 </li>
+                <li class="theme-toggle-item">
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+                        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                </li>
             </ul>
         </nav>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title" data-i18n="home.heroTitle">Turn Your Data Into Your Greatest Competitive Advantage</h1>
-                <p class="hero-subtitle" data-i18n="home.heroSubtitle">Stop drowning in spreadsheets. Start making confident, data-driven decisions that grow your business.</p>
-                <div class="hero-cta">
-                    <a href="contact.html" class="btn-primary" data-i18n="home.heroCTA">Get Started Today</a>
-                    <a href="services.html" class="btn-secondary" data-i18n="home.heroSecondary">Explore Our Services</a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="hero-banner">
+        <iframe class="hero-iframe hero-iframe--light"
+            src="MetricWave-Header-Light.html"
+            title="MetricWave"
+            scrolling="no"></iframe>
+        <iframe class="hero-iframe hero-iframe--dark"
+            src="MetricWave-Header-Dark.html"
+            title="MetricWave"
+            scrolling="no"
+            loading="lazy"></iframe>
+    </div>
 
     <!-- Services Overview -->
     <section class="services-overview">
@@ -94,56 +102,56 @@
             <div class="services-grid">
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_ba.png" alt="Business Analytics">
+                        <img src="Logos_Services/services_ba.png" alt="Data Analytics & Business Intelligence">
                     </div>
-                    <h3 data-i18n="home.service1Title">Business Analytics</h3>
-                    <p data-i18n="home.service1Desc">Transform raw data into actionable insights that drive strategic decision-making and business growth.</p>
-                    <a href="services.html#business-analytics" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</h3>
+                    <p data-i18n="home.service1Desc">Connect your data sources and turn them into dashboards, KPIs, and insight reports that drive real decisions.</p>
+                    <a href="services.html#data-analytics-bi" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_bi.png" alt="Business Intelligence">
+                        <img src="Logos_Services/services_bi.png" alt="Web Development & Maintenance">
                     </div>
-                    <h3 data-i18n="home.service2Title">Business Intelligence (BI) & Data Storytelling</h3>
-                    <p data-i18n="home.service2Desc">Create compelling visualizations and dashboards that communicate your data's story clearly and effectively.</p>
-                    <a href="services.html#bi-storytelling" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service2Title">Web Development &amp; Maintenance</h3>
+                    <p data-i18n="home.service2Desc">A fast, professional web presence built for performance and conversion, with ongoing maintenance included.</p>
+                    <a href="services.html#web-development" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_pa.png" alt="Process Analytics">
+                        <img src="Logos_Services/services_pa.png" alt="Process Mining & Analytics">
                     </div>
-                    <h3 data-i18n="home.service3Title">Process Analytics & Optimization</h3>
-                    <p data-i18n="home.service3Desc">Identify bottlenecks, eliminate waste, and streamline operations using data-driven insights.</p>
-                    <a href="services.html#process-analytics" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service3Title">Process Mining &amp; Analytics</h3>
+                    <p data-i18n="home.service3Desc">Map how your business actually operates and pinpoint exactly where time and money are being lost.</p>
+                    <a href="services.html#process-mining" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_ds.png" alt="Data Strategy">
+                        <img src="Logos_Services/services_ds.png" alt="Automation & AI Agents">
                     </div>
-                    <h3 data-i18n="home.service4Title">Data Strategy & Governance</h3>
-                    <p data-i18n="home.service4Desc">Build a sustainable data foundation with proper governance that grows with your business.</p>
-                    <a href="services.html#data-strategy" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service4Title">Automation &amp; AI Agents</h3>
+                    <p data-i18n="home.service4Desc">Replace repetitive manual workflows with intelligent automation — from simple triggers to multi-step AI agents.</p>
+                    <a href="services.html#automation-ai" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_dl.png" alt="Data Literacy">
+                        <img src="Logos_Services/services_dl.png" alt="Business Strategy & Management">
                     </div>
-                    <h3 data-i18n="home.service5Title">Data Literacy & Culture Programs</h3>
-                    <p data-i18n="home.service5Desc">Develop organizational data literacy and analytical thinking skills to build a data-driven culture.</p>
-                    <a href="services.html#data-literacy" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service5Title">Business Strategy &amp; Management</h3>
+                    <p data-i18n="home.service5Desc">Data-informed strategic planning and advisory — from goal-setting and financial modelling to execution tracking.</p>
+                    <a href="services.html#business-strategy" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="Logos_Services/services_di.png" alt="Decision Intelligence">
+                        <img src="Logos_Services/services_di.png" alt="Data Engineering & Integration">
                     </div>
-                    <h3 data-i18n="home.service6Title">Decision Intelligence (DI) & Advanced Analytics</h3>
-                    <p data-i18n="home.service6Desc">Leverage advanced analytics and AI to enhance decision-making processes across your organization.</p>
-                    <a href="services.html#decision-intelligence" class="service-link" data-i18n="home.learnMore">Learn More →</a>
+                    <h3 data-i18n="home.service6Title">Data Engineering &amp; Integration</h3>
+                    <p data-i18n="home.service6Desc">Build the pipelines and infrastructure that make your analytics reliable — clean data in, trustworthy insights out.</p>
+                    <a href="services.html#data-engineering" class="service-link" data-i18n="home.learnMore">Learn More →</a>
                 </div>
             </div>
         </div>
@@ -319,12 +327,12 @@
                 <div class="footer-col">
                     <h4 data-i18n="footer.services">Services</h4>
                     <ul>
-                        <li><a href="services.html#business-analytics" data-i18n="home.service1Title">Business Analytics</a></li>
-                        <li><a href="services.html#bi-storytelling" data-i18n="home.service2Title">BI & Data Storytelling</a></li>
-                        <li><a href="services.html#process-optimization" data-i18n="home.service3Title">Process Analytics</a></li>
-                        <li><a href="services.html#data-strategy" data-i18n="home.service4Title">Data Strategy</a></li>
-                        <li><a href="services.html#data-literacy" data-i18n="home.service5Title">Data Literacy Programs</a></li>
-                        <li><a href="services.html#decision-intelligence" data-i18n="home.service6Title">Decision Intelligence</a></li>
+                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
+                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
+                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
+                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
+                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -426,7 +434,7 @@
         </div>
     </div>
 
-    <script src="translations.js"></script>
+    <script src="translations.js?v=2"></script>
     <script src="cookie-consent.js"></script>
     <script src="script.js"></script>
 </body>
