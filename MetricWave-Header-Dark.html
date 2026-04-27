@@ -144,7 +144,7 @@ function Schematic({ t, mode }) {
   ];
 
   // model in the middle
-  const modelX = 460, modelY = 200;
+  const modelX = 480, modelY = 200;
   const sourceX = 130, outputX = 800;
 
   return (
@@ -154,12 +154,12 @@ function Schematic({ t, mode }) {
       style={{ overflow: "visible" }}
     >
       <defs>
-        {/* gradient for input edges (cool → warm at model) */}
-        <linearGradient id={`edgeIn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        {/* gradient for input edges — userSpaceOnUse avoids degenerate bbox on horizontal paths */}
+        <linearGradient id={`edgeIn-${mode}`} x1="210" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
           <stop offset="0%"   stopColor={t.teal} stopOpacity="0.15" />
           <stop offset="100%" stopColor={t.teal} stopOpacity="0.85" />
         </linearGradient>
-        <linearGradient id={`edgeOut-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={`edgeOut-${mode}`} x1="560" y1="0" x2="720" y2="0" gradientUnits="userSpaceOnUse">
           <stop offset="0%"   stopColor={t.teal} stopOpacity="0.85" />
           <stop offset="100%" stopColor={t.teal} stopOpacity="0.15" />
         </linearGradient>
@@ -407,7 +407,7 @@ function MetricWaveHeader({ mode = "light" }) {
       )}
 
       {/* copy column */}
-      <div style={{ position: "absolute", left: 80, top: 70, zIndex: 3, maxWidth: 560 }}>
+      <div style={{ position: "absolute", left: 150, top: 70, zIndex: 3, maxWidth: 560 }}>
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace", fontSize: 13,
@@ -474,7 +474,7 @@ function MetricWaveHeader({ mode = "light" }) {
       <div
         style={{
           position: "absolute",
-          right: 60, top: 70,
+          right: 100, top: 70,
           width: 980, height: 620,
           zIndex: 2,
         }}
