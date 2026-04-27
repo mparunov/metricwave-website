@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetricWave — Data Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
+  body { min-height: 100vh; }
+  /* fit() scales the 1920×800 panel into the viewport, top-left origin */
+  #fit-stage { position: relative; width: 1920px; height: 800px; transform-origin: top left; }
+  #fit-wrap  { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+  @keyframes mwDraw     { to { stroke-dashoffset: 0; } }
+  @keyframes mwPulse    { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.45; transform: scale(0.92); } }
+  @keyframes mwPulseStroke { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+  @keyframes mwPulseRing{ 0% { opacity:0.6; r:5; } 100% { opacity:0; r:18; } }
+  @keyframes mwBar      { from { transform: scaleY(0.3); } to { transform: scaleY(1.05); } }
+  @keyframes mwSpin     { to { transform: rotate(360deg); } }
+  @keyframes mwFadeIn   { from { opacity:0; } to { opacity:1; } }
+  @keyframes mwSlideIn  { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideInR { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideUp  { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes mwGrow     { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes mwScaleX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes mwPop      { from { opacity:0; transform: scale(0.6); } to { opacity:1; transform: scale(1); } }
+  @keyframes mwDashFlow { to { stroke-dashoffset: -100; } }
+  @keyframes mwBlink    { 50% { opacity: 0; } }
+  @keyframes mwBlinkOut { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes mwBadgeCycle {
+    0%, 30%   { opacity: 1; }
+    33%, 63%  { opacity: 1; }
+    66%, 96%  { opacity: 1; }
+    100%      { opacity: 1; }
+  }
+  @keyframes mwStatPop {
+    0%   { opacity: 0; transform: translateX(8px); }
+    12%  { opacity: 1; transform: translateX(0); }
+    88%  { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(-8px); }
+  }
+</style>
+<script>
+  (function(){
+    var t = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+  window.addEventListener("message", function(e) {
+    if (e.data && e.data.type === "mw-theme") {
+      document.documentElement.setAttribute("data-theme", e.data.theme);
+    }
+  });
+</script>
+</head>
+<body>
+<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+
+<script>
+  function fit() {
+    const stage = document.getElementById('fit-stage');
+    const wrap  = document.getElementById('fit-wrap');
+    if (!stage || !wrap) return;
+    const sx = wrap.clientWidth / 1920;
+    const sy = wrap.clientHeight / 800;
+    const s = Math.min(sx, sy);
+    stage.style.transform = 'scale(' + s + ')';
+    // center
+    const w = 1920 * s, h = 800 * s;
+    stage.style.left = ((wrap.clientWidth  - w) / 2) + 'px';
+    stage.style.top  = ((wrap.clientHeight - h) / 2) + 'px';
+  }
+  window.addEventListener('load',  fit);
+  window.addEventListener('resize', fit);
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react" src="hero-shell.jsx"></script>
+<script type="text/babel" data-presets="env,react" src="hero-parts.jsx"></script>
+<script type="text/babel" data-presets="env,react" src="schemes-1.jsx"></script>
+<script type="text/babel" data-presets="env,react" src="schemes-2.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+  window.MW_SERVICE = {
+  "schematic": "dataeng",
+  "eyebrow": "· PIPELINES · WAREHOUSES · APIs ·",
+  "headline": {
+    "pre": "Clean data in. Reliable decisions out.",
+    "italic": "No exceptions.",
+    "post": ""
+  },
+  "lead": "We build the pipelines, warehouses, and integrations that make every report, dashboard, and model you run accurate and trustworthy.",
+  "ctaPrimary": "Audit my stack",
+  "ctaSecondary": "See pipeline examples",
+  "ticker": "· EXTRACT → TRANSFORM → LOAD → SERVE ·",
+  "navActive": "Services"
+};
+</script>
+<script type="text/babel" data-presets="env,react" src="hero-app.jsx"></script>
+</body>
+</html>

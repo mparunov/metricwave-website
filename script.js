@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
 
+        // Sync theme into any hero iframes on this page
+        document.querySelectorAll('iframe.hero-iframe, iframe.service-hero-iframe').forEach(function(iframe) {
+            try { iframe.contentWindow.postMessage({ type: 'mw-theme', theme: next }, '*'); } catch(e) {}
+        });
+
         setTimeout(function() {
             document.documentElement.classList.remove('theme-transitioning');
         }, 350);

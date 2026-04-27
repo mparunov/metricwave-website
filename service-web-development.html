@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MetricWave Web Development & Maintenance — fast, conversion-optimised websites built clean and integrated with your analytics stack.">
-    <title>Web Development & Maintenance - MetricWave</title>
+    <meta name="description" content="MetricWave designs and builds fast, conversion-optimised websites wired into your analytics stack from day one — with ongoing maintenance and full performance visibility.">
+    <title>Web Development & Maintenance — MetricWave</title>
     <link rel="icon" type="image/png" href="mwlogo.png">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -18,43 +18,39 @@
     <header class="header">
         <nav class="nav-container">
             <div class="logo">
-                <a href="index.html">
-                    <img src="logo_mw_new.png?v=4" alt="MetricWave">
-                </a>
+                <a href="index.html"><img src="logo_mw_new.png?v=4" alt="MetricWave"></a>
             </div>
             <button class="mobile-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html" data-i18n="nav.home">Home</a></li>
-                <li><a href="about.html" data-i18n="nav.about">About</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
                 <li class="nav-dropdown">
-                    <a href="services.html" class="active" data-i18n="nav.services">Services</a>
+                    <a href="services.html" class="active">Services</a>
                     <ul class="nav-dropdown-menu">
-                        <li><a href="services.html#data-analytics-bi" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
-                        <li><a href="services.html#web-development" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
-                        <li><a href="services.html#process-mining" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
-                        <li><a href="services.html#automation-ai" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
-                        <li><a href="services.html#business-strategy" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
-                        <li><a href="services.html#data-engineering" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
+                        <li><a href="service-analytics-bi.html">Data Analytics &amp; Business Intelligence</a></li>
+                        <li><a href="service-web-development.html">Web Development &amp; Maintenance</a></li>
+                        <li><a href="service-process-mining.html">Process Mining &amp; Analytics</a></li>
+                        <li><a href="service-automation-ai.html">Automation &amp; AI Agents</a></li>
+                        <li><a href="service-business-strategy.html">Business Strategy &amp; Management</a></li>
+                        <li><a href="service-data-engineering.html">Data Engineering &amp; Integration</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
                     <a href="industries.html">Industries</a>
                     <ul class="nav-dropdown-menu">
-                        <li><a href="industries.html#logistics">Logistics &amp; Transportation</a></li>
-                        <li><a href="industries.html#technology">Technology &amp; SaaS</a></li>
-                        <li><a href="industries.html#gaming">Gaming &amp; Entertainment</a></li>
-                        <li><a href="industries.html#government">Government &amp; Public Sector</a></li>
-                        <li><a href="industries.html#education">Education &amp; Research</a></li>
-                        <li><a href="industries.html#nonprofit">Non-Profit &amp; Social Impact</a></li>
+                        <li><a href="industry-logistics.html">Logistics &amp; Mobility</a></li>
+                        <li><a href="industry-technology.html">Technology &amp; SaaS</a></li>
+                        <li><a href="industry-gaming.html">Regulated SaaS &amp; iGaming</a></li>
+                        <li><a href="industry-government.html">Government &amp; Public Sector</a></li>
+                        <li><a href="industry-education.html">Education &amp; Research</a></li>
+                        <li><a href="industry-nonprofit.html">Non-Profit &amp; Int'l Development</a></li>
                     </ul>
                 </li>
-                <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
-                <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
-                <li><a href="contact.html" class="nav-cta" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact.html" class="nav-cta">Contact</a></li>
                 <li class="language-switcher">
                     <button class="lang-btn" aria-label="Language selector">
                         <img src="Logos_Languages/en_logo.png" alt="EN" class="lang-flag" id="current-flag">
@@ -78,127 +74,90 @@
         </nav>
     </header>
 
-    <!-- Page Hero -->
-    <section class="page-hero">
-        <div class="container">
-            <div class="service-breadcrumb">
-                <a href="services.html#web-development">← Back to Services</a>
-            </div>
-            <p class="service-tag-badge" style="margin-top:1rem">DESIGN · BUILD · MAINTAIN</p>
-            <h1 class="page-title">Web Development &amp; Maintenance</h1>
-            <p class="page-subtitle">Your website should work as hard as you do — fast, tracked, and always up to date.</p>
-        </div>
-    </section>
+    <div class="service-breadcrumb container">
+        <a href="services.html">← All Services</a> &nbsp;/&nbsp; Web Development &amp; Maintenance
+    </div>
 
-    <!-- Overview -->
-    <section class="service-detail">
+    <div class="service-hero-banner">
+        <iframe class="service-hero-iframe" src="MetricWave-WebDev.html" scrolling="no" title="Web Development & Maintenance"></iframe>
+    </div>
+
+    <section class="service-detail" style="padding: var(--spacing-xl) 0;">
         <div class="container">
-            <div class="service-detail-grid">
-                <div class="service-detail-content" style="grid-column: 1 / -1; max-width: 780px;">
-                    <p class="service-detail-lead">A slow, untracked, or outdated website costs you leads every day. We build clean, fast, conversion-optimised sites that are wired into your analytics stack from day one — so you always know what's working.</p>
-                    <p style="color:var(--light-gray);margin-bottom:1rem">Every site we build hits strong Core Web Vitals scores, is fully tracked with GA4 and event analytics, has a solid SEO foundation, and is easy to maintain. We handle hosting, deployment and ongoing updates so your team never has to think about it.</p>
-                    <p style="color:var(--light-gray)">Whether it's a new build, a redesign, or just keeping an existing site healthy — we treat your web presence as a business asset, not a one-off project.</p>
-                    <div class="service-btn-group" style="margin-top:2rem">
-                        <a href="contact.html" class="btn-primary">Book a Consultation</a>
-                        <a href="services.html#web-development" class="btn-teal-outline">← Service Overview</a>
+            <div class="service-detail-page-grid">
+                <div class="service-detail-page-main">
+                    <p class="service-tag-badge">DESIGN · BUILD · MAINTAIN</p>
+                    <h1 class="service-detail-title">Web Development &amp; Maintenance</h1>
+                    <p class="service-detail-lead">Your website should be your best-performing salesperson. We design, build, and maintain fast, conversion-optimised sites that are wired into your analytics stack from day one.</p>
+
+                    <h3>What You Get</h3>
+                    <ul class="service-feature-list">
+                        <li>Custom website design and development</li>
+                        <li>Performance optimisation (Core Web Vitals, page speed)</li>
+                        <li>Analytics and tracking integration (GA4, pixels, events)</li>
+                        <li>SEO technical foundation and structured data</li>
+                        <li>Ongoing content updates and maintenance</li>
+                        <li>Hosting setup, deployment and uptime monitoring</li>
+                    </ul>
+                </div>
+                <div class="service-detail-page-aside">
+                    <div class="service-aside-card">
+                        <h3>Perfect For</h3>
+                        <p>Businesses that need a professional web presence that converts visitors, loads fast, and connects cleanly into their broader analytics and marketing infrastructure.</p>
+                    </div>
+                    <div class="service-aside-card service-aside-results">
+                        <h3>Typical Results</h3>
+                        <ul class="results-list">
+                        <li>Measurable improvement in page load times and Core Web Vitals</li>
+                        <li>Full analytics visibility from first visit to conversion</li>
+                        <li>Zero-maintenance overhead for your internal team</li>
+                        <li>A site that grows with your business</li>
+                        </ul>
+                    </div>
+                    <div class="service-aside-cta">
+                        <a href="contact.html" class="btn-primary" style="display:block;text-align:center;">Discuss This Service</a>
+                        <a href="pricing.html" class="btn-teal-outline" style="display:block;text-align:center;margin-top:0.75rem;">View Pricing</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Technologies -->
-    <section class="tech-stack-section">
+    <section class="how-we-work" style="background-color: var(--charcoal);">
         <div class="container">
-            <h2 class="section-title">Technologies &amp; Tools We Use</h2>
-            <p class="section-subtitle">The platforms and frameworks we deploy for this service</p>
-            <div class="tech-grid">
-                <span class="tech-badge"><span class="tech-badge-dot"></span>HTML5 / CSS3</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>JavaScript</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>React</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Tailwind CSS</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Next.js</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Netlify</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Vercel</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Google Analytics 4</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Lighthouse</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>SEO / Schema</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>Figma</span>
-                    <span class="tech-badge"><span class="tech-badge-dot"></span>WordPress</span>
+            <h2 class="section-title">Other Services</h2>
+            <p class="section-subtitle">Our six services work together — most clients use two or more.</p>
+            <div class="related-services-grid">
+                <a href="service-analytics-bi.html" class="related-service-card">
+                    <span>Data Analytics &amp; BI</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="service-process-mining.html" class="related-service-card">
+                    <span>Process Mining</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="service-automation-ai.html" class="related-service-card">
+                    <span>Automation &amp; AI</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="service-business-strategy.html" class="related-service-card">
+                    <span>Business Strategy</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="service-data-engineering.html" class="related-service-card">
+                    <span>Data Engineering</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Project Snapshots -->
-    <section class="projects-section">
-        <div class="container">
-            <h2 class="section-title">Project Snapshots</h2>
-            <p class="section-subtitle">A sample of work delivered across different clients and contexts</p>
-            <div class="project-grid">
-                <div class="project-card">
-                    <p class="project-tag">WEB BUILD · INTERNAL</p>
-                    <h3>MetricWave Platform</h3>
-                    <p>Designed and built this site from scratch — multi-language support (5 languages), dark/light mode, full GA4 analytics integration, Netlify Forms, cookie consent, and a scalable CSS architecture.</p>
-                    <span class="project-metric">Full analytics visibility from first visit to CTA</span>
-                </div>
-
-                <div class="project-card">
-                    <p class="project-tag">NGO · EUROPE</p>
-                    <h3>Campaign Landing Page for European NGO</h3>
-                    <p>Built a focused campaign site for a non-profit advocacy campaign. Integrated Mailchimp for lead capture, GA4 for funnel tracking, and optimised for mobile-first performance.</p>
-                    <span class="project-metric">38% email capture rate on campaign traffic</span>
-                </div>
-
-                <div class="project-card">
-                    <p class="project-tag">CONSULTING · PROFESSIONAL SERVICES</p>
-                    <h3>Full Redesign for Consulting Firm</h3>
-                    <p>Rebuilt a slow, outdated site with a clean modern design, fast load times and proper analytics. Structured data, sitemap, and Core Web Vitals audit included.</p>
-                    <span class="project-metric">Core Web Vitals score: 42 → 94</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="how-we-work">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Our delivery process for this service</p>
-            <div class="process-grid">
-                <div class="process-step">
-                    <div class="process-number">Step 1</div>
-                    <h3>Design & Scope</h3>
-                    <p>We review your goals, audience, and existing presence. We propose a design direction and agree on pages, features, and integrations.</p>
-                </div>
-
-                <div class="process-step">
-                    <div class="process-number">Step 2</div>
-                    <h3>Build</h3>
-                    <p>We develop the site clean — semantic HTML, fast CSS, no unnecessary dependencies. Analytics and tracking are wired in during build, not as an afterthought.</p>
-                </div>
-
-                <div class="process-step">
-                    <div class="process-number">Step 3</div>
-                    <h3>Test & Launch</h3>
-                    <p>Full Lighthouse audit, cross-browser testing, and a staged launch. We handle DNS, hosting setup and go-live.</p>
-                </div>
-
-                <div class="process-step">
-                    <div class="process-number">Step 4</div>
-                    <h3>Maintain & Improve</h3>
-                    <p>We handle content updates, performance monitoring, and iterative improvements on a retainer or per-request basis.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
     <section class="cta-section">
         <div class="container">
             <div class="cta-content">
                 <h2>Ready to Get Started?</h2>
-                <p>Schedule a free consultation to discuss how Web Development &amp; Maintenance can work for your business.</p>
-                <a href="contact.html" class="btn-primary btn-large">Book Your Consultation</a>
+                <p>Book a free consultation to discuss how this service applies to your business.</p>
+                <a href="contact.html" class="btn-primary btn-large">Book a Free Consultation</a>
             </div>
         </div>
     </section>
@@ -206,76 +165,18 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>MetricWave</h4>
-                    <p data-i18n="footer.description">Empowering small businesses with data-driven insights and analytics expertise.</p>
-                </div>
-                <div class="footer-col">
-                    <h4 data-i18n="footer.quickLinks">Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
-                        <li><a href="about.html" data-i18n="nav.about">About</a></li>
-                        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
-                        <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
-                        <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
-                        <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4 data-i18n="footer.services">Services</h4>
-                    <ul>
-                        <li><a href="service-analytics-bi.html" data-i18n="home.service1Title">Data Analytics &amp; Business Intelligence</a></li>
-                        <li><a href="service-web-development.html" data-i18n="home.service2Title">Web Development &amp; Maintenance</a></li>
-                        <li><a href="service-process-mining.html" data-i18n="home.service3Title">Process Mining &amp; Analytics</a></li>
-                        <li><a href="service-automation-ai.html" data-i18n="home.service4Title">Automation &amp; AI Agents</a></li>
-                        <li><a href="service-business-strategy.html" data-i18n="home.service5Title">Business Strategy &amp; Management</a></li>
-                        <li><a href="service-data-engineering.html" data-i18n="home.service6Title">Data Engineering &amp; Integration</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4 data-i18n="footer.contact">Contact</h4>
-                    <ul>
-                        <li><span data-i18n="footer.email">Email</span>: mikheil@metricwave.net</li>
-                        <li><span data-i18n="footer.phone">Phone</span>: +32 (472) 440551</li>
-                        <li><span data-i18n="footer.location">Location</span>: <span data-i18n="footer.locationValue">Brussels, Belgium</span></li>
-                    </ul>
-                </div>
+                <div class="footer-col"><h4>MetricWave</h4><p>Empowering businesses with data-driven insights and analytics expertise.</p></div>
+                <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="industries.html">Industries</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+                <div class="footer-col"><h4>Services</h4><ul><li><a href="service-analytics-bi.html">Data Analytics &amp; BI</a></li><li><a href="service-process-mining.html">Process Mining &amp; Analytics</a></li><li><a href="service-automation-ai.html">Automation &amp; AI Agents</a></li><li><a href="service-business-strategy.html">Business Strategy</a></li><li><a href="service-data-engineering.html">Data Engineering</a></li></ul></div>
+                <div class="footer-col"><h4>Contact</h4><ul><li>Email: mikheil@metricwave.net</li><li>Phone: +32 (472) 440551</li><li>Location: Brussels, Belgium</li></ul></div>
             </div>
-            <div class="footer-social">
-                <h4 data-i18n="footer.connectTitle">Connect With Us</h4>
-                <div class="social-links">
-                    <a href="https://www.linkedin.com/company/metricwave" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
-                    <a href="https://www.facebook.com/metricwave" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
-                    </a>
-                    <a href="https://www.instagram.com/metricwavedata" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p data-i18n="footer.copyright">&copy; 2026 MetricWave - Thrive Performance Coaching. All rights reserved.</p>
-            </div>
+            <div class="footer-social"><h4>Connect With Us</h4><div class="social-links"><a href="https://www.linkedin.com/company/metricwave" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div></div>
+            <div class="footer-bottom"><p>&copy; 2026 MetricWave. All rights reserved.</p></div>
         </div>
     </footer>
 
-    <div id="cookie-consent-banner" class="cookie-consent-banner">
-        <div class="container">
-            <div class="cookie-banner-content">
-                <div class="cookie-banner-text">
-                    <h3>We Value Your Privacy</h3>
-                    <p>We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. By clicking "Accept All", you consent to our use of cookies. <a href="cookie-policy.html">Learn more</a></p>
-                </div>
-                <div class="cookie-banner-actions">
-                    <button id="cookie-accept-all" class="cookie-btn cookie-btn-accept">Accept All</button>
-                    <button id="cookie-necessary-only" class="cookie-btn cookie-btn-necessary">Necessary Only</button>
-                    <button id="cookie-customize" class="cookie-btn cookie-btn-customize">Customize</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="cookie-consent-banner" class="cookie-consent-banner"><div class="container"><div class="cookie-banner-content"><div class="cookie-banner-text"><h3>We Value Your Privacy</h3><p>We use cookies to enhance your browsing experience. <a href="cookie-policy.html">Learn more</a></p></div><div class="cookie-banner-actions"><button id="cookie-accept-all" class="cookie-btn cookie-btn-accept">Accept All</button><button id="cookie-necessary-only" class="cookie-btn cookie-btn-necessary">Necessary Only</button><button id="cookie-customize" class="cookie-btn cookie-btn-customize">Customize</button></div></div></div></div>
+    <div id="cookie-modal" class="cookie-modal"><div class="cookie-modal-content"><div class="cookie-modal-header"><h2>Cookie Preferences</h2><button id="cookie-modal-close" class="cookie-modal-close" aria-label="Close">&times;</button></div><div class="cookie-category"><div class="cookie-category-header"><h3>Necessary Cookies</h3><label class="cookie-toggle"><input type="checkbox" checked disabled><span class="cookie-toggle-slider"></span></label></div><p class="cookie-category-description">Essential cookies required for the website to function.</p></div><div class="cookie-category"><div class="cookie-category-header"><h3>Analytics Cookies</h3><label class="cookie-toggle"><input type="checkbox" id="cookie-analytics"><span class="cookie-toggle-slider"></span></label></div><p class="cookie-category-description">Help us understand how visitors interact with our website.</p></div><div class="cookie-category"><div class="cookie-category-header"><h3>Marketing Cookies</h3><label class="cookie-toggle"><input type="checkbox" id="cookie-marketing"><span class="cookie-toggle-slider"></span></label></div><p class="cookie-category-description">Used to track visitors across websites.</p></div><div class="cookie-modal-actions"><button id="cookie-save-preferences" class="cookie-btn cookie-btn-accept">Save Preferences</button></div></div></div>
 
     <script src="translations.js?v=2"></script>
     <script src="cookie-consent.js"></script>
