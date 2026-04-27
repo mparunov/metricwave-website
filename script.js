@@ -8,7 +8,31 @@
     document.documentElement.setAttribute('data-theme', saved);
 })();
 
+// Applies theme to all hero iframes on the page (both landing-page and service-page iframes)
+function syncIframeThemes(theme) {
+    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe').forEach(function(iframe) {
+        // Direct contentDocument access (same-origin, most reliable — triggers MutationObserver in useTheme())
+        try {
+            if (iframe.contentDocument && iframe.contentDocument.documentElement) {
+                iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
+            }
+        } catch(e) {}
+        // postMessage fallback
+        try { iframe.contentWindow.postMessage({ type: 'mw-theme', theme: theme }, '*'); } catch(e) {}
+    });
+}
+
+// On DOMContentLoaded: apply current theme to any already-loaded iframes, and wire up load handlers
 document.addEventListener('DOMContentLoaded', function() {
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+
+    // Apply theme to iframes that load after DOMContentLoaded
+    document.querySelectorAll('iframe.service-hero-iframe').forEach(function(iframe) {
+        iframe.addEventListener('load', function() {
+            syncIframeThemes(currentTheme);
+        });
+    });
+
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
 
@@ -19,11 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.classList.add('theme-transitioning');
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
+        currentTheme = next;
 
-        // Sync theme into any hero iframes on this page
-        document.querySelectorAll('iframe.hero-iframe, iframe.service-hero-iframe').forEach(function(iframe) {
-            try { iframe.contentWindow.postMessage({ type: 'mw-theme', theme: next }, '*'); } catch(e) {}
-        });
+        syncIframeThemes(next);
 
         setTimeout(function() {
             document.documentElement.classList.remove('theme-transitioning');

@@ -18,7 +18,7 @@ const MW_SCHEMATICS = {
 function App() {
   const cfg = window.MW_SERVICE;
   const Schem = MW_SCHEMATICS[cfg.schematic];
-  return <ServiceHero {...cfg} Schematic={Schem} />;
+  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

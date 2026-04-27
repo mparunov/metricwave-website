@@ -89,18 +89,24 @@ function HeroLogo({ color, mode }) {
    ServiceHero — full 1920×800 panel
 ============================================================ */
 function ServiceHero({
-  eyebrow,        // string with leading/trailing dots e.g. "· DASHBOARDS · KPIs · REPORTING ·"
-  headline,      // {pre, italic, post}
-  lead,          // string
-  ctaPrimary,    // string
-  ctaSecondary,  // string
-  ticker,        // string
-  Schematic,     // (t, mode) => svg
+  eyebrow,
+  headline,
+  lead,
+  ctaPrimary,
+  ctaSecondary,
+  ticker,
+  Schematic,
   navActive = "Services",
+  showNav = true,
 }) {
   const mode = useTheme();
   const t = HERO_TOKENS[mode];
   const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
+
+  // When nav is hidden, shift content up to fill the extra space
+  const copyTop    = showNav ? 240 : 130;
+  const schemTop   = showNav ? 140 :  40;
+  const schemHeight = showNav ? 560 : 660;
 
   return (
     <div style={{
@@ -133,36 +139,37 @@ function ServiceHero({
         }} />
       )}
 
-      {/* nav */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0,
-        padding: "30px 80px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        zIndex: 4,
-      }}>
-        <HeroLogo color={t.text1} mode={mode} />
-        <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2, letterSpacing: "-0.005em" }}>
-          {navItems.map((n) => (
-            <span key={n} style={{
-              color: n === navActive ? t.text1 : t.text2,
-              fontWeight: n === navActive ? 600 : 400,
-              paddingBottom: 2,
-              borderBottom: n === navActive ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
-            }}>{n}</span>
-          ))}
-        </nav>
-        <button style={{
-          fontFamily: "inherit", fontSize: 13, fontWeight: 600,
-          padding: "10px 18px", borderRadius: 7, cursor: "pointer",
-          border: "none", background: t.accentBg, color: t.accentInk,
-        }}>Contact</button>
-      </div>
+      {/* nav — only shown in standalone/preview mode */}
+      {showNav && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          padding: "30px 80px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          zIndex: 4,
+        }}>
+          <HeroLogo color={t.text1} mode={mode} />
+          <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2, letterSpacing: "-0.005em" }}>
+            {navItems.map((n) => (
+              <span key={n} style={{
+                color: n === navActive ? t.text1 : t.text2,
+                fontWeight: n === navActive ? 600 : 400,
+                paddingBottom: 2,
+                borderBottom: n === navActive ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
+              }}>{n}</span>
+            ))}
+          </nav>
+          <button style={{
+            fontFamily: "inherit", fontSize: 13, fontWeight: 600,
+            padding: "10px 18px", borderRadius: 7, cursor: "pointer",
+            border: "none", background: t.accentBg, color: t.accentInk,
+          }}>Contact</button>
+        </div>
+      )}
 
-      {/* LEFT COLUMN — copy (x: 80–580px) */}
+      {/* LEFT COLUMN — copy */}
       <div style={{
-        position: "absolute", left: 80, top: 240, width: 500, zIndex: 3,
+        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
       }}>
-        {/* eyebrow — monospace teal */}
         <div style={{
           fontFamily: "'Courier New', monospace",
           fontSize: "0.7rem",
@@ -171,7 +178,6 @@ function ServiceHero({
           color: t.teal, marginBottom: 22,
         }}>{eyebrow}</div>
 
-        {/* H1 — weight 900 */}
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 900,
@@ -188,14 +194,12 @@ function ServiceHero({
           {headline.cursor && <BlinkCursor color={t.teal} />}
         </h1>
 
-        {/* lead */}
         <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
         }}>{lead}</p>
 
-        {/* CTAs */}
         <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 14, fontWeight: 700,
@@ -213,20 +217,20 @@ function ServiceHero({
         </div>
       </div>
 
-      {/* RIGHT COLUMN — schematic (x: 620–1840) */}
+      {/* RIGHT COLUMN — schematic */}
       <div style={{
         position: "absolute",
-        left: 620, top: 140, width: 1220, height: 560,
+        left: 620, top: schemTop, width: 1220, height: schemHeight,
         zIndex: 2,
       }}>
         <Schematic t={t} mode={mode} />
       </div>
 
-      {/* TICKER strip (y: 770–800) */}
+      {/* TICKER strip */}
       <div style={{
         position: "absolute", left: 0, right: 0, bottom: 0, height: 30,
         zIndex: 5,
-        background: mode === "dark" ? t.surface1 : t.surface1,
+        background: t.surface1,
         borderTop: `1px solid ${t.border}`,
         display: "flex", alignItems: "center",
         padding: "0 80px",
