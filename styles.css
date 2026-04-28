@@ -532,11 +532,11 @@ a:hover {
 }
 
 .service-card {
-    background-color: var(--dark-gray);
+    background-color: var(--charcoal);
     padding: 0;
-    border-radius: 10px;
+    border-radius: 14px;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 1px solid var(--medium-gray);
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -547,16 +547,16 @@ a:hover {
 }
 
 .service-card:hover {
-    transform: translateY(-5px) scale(1.02);
+    transform: translateY(-3px);
     border-color: var(--teal);
-    box-shadow: 0 12px 36px rgba(45, 212, 191, 0.22);
+    box-shadow: 0 12px 32px rgba(45, 212, 191, 0.18);
     z-index: 10;
 }
 
 /* animated schematic preview */
 .service-preview-wrap {
     width: 100%;
-    aspect-ratio: 1220 / 560;
+    height: 210px;
     overflow: hidden;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     flex-shrink: 0;
@@ -571,7 +571,7 @@ a:hover {
 
 .schematic-iframe {
     width: 100%;
-    height: 560px; /* intrinsic schematic height; parent clips via overflow:hidden */
+    height: 100%;
     border: none;
     display: block;
     pointer-events: none;
@@ -584,9 +584,36 @@ a:hover {
     transition: transform 0.4s ease;
 }
 
+/* number badge inside preview */
+.service-num {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    color: var(--teal);
+    letter-spacing: 0.18em;
+    background: var(--charcoal);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--medium-gray);
+    z-index: 2;
+    line-height: 1;
+}
+
+/* monospace tag above title */
+.service-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
 /* text body */
 .service-card-body {
-    padding: 1.6rem 1.8rem;
+    padding: 1.4rem 1.5rem 1.6rem;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -594,9 +621,11 @@ a:hover {
 
 .service-card h3 {
     color: var(--white);
-    margin: 0 0 0.75rem;
-    font-size: 1.25rem;
-    line-height: 1.35;
+    margin: 0 0 0.6rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
 }
 
 [data-theme="light"] .service-card h3 {
@@ -605,18 +634,21 @@ a:hover {
 
 .service-card p {
     color: var(--light-gray);
-    margin: 0 0 1.25rem;
-    font-size: 0.95rem;
+    margin: 0 0 1.2rem;
+    font-size: 0.875rem;
     line-height: 1.55;
     flex: 1;
 }
 
 .service-link {
     color: var(--teal);
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
     transition: var(--transition);
     display: inline-block;
+    margin-top: auto;
 }
 
 .service-link:hover,
