@@ -1,348 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MetricWave — Services</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
-  body { min-height: 100vh; }
-  #fit-wrap  { position: relative; width: 100vw; min-height: 100vh; overflow: hidden; }
-  #fit-stage { position: absolute; top: 0; left: 0; width: 1920px; transform-origin: top left; }
-
-  @keyframes mwDraw     { to { stroke-dashoffset: 0; } }
-  @keyframes mwPulse    { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.45; transform: scale(0.92); } }
-  @keyframes mwPulseStroke { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
-  @keyframes mwPulseRing{ 0% { opacity:0.6; r:5; } 100% { opacity:0; r:18; } }
-  @keyframes mwBar      { from { transform: scaleY(0.3); } to { transform: scaleY(1.05); } }
-  @keyframes mwSpin     { to { transform: rotate(360deg); } }
-  @keyframes mwFadeIn   { from { opacity:0; } to { opacity:1; } }
-  @keyframes mwSlideIn  { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
-  @keyframes mwSlideInR { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
-  @keyframes mwSlideUp  { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
-  @keyframes mwGrow     { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-  @keyframes mwScaleX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  @keyframes mwPop      { from { opacity:0; transform: scale(0.6); } to { opacity:1; transform: scale(1); } }
-  @keyframes mwDashFlow { to { stroke-dashoffset: -100; } }
-  @keyframes mwBlink    { 50% { opacity: 0; } }
-  @keyframes mwBlinkOut { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+  html, body { margin: 0; padding: 0; overflow: hidden; background: transparent; }
+  #schem-wrap { width: 1220px; height: 560px; transform-origin: top left; overflow: hidden; }
 </style>
 </head>
 <body>
-<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+<div id="schem-wrap"><div id="root"></div></div>
 
 <script>
-  (function() {
-    var saved = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', saved);
-  })();
-  window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'mw-theme') {
-      var t = e.data.theme || 'dark';
-      document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('theme', t);
-    }
-  });
-
-  function fit() {
-    var stage = document.getElementById('fit-stage');
-    var wrap  = document.getElementById('fit-wrap');
-    if (!stage || !wrap) return;
-    var s = Math.min(1, wrap.clientWidth / 1920);
-    stage.style.transform = 'scale(' + s + ')';
-    var h = stage.scrollHeight * s;
-    wrap.style.minHeight = '0';
-    wrap.style.height = h + 'px';
-    if (window.parent !== window) {
-      window.parent.postMessage({ type: 'mw-page-height', height: h }, '*');
-    }
+(function() {
+  var t = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'mw-theme') {
+    var t = e.data.theme || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('theme', t);
   }
-  window.addEventListener('load',   function() { fit(); setTimeout(fit, 100); setTimeout(fit, 600); });
-  window.addEventListener('resize', fit);
-  if (window.ResizeObserver) {
-    window.addEventListener('load', function() {
-      var stage = document.getElementById('fit-stage');
-      if (stage) new ResizeObserver(fit).observe(stage);
-    });
-  }
+});
+function fit() {
+  var w = document.documentElement.clientWidth || 300;
+  var scale = w / 1220;
+  var wrap = document.getElementById('schem-wrap');
+  if (wrap) wrap.style.transform = 'scale(' + scale + ')';
+}
+window.addEventListener('load', function() { fit(); setTimeout(fit, 80); });
+window.addEventListener('resize', fit);
 </script>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
-<script type="text/babel" data-presets="env,react">
-/* global React */
-const { useState, useEffect } = React;
-
-/* ============================================================
-   MetricWave — Service hero shell (1920 × 800)
-   Auto-detects light/dark via data-theme on <html>.
-   Slot a Schematic into the right column.
-============================================================ */
-
-const HERO_TOKENS = {
-  dark: {
-    bg:        "#0A0A0A",
-    surface1:  "#1A1A1A",
-    surface2:  "#2A2A2A",
-    border:    "#3A3A3A",
-    text1:     "#FFFFFF",
-    text2:     "#E5E5E5",
-    teal:      "#2DD4BF",
-    tealDk:    "#14B8A6",
-    tealLt:    "#5EEAD4",
-    tealGlow:  "rgba(45,212,191,0.15)",
-    warn:      "#F59E0B",
-    warnGlow:  "rgba(245,158,11,0.18)",
-    ok:        "#22C55E",
-    nodeFill:  "#1A1A1A",
-    modelFill: "#1A1A1A",
-    modelInk:  "#FFFFFF",
-    accentBg:  "#2DD4BF",
-    accentInk: "#0A0A0A",
-  },
-  light: {
-    bg:        "#FFFFFF",
-    surface1:  "#F4F4F6",
-    surface2:  "#E8E8EC",
-    border:    "#C8C8D4",
-    text1:     "#0D0D10",
-    text2:     "#404050",
-    teal:      "#0D9488",
-    tealDk:    "#0F766E",
-    tealLt:    "#14B8A6",
-    tealGlow:  "rgba(13,148,136,0.12)",
-    warn:      "#D97706",
-    warnGlow:  "rgba(217,119,6,0.18)",
-    ok:        "#16A34A",
-    nodeFill:  "#FFFFFF",
-    modelFill: "#0D0D10",
-    modelInk:  "#FFFFFF",
-    accentBg:  "#0D9488",
-    accentInk: "#FFFFFF",
-  },
-};
-
-function useTheme() {
-  const initial = (typeof document !== "undefined" &&
-    document.documentElement.getAttribute("data-theme")) || "dark";
-  const [mode, setMode] = useState(initial);
-  useEffect(() => {
-    const obs = new MutationObserver(() => {
-      const next = document.documentElement.getAttribute("data-theme") || "dark";
-      setMode(next);
-    });
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => obs.disconnect();
-  }, []);
-  return mode;
-}
-
-function HeroLogo({ color, mode }) {
-  return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-      <img
-        src="../assets/metricwave-mark.png"
-        alt=""
-        style={{
-          height: 34, width: "auto", objectFit: "contain",
-          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
-        }}
-      />
-      <span style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-        fontWeight: 700, fontSize: 22,
-        letterSpacing: "-0.02em", color,
-      }}>MetricWave</span>
-    </div>
-  );
-}
-
-/* ============================================================
-   ServiceHero — full 1920×800 panel
-============================================================ */
-function ServiceHero({
-  eyebrow,
-  headline,
-  lead,
-  ctaPrimary,
-  ctaSecondary,
-  ticker,
-  Schematic,
-  navActive = "Services",
-  showNav = true,
-}) {
-  const mode = useTheme();
-  const t = HERO_TOKENS[mode];
-  const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
-
-  // When nav is hidden, shift content up to fill the extra space
-  const copyTop    = showNav ? 240 : 130;
-  const schemTop   = showNav ? 140 :  40;
-  const schemHeight = showNav ? 560 : 660;
-
-  return (
-    <div style={{
-      width: 1920, height: 800,
-      background: t.bg,
-      position: "relative", overflow: "hidden",
-      fontFamily: "'Inter', system-ui, sans-serif",
-      color: t.text1,
-      isolation: "isolate",
-    }}>
-      {/* fine grid */}
-      <svg width="1920" height="800" style={{ position: "absolute", inset: 0, opacity: mode === "dark" ? 0.4 : 0.55 }}>
-        <defs>
-          <pattern id={`heroGrid-${mode}`} width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M0 0H40M0 0V40" stroke={t.border} strokeWidth="0.5" />
-          </pattern>
-          <pattern id={`heroGridBig-${mode}`} width="200" height="200" patternUnits="userSpaceOnUse">
-            <path d="M0 0H200M0 0V200" stroke={t.border} strokeWidth="0.7" />
-          </pattern>
-        </defs>
-        <rect width="1920" height="800" fill={`url(#heroGrid-${mode})`} />
-        <rect width="1920" height="800" fill={`url(#heroGridBig-${mode})`} opacity="0.7" />
-      </svg>
-
-      {mode === "dark" && (
-        <div style={{
-          position: "absolute", inset: 0,
-          background: `radial-gradient(900px 600px at 70% 50%, ${t.tealGlow}, transparent 70%)`,
-          zIndex: 1,
-        }} />
-      )}
-
-      {/* nav — only shown in standalone/preview mode */}
-      {showNav && (
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0,
-          padding: "30px 80px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          zIndex: 4,
-        }}>
-          <HeroLogo color={t.text1} mode={mode} />
-          <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2, letterSpacing: "-0.005em" }}>
-            {navItems.map((n) => (
-              <span key={n} style={{
-                color: n === navActive ? t.text1 : t.text2,
-                fontWeight: n === navActive ? 600 : 400,
-                paddingBottom: 2,
-                borderBottom: n === navActive ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
-              }}>{n}</span>
-            ))}
-          </nav>
-          <button style={{
-            fontFamily: "inherit", fontSize: 13, fontWeight: 600,
-            padding: "10px 18px", borderRadius: 7, cursor: "pointer",
-            border: "none", background: t.accentBg, color: t.accentInk,
-          }}>Contact</button>
-        </div>
-      )}
-
-      {/* LEFT COLUMN — copy */}
-      <div style={{
-        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
-      }}>
-        <div style={{
-          fontFamily: "'Courier New', monospace",
-          fontSize: "0.7rem",
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-          color: t.teal, marginBottom: 22,
-        }}>{eyebrow}</div>
-
-        <h1 style={{
-          fontFamily: "'Inter', system-ui, sans-serif",
-          fontWeight: 900,
-          fontSize: "clamp(3rem, 4vw, 4.25rem)",
-          lineHeight: 1.1,
-          letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
-        }}>
-          {headline.pre}
-          {headline.italic && (
-            <>{" "}<span style={{ color: t.teal }}>{headline.italic}</span></>
-          )}
-          {headline.post && <>{" "}{headline.post}</>}
-          {headline.cursor && <BlinkCursor color={t.teal} />}
-        </h1>
-
-        <p style={{
-          fontSize: "1.05rem", lineHeight: 1.6,
-          color: t.text2, marginTop: 26, marginBottom: 0,
-          maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
-
-        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
-          <button style={{
-            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
-            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
-            border: "none", background: t.teal, color: t.bg,
-            letterSpacing: "-0.01em",
-          }}>{ctaPrimary} →</button>
-          <button style={{
-            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
-            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
-            background: "transparent", color: t.teal,
-            border: `2px solid ${t.teal}`,
-            letterSpacing: "-0.01em",
-          }}>{ctaSecondary}</button>
-        </div>
-      </div>
-
-      {/* RIGHT COLUMN — schematic */}
-      <div style={{
-        position: "absolute",
-        left: 620, top: schemTop, width: 1220, height: schemHeight,
-        zIndex: 2,
-      }}>
-        <Schematic t={t} mode={mode} />
-      </div>
-
-      {/* TICKER strip */}
-      <div style={{
-        position: "absolute", left: 0, right: 0, bottom: 0, height: 30,
-        zIndex: 5,
-        background: t.surface1,
-        borderTop: `1px solid ${t.border}`,
-        display: "flex", alignItems: "center",
-        padding: "0 80px",
-        justifyContent: "space-between",
-        fontFamily: "'Courier New', monospace",
-        fontSize: "0.65rem",
-        color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
-      }}>
-        <span>{ticker}</span>
-        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: 999,
-            background: t.teal, animation: "mwPulse 1.6s infinite",
-          }} />
-          Live · Always in sync
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function BlinkCursor({ color }) {
-  return (
-    <span style={{
-      display: "inline-block", width: "0.5ch", marginLeft: 4,
-      animation: "mwBlinkOut 4s linear forwards, mwBlink 0.6s steps(2) infinite",
-      color,
-    }}>|</span>
-  );
-}
-
-Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme });
-
-</script>
 <script type="text/babel" data-presets="env,react">
 /* global React */
 const { useState, useEffect } = React;
@@ -480,6 +174,7 @@ function AgoTicker({ x, y, ...rest }) {
 Object.assign(window, { NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker });
 
 </script>
+
 <script type="text/babel" data-presets="env,react">
 /* global React, NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker */
 const { useState, useEffect } = React;
@@ -1018,6 +713,7 @@ function SchemAutomation({ t, mode }) {
 Object.assign(window, { SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation });
 
 </script>
+
 <script type="text/babel" data-presets="env,react">
 /* global React, NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker */
 const { useState, useEffect } = React;
@@ -1610,291 +1306,59 @@ function SchemIndustries({ t, mode }) {
 Object.assign(window, { SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries });
 
 </script>
+
 <script type="text/babel" data-presets="env,react">
-/* global React, useTheme, HERO_TOKENS */
-const { useState: useStateP, useEffect: useEffectP } = React;
+/* global React, SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation, SchemStrategy, SchemDataEng */
+const { useState, useEffect } = React;
 
-/* ============================================================
-   MetricWave — Page chrome shared across Services/About/Contact.
-   Provides Nav, Ticker strip, GridBg, Logo so each page just
-   focuses on its own body content.
-============================================================ */
+const TOKENS = {
+  dark: {
+    bg:"#0A0A0A", surface1:"#1A1A1A", surface2:"#2A2A2A", border:"#3A3A3A",
+    text1:"#FFFFFF", text2:"#E5E5E5", teal:"#2DD4BF", tealDk:"#14B8A6",
+    tealLt:"#5EEAD4", tealGlow:"rgba(45,212,191,0.15)", warn:"#F59E0B",
+    warnGlow:"rgba(245,158,11,0.18)", ok:"#22C55E", nodeFill:"#1A1A1A",
+    modelFill:"#1A1A1A", modelInk:"#FFFFFF", accentBg:"#2DD4BF", accentInk:"#0A0A0A",
+  },
+  light: {
+    bg:"#FFFFFF", surface1:"#F4F4F6", surface2:"#E8E8EC", border:"#C8C8D4",
+    text1:"#0D0D10", text2:"#404050", teal:"#0D9488", tealDk:"#0F766E",
+    tealLt:"#14B8A6", tealGlow:"rgba(13,148,136,0.12)", warn:"#D97706",
+    warnGlow:"rgba(217,119,6,0.18)", ok:"#16A34A", nodeFill:"#FFFFFF",
+    modelFill:"#0D0D10", modelInk:"#FFFFFF", accentBg:"#0D9488", accentInk:"#FFFFFF",
+  },
+};
 
-function PageLogo({ color, mode }) {
-  return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-      <img
-        src="mwlogo.png"
-        alt=""
-        style={{
-          height: 34, width: "auto", objectFit: "contain",
-          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
-        }}
-      />
-      <span style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-        fontWeight: 700, fontSize: 22,
-        letterSpacing: "-0.02em", color,
-      }}>MetricWave</span>
-    </div>
-  );
+const SCHEMATICS = {
+  analytics:  SchemAnalytics,
+  web:        SchemWeb,
+  process:    SchemProcess,
+  automation: SchemAutomation,
+  strategy:   SchemStrategy,
+  dataeng:    SchemDataEng,
+};
+
+function useTheme() {
+  const init = document.documentElement.getAttribute('data-theme') || 'light';
+  const [mode, setMode] = useState(init);
+  useEffect(() => {
+    const obs = new MutationObserver(() =>
+      setMode(document.documentElement.getAttribute('data-theme') || 'light')
+    );
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
+  return mode;
 }
 
-function GridBg({ t, mode, w = 1920, h = 1200 }) {
-  return (
-    <>
-      <svg width={w} height={h} style={{ position: "absolute", inset: 0, opacity: mode === "dark" ? 0.32 : 0.5, pointerEvents: "none" }}>
-        <defs>
-          <pattern id={`pgGrid-${mode}`} width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M0 0H40M0 0V40" stroke={t.border} strokeWidth="0.5" />
-          </pattern>
-          <pattern id={`pgGridBig-${mode}`} width="200" height="200" patternUnits="userSpaceOnUse">
-            <path d="M0 0H200M0 0V200" stroke={t.border} strokeWidth="0.7" />
-          </pattern>
-        </defs>
-        <rect width={w} height={h} fill={`url(#pgGrid-${mode})`} />
-        <rect width={w} height={h} fill={`url(#pgGridBig-${mode})`} opacity="0.7" />
-      </svg>
-      {mode === "dark" && (
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: `radial-gradient(900px 600px at 70% 25%, ${t.tealGlow}, transparent 70%)`,
-        }} />
-      )}
-    </>
-  );
-}
-
-function PageNav({ t, mode, active }) {
-  const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
-  return (
-    <div style={{
-      position: "absolute", top: 0, left: 0, right: 0,
-      padding: "30px 80px",
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      zIndex: 10,
-    }}>
-      <PageLogo color={t.text1} mode={mode} />
-      <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2 }}>
-        {navItems.map((n) => (
-          <span key={n} style={{
-            color: n === active ? t.text1 : t.text2,
-            fontWeight: n === active ? 600 : 400,
-            paddingBottom: 2,
-            borderBottom: n === active ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
-          }}>{n}</span>
-        ))}
-      </nav>
-      <button style={{
-        fontFamily: "inherit", fontSize: 13, fontWeight: 600,
-        padding: "10px 18px", borderRadius: 7, cursor: "pointer",
-        border: "none", background: t.accentBg, color: t.accentInk,
-      }}>Contact</button>
-    </div>
-  );
-}
-
-function PageTicker({ t, mode, label }) {
-  return (
-    <div style={{
-      position: "absolute", left: 0, right: 0, bottom: 0, height: 30, zIndex: 10,
-      background: t.surface1,
-      borderTop: `1px solid ${t.border}`,
-      display: "flex", alignItems: "center", padding: "0 80px",
-      boxSizing: "border-box", overflow: "hidden",
-      justifyContent: "space-between",
-      fontFamily: "'Courier New', monospace", fontSize: "0.65rem",
-      color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
-    }}>
-      <span>{label}</span>
-      <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
-        Live · Always in sync
-      </span>
-    </div>
-  );
-}
-
-function PageEyebrow({ color, children }) {
-  return (
-    <div style={{
-      fontFamily: "'Courier New', monospace", fontSize: "0.7rem",
-      letterSpacing: "0.15em", textTransform: "uppercase",
-      color, marginBottom: 22,
-    }}>{children}</div>
-  );
-}
-
-Object.assign(window, { PageLogo, GridBg, PageNav, PageTicker, PageEyebrow });
-
-</script>
-<script type="text/babel" data-presets="env,react">
-/* global React, SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation,
-   SchemStrategy, SchemDataEng,
-   PageNav, PageTicker, GridBg, PageEyebrow, useTheme, HERO_TOKENS */
-const { useState, useEffect, useRef } = React;
-
-/* ============================================================
-   SERVICES — overview page (1920 wide, ~1900 tall)
-   Hero strip + 6 service tiles in a 3×2 grid, each containing
-   a miniature schematic preview and copy.
-============================================================ */
-
-const SERVICES = [
-  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs", lead: "Connect every source into one trusted analytics layer.", file: "service-analytics-bi.html" },
-  { key: "web",        Schem: () => SchemWeb,        title: "Web Development",     tag: "DESIGN · BUILD · MAINTAIN", lead: "Fast, wired sites built into your analytics stack.", file: "service-web-development.html" },
-  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service-process-mining.html" },
-  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "AGENTS · LLMs · WORKFLOWS", lead: "AI agents handling repetitive work, end to end.", file: "service-automation-ai.html" },
-  { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service-business-strategy.html" },
-  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES", lead: "Pipelines and warehouses you can actually trust.", file: "service-data-engineering.html" },
-];
-
-function ServiceTile({ s, t, mode }) {
-  const Schem = s.Schem();
-  const [hover, setHover] = useState(false);
-  return (
-    <a href={s.file} target="_parent"
-      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{
-        display: "block", textDecoration: "none", position: "relative",
-        background: t.surface1,
-        border: `1px solid ${hover ? t.teal : t.border}`,
-        borderRadius: 14, overflow: "hidden",
-        transition: "all 0.25s ease",
-        boxShadow: hover ? `0 12px 32px ${t.tealGlow}` : "none",
-        transform: hover ? "translateY(-3px)" : "translateY(0)",
-      }}>
-      <div style={{ height: 220, background: t.bg, borderBottom: `1px solid ${t.border}`, overflow: "hidden", position: "relative" }}>
-        <div style={{
-          width: 1220, height: 560,
-          transform: "scale(0.36)",
-          transformOrigin: "top left",
-          position: "absolute", inset: 0,
-        }}>
-          <Schem t={t} mode={mode} />
-        </div>
-        <div style={{
-          position: "absolute", top: 12, left: 12,
-          fontFamily: "'Courier New', monospace", fontSize: 9,
-          color: t.teal, letterSpacing: "0.18em",
-          background: t.surface1, padding: "4px 8px", borderRadius: 4,
-          border: `1px solid ${t.border}`,
-        }}>0{SERVICES.indexOf(s) + 1}</div>
-      </div>
-      <div style={{ padding: "22px 24px 24px" }}>
-        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· {s.tag} ·</div>
-        <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 24, letterSpacing: "-0.02em", margin: 0, color: t.text1 }}>{s.title}</h3>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.55, color: t.text2, marginTop: 10, marginBottom: 18 }}>{s.lead}</p>
-        <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700, color: t.teal, letterSpacing: "0.08em" }}>
-          Explore {s.title} →
-        </span>
-      </div>
-    </a>
-  );
-}
-
-function ServicesPage() {
+function App() {
   const mode = useTheme();
-  const t = HERO_TOKENS[mode];
-  const embedded = window.parent !== window;
-
-  return (
-    <div style={{
-      width: 1920, minHeight: 1920,
-      background: t.bg, color: t.text1,
-      fontFamily: "'Inter', system-ui, sans-serif",
-      position: "relative", overflow: "hidden", isolation: "isolate",
-    }}>
-      <GridBg t={t} mode={mode} w={1920} h={1920} />
-      {!embedded && <PageNav t={t} mode={mode} active="Services" />}
-
-      {/* HERO BANNER */}
-      <div style={{ position: "relative", padding: embedded ? "80px 80px 80px" : "200px 80px 80px", zIndex: 3 }}>
-        <PageEyebrow color={t.teal}>· OUR SERVICES · END-TO-END DATA + AI ·</PageEyebrow>
-        <h1 style={{
-          fontFamily: "'Inter', sans-serif", fontWeight: 900,
-          fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
-          letterSpacing: "-0.03em", margin: 0, maxWidth: 1500, textWrap: "balance",
-        }}>
-          Six services. <span style={{ color: t.teal }}>One coherent system</span> for turning data into outcomes.
-        </h1>
-        <p style={{
-          fontSize: 18, lineHeight: 1.55, color: t.text2,
-          marginTop: 26, maxWidth: 760, textWrap: "pretty",
-        }}>
-          From pipelines to dashboards to automation — every service we offer plugs into the same stack, so the work compounds instead of fragmenting.
-        </p>
-        {/* live counter row */}
-        <div style={{ display: "flex", gap: 60, marginTop: 50, paddingTop: 28, borderTop: `1px solid ${t.border}` }}>
-          {[
-            { val: "6", label: "INTEGRATED SERVICES" },
-            { val: "150+", label: "PROJECTS DELIVERED" },
-            { val: "14.2M", label: "ROWS PROCESSED DAILY" },
-            { val: "31h", label: "AVG WEEKLY TIME SAVED" },
-          ].map((s, i) => (
-            <div key={i}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 36, color: t.teal, letterSpacing: "-0.03em" }}>{s.val}</div>
-              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginTop: 4 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SERVICE TILES — 3 × 2 grid */}
-      <div style={{ position: "relative", padding: "0 80px 120px", zIndex: 3 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-          {SERVICES.map((s) => <ServiceTile key={s.key} s={s} t={t} mode={mode} />)}
-        </div>
-      </div>
-
-      {/* FOOTER CTA */}
-      <div style={{ position: "relative", padding: "80px", zIndex: 3, borderTop: `1px solid ${t.border}` }}>
-        <div style={{
-          background: t.surface1,
-          border: `1px solid ${t.teal}`,
-          borderRadius: 16, padding: 60,
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 40,
-        }}>
-          <div>
-            <PageEyebrow color={t.teal}>· READY TO START ·</PageEyebrow>
-            <h2 style={{
-              fontFamily: "'Inter', sans-serif", fontWeight: 900,
-              fontSize: 44, lineHeight: 1.05, letterSpacing: "-0.025em",
-              margin: 0, maxWidth: 800, textWrap: "balance", color: t.text1,
-            }}>
-              Not sure which service fits? <span style={{ color: t.teal }}>Let's diagnose first.</span>
-            </h2>
-            <p style={{ fontSize: 16, color: t.text2, marginTop: 14, maxWidth: 660 }}>
-              A 30-minute call. We'll look at your stack, your team, and where the actual leverage is.
-            </p>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <button style={{
-              fontFamily: "inherit", fontSize: 15, fontWeight: 700,
-              padding: "16px 32px", borderRadius: 8, cursor: "pointer",
-              border: "none", background: t.teal, color: t.bg, whiteSpace: "nowrap",
-            }}>Book a free consultation →</button>
-            <button style={{
-              fontFamily: "inherit", fontSize: 15, fontWeight: 700,
-              padding: "16px 32px", borderRadius: 8, cursor: "pointer",
-              background: "transparent", color: t.teal, whiteSpace: "nowrap",
-              border: `2px solid ${t.teal}`,
-            }}>Get pricing</button>
-          </div>
-        </div>
-      </div>
-
-      <PageTicker t={t} mode={mode} label="· ANALYTICS · WEB DEVELOPMENT · PROCESS MINING · AUTOMATION · STRATEGY · DATA ENGINEERING ·" />
-    </div>
-  );
+  const t = TOKENS[mode];
+  const key = new URLSearchParams(location.search).get('s') || 'analytics';
+  const Schem = SCHEMATICS[key] || SchemAnalytics;
+  return <Schem t={t} mode={mode} />;
 }
 
-Object.assign(window, { ServicesPage });
-
-</script>
-
-<script type="text/babel" data-presets="env,react">
-  ReactDOM.createRoot(document.getElementById("root")).render(<window.ServicesPage />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>

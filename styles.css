@@ -533,60 +533,96 @@ a:hover {
 
 .service-card {
     background-color: var(--dark-gray);
-    padding: 2rem;
+    padding: 0;
     border-radius: 10px;
     transition: var(--transition);
     border: 2px solid transparent;
     position: relative;
     z-index: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
 }
 
 .service-card:hover {
-    transform: translateY(-5px) scale(1.05);
+    transform: translateY(-5px) scale(1.02);
     border-color: var(--teal);
-    box-shadow: 0 10px 30px rgba(45, 212, 191, 0.2);
+    box-shadow: 0 12px 36px rgba(45, 212, 191, 0.22);
     z-index: 10;
 }
 
-.service-icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 120px;
+/* animated schematic preview */
+.service-preview-wrap {
+    width: 100%;
+    aspect-ratio: 1220 / 560;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+    background: #0A0A0A;
+    position: relative;
 }
 
-.service-icon img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
+[data-theme="light"] .service-preview-wrap {
+    background: #F4F4F6;
+    border-bottom: 1px solid #E0E0EA;
+}
+
+.schematic-iframe {
+    width: 100%;
+    height: 560px; /* intrinsic schematic height; parent clips via overflow:hidden */
+    border: none;
+    display: block;
+    pointer-events: none;
+}
+
+/* scale schematic on card hover */
+.service-card:hover .schematic-iframe {
+    transform: scale(1.04);
+    transform-origin: center center;
+    transition: transform 0.4s ease;
+}
+
+/* text body */
+.service-card-body {
+    padding: 1.6rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .service-card h3 {
     color: var(--white);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1.35;
+}
+
+[data-theme="light"] .service-card h3 {
+    color: #0D0D10;
 }
 
 .service-card p {
     color: var(--light-gray);
-    margin-bottom: 1.5rem;
-    min-height: 90px;
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    flex: 1;
 }
 
 .service-link {
     color: var(--teal);
     font-weight: 600;
+    font-size: 0.9rem;
     transition: var(--transition);
+    display: inline-block;
 }
 
-.service-link:hover {
+.service-link:hover,
+.service-card:hover .service-link {
     color: var(--teal-light);
-    padding-left: 5px;
+    padding-left: 4px;
 }
 
 /* ===================================

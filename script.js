@@ -10,7 +10,7 @@
 
 // Applies theme to all hero iframes on the page (both landing-page and service-page iframes)
 function syncIframeThemes(theme) {
-    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe, iframe.page-iframe').forEach(function(iframe) {
+    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe, iframe.page-iframe, iframe.schematic-iframe').forEach(function(iframe) {
         // Direct contentDocument access (same-origin, most reliable — triggers MutationObserver in useTheme())
         try {
             if (iframe.contentDocument && iframe.contentDocument.documentElement) {

@@ -30,7 +30,16 @@
 </style>
 </head>
 <body>
-<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+<div id="fit-wrap"><div id="fit-stage">
+<!-- Hidden form for Netlify build-time detection -->
+<form name="contact" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name" />
+  <input type="email" name="email" />
+  <input type="text" name="company" />
+  <input type="text" name="services" />
+  <textarea name="message"></textarea>
+</form>
+<div id="root"></div></div></div>
 
 <script>
   (function() {
@@ -610,6 +619,12 @@ function project(lon, lat, w = 980, h = 460) {
   return [x, y];
 }
 
+function encode(data) {
+  return Object.keys(data)
+    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+    .join("&");
+}
+
 const CLIENTS = [
   { city: "Montreal",  country: "Canada",  lon: -73.55,  lat: 45.50, count: "12 clients", featured: true },
   { city: "Brussels",  country: "Belgium", lon:   4.35,  lat: 50.85, count: "18 clients", featured: true },
@@ -818,42 +833,103 @@ function ContinentShapes({ t, mode, W, H }) {
 }
 
 function ContactForm({ t, mode }) {
-  const fields = [
-    { id: "name",    label: "Your name",        type: "text",  ph: "Jane Doe" },
-    { id: "email",   label: "Work email",       type: "email", ph: "jane@company.com" },
-    { id: "company", label: "Company",          type: "text",  ph: "Acme Co." },
-  ];
-  const services = ["Analytics & BI", "Web", "Process Mining", "Automation", "Strategy", "Data Engineering"];
-  const [picked, setPicked] = cUseState(["Analytics & BI"]);
+  const SVCS = ["Analytics & BI", "Web", "Process Mining", "Automation", "Strategy", "Data Engineering"];
+  const [picked,   setPicked]   = cUseState(["Analytics & BI"]);
+  const [status,   setStatus]   = cUseState("idle"); // idle | sending | sent | error
+  const [vals,     setVals]     = cUseState({ name: "", email: "", company: "", message: "" });
+
   const toggle = (s) => setPicked(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
+  const change = (id) => (e) => setVals(v => ({ ...v, [id]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!vals.name || !vals.email || !vals.message) return;
+    setStatus("sending");
+    const payload = { ...vals, "form-name": "contact", services: picked.join(", ") };
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode(payload),
+      });
+      setStatus("sent");
+    } catch {
+      // Fallback: open mailto if fetch fails (e.g. file:// local dev)
+      const sub  = encodeURIComponent("New enquiry from " + (vals.name || "website"));
+      const body = encodeURIComponent(
+        `Name: ${vals.name}\nEmail: ${vals.email}\nCompany: ${vals.company}\nServices: ${picked.join(", ")}\n\n${vals.message}`
+      );
+      window.open(`mailto:mikheil@metricwave.net?subject=${sub}&body=${body}`, "_blank");
+      setStatus("sent");
+    }
+  };
+
+  const inputStyle = {
+    width: "100%", boxSizing: "border-box",
+    padding: "14px 16px", borderRadius: 8,
+    border: `1px solid ${t.border}`, background: t.bg, color: t.text1,
+    fontFamily: "'Inter', sans-serif", fontSize: 15, outline: "none",
+  };
+  const labelStyle = {
+    display: "block", fontFamily: "'Courier New', monospace",
+    fontSize: 10, color: t.text2, letterSpacing: "0.15em",
+    marginBottom: 8, textTransform: "uppercase",
+  };
+
+  if (status === "sent") {
+    return (
+      <div style={{
+        background: t.surface1, border: `1px solid ${t.teal}`, borderRadius: 16,
+        padding: 48, textAlign: "center",
+      }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
+        <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 26, color: t.teal, margin: "0 0 12px" }}>
+          Message sent!
+        </h3>
+        <p style={{ color: t.text2, fontSize: 16, lineHeight: 1.6 }}>
+          Thanks for reaching out. We'll get back to you within 1 working day at <strong>{vals.email}</strong>.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} style={{
-      background: t.surface1, border: `1px solid ${t.border}`, borderRadius: 16,
-      padding: 36,
-    }}>
+    <form
+      name="contact"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      onSubmit={handleSubmit}
+      style={{ background: t.surface1, border: `1px solid ${t.border}`, borderRadius: 16, padding: 36 }}
+    >
+      <input type="hidden" name="form-name" value="contact" />
+      <div style={{ display: "none" }}><input name="bot-field" /></div>
+
       <PageEyebrow color={t.teal}>· SEND US A NOTE ·</PageEyebrow>
       <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: "-0.02em", margin: "0 0 22px", color: t.text1 }}>
         Reply usually within 1 working day.
       </h3>
 
-      {fields.map((f) => (
+      {[
+        { id: "name",    label: "Your name *",  type: "text",  ph: "Jane Doe" },
+        { id: "email",   label: "Work email *", type: "email", ph: "jane@company.com" },
+        { id: "company", label: "Company",      type: "text",  ph: "Acme Co." },
+      ].map((f) => (
         <div key={f.id} style={{ marginBottom: 18 }}>
-          <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>{f.label}</label>
-          <input type={f.type} placeholder={f.ph} style={{
-            width: "100%", boxSizing: "border-box",
-            padding: "14px 16px", borderRadius: 8,
-            border: `1px solid ${t.border}`, background: t.bg, color: t.text1,
-            fontFamily: "'Inter', sans-serif", fontSize: 15,
-            outline: "none",
-          }} />
+          <label style={labelStyle}>{f.label}</label>
+          <input
+            type={f.type} name={f.id} placeholder={f.ph}
+            value={vals[f.id]} onChange={change(f.id)}
+            required={f.label.includes("*")}
+            style={inputStyle}
+          />
         </div>
       ))}
 
       <div style={{ marginBottom: 18 }}>
-        <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 10, textTransform: "uppercase" }}>Services of interest</label>
+        <label style={labelStyle}>Services of interest</label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {services.map(s => (
+          {SVCS.map(s => (
             <button key={s} type="button" onClick={() => toggle(s)} style={{
               fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer",
               padding: "8px 14px", borderRadius: 999,
@@ -864,25 +940,40 @@ function ContactForm({ t, mode }) {
             }}>{s}</button>
           ))}
         </div>
+        <input type="hidden" name="services" value={picked.join(", ")} />
       </div>
 
       <div style={{ marginBottom: 24 }}>
-        <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>What's the problem to solve?</label>
-        <textarea rows={5} placeholder="A few sentences about what you're trying to figure out…" style={{
-          width: "100%", boxSizing: "border-box",
-          padding: "14px 16px", borderRadius: 8,
-          border: `1px solid ${t.border}`, background: t.bg, color: t.text1,
-          fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.5,
-          outline: "none", resize: "vertical",
-        }} />
+        <label style={labelStyle}>What's the problem to solve? *</label>
+        <textarea
+          name="message" rows={5} required
+          placeholder="A few sentences about what you're trying to figure out…"
+          value={vals.message} onChange={change("message")}
+          style={{ ...inputStyle, lineHeight: 1.5, resize: "vertical" }}
+        />
       </div>
 
-      <button type="submit" style={{
-        fontFamily: "inherit", fontSize: 15, fontWeight: 700,
-        padding: "16px 32px", borderRadius: 8, cursor: "pointer",
-        border: "none", background: t.teal, color: t.bg,
-        width: "100%",
-      }}>Send message →</button>
+      {status === "error" && (
+        <p style={{ color: t.warn, fontSize: 13, marginBottom: 12 }}>
+          Something went wrong — please try again or email us directly at mikheil@metricwave.net
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        style={{
+          fontFamily: "inherit", fontSize: 15, fontWeight: 700,
+          padding: "16px 32px", borderRadius: 8,
+          cursor: status === "sending" ? "wait" : "pointer",
+          border: "none",
+          background: status === "sending" ? t.tealDk : t.teal,
+          color: t.bg, width: "100%",
+          transition: "background 0.2s",
+        }}
+      >
+        {status === "sending" ? "Sending…" : "Send message →"}
+      </button>
     </form>
   );
 }

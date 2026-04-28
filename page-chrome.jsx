@@ -88,6 +88,7 @@ function PageTicker({ t, mode, label }) {
       background: t.surface1,
       borderTop: `1px solid ${t.border}`,
       display: "flex", alignItems: "center", padding: "0 80px",
+      boxSizing: "border-box", overflow: "hidden",
       justifyContent: "space-between",
       fontFamily: "'Courier New', monospace", fontSize: "0.65rem",
       color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",

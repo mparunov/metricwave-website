@@ -1,11 +1,11 @@
 /* global React, SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation,
-   SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries,
+   SchemStrategy, SchemDataEng,
    PageNav, PageTicker, GridBg, PageEyebrow, useTheme, HERO_TOKENS */
 const { useState, useEffect, useRef } = React;
 
 /* ============================================================
    SERVICES — overview page (1920 wide, ~1900 tall)
-   Hero strip + 8 service tiles in a 4×2 grid, each containing
+   Hero strip + 6 service tiles in a 3×2 grid, each containing
    a miniature schematic preview and copy.
 ============================================================ */
 
@@ -16,8 +16,6 @@ const SERVICES = [
   { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "AGENTS · LLMs · WORKFLOWS", lead: "AI agents handling repetitive work, end to end.", file: "service-automation-ai.html" },
   { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service-business-strategy.html" },
   { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES", lead: "Pipelines and warehouses you can actually trust.", file: "service-data-engineering.html" },
-  { key: "blog",       Schem: () => SchemBlog,       title: "Blog",                tag: "INSIGHTS · RESEARCH", lead: "Our take on AI, analytics, and decisions.", file: "blog.html" },
-  { key: "industries", Schem: () => SchemIndustries, title: "Industries",          tag: "LOGISTICS · SAAS · GOV", lead: "Domains we've worked inside, not just on.", file: "industries.html" },
 ];
 
 function ServiceTile({ s, t, mode }) {
@@ -87,7 +85,7 @@ function ServicesPage() {
           fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
           letterSpacing: "-0.03em", margin: 0, maxWidth: 1500, textWrap: "balance",
         }}>
-          Eight services. <span style={{ color: t.teal }}>One coherent system</span> for turning data into outcomes.
+          Six services. <span style={{ color: t.teal }}>One coherent system</span> for turning data into outcomes.
         </h1>
         <p style={{
           fontSize: 18, lineHeight: 1.55, color: t.text2,
@@ -98,7 +96,7 @@ function ServicesPage() {
         {/* live counter row */}
         <div style={{ display: "flex", gap: 60, marginTop: 50, paddingTop: 28, borderTop: `1px solid ${t.border}` }}>
           {[
-            { val: "8", label: "INTEGRATED SERVICES" },
+            { val: "6", label: "INTEGRATED SERVICES" },
             { val: "150+", label: "PROJECTS DELIVERED" },
             { val: "14.2M", label: "ROWS PROCESSED DAILY" },
             { val: "31h", label: "AVG WEEKLY TIME SAVED" },
@@ -111,9 +109,9 @@ function ServicesPage() {
         </div>
       </div>
 
-      {/* SERVICE TILES — 4 × 2 grid */}
+      {/* SERVICE TILES — 3 × 2 grid */}
       <div style={{ position: "relative", padding: "0 80px 120px", zIndex: 3 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {SERVICES.map((s) => <ServiceTile key={s.key} s={s} t={t} mode={mode} />)}
         </div>
       </div>
@@ -155,7 +153,7 @@ function ServicesPage() {
         </div>
       </div>
 
-      <PageTicker t={t} mode={mode} label="· ANALYTICS · WEB · PROCESS · AUTOMATION · STRATEGY · DATA · BLOG · INDUSTRIES ·" />
+      <PageTicker t={t} mode={mode} label="· ANALYTICS · WEB DEVELOPMENT · PROCESS MINING · AUTOMATION · STRATEGY · DATA ENGINEERING ·" />
     </div>
   );
 }
