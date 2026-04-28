@@ -23,7 +23,7 @@ function SchemStrategy({ t, mode }) {
   ];
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={cx} cy={cy} r="220" fill={`url(#modelGlow-${mode})`} opacity="0.6" />
 
@@ -153,7 +153,7 @@ function SchemDataEng({ t, mode }) {
   const cx = wx + ww / 2, cy = wy + wh / 2;
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs>
         <EdgeDefs t={t} mode={mode} />
         <linearGradient id={`edgeOk-${mode}`} x1="0" y1="0" x2="1" y2="0">
@@ -337,24 +337,24 @@ function SchemDataEng({ t, mode }) {
 function SchemBlog({ t, mode }) {
   const cards = [
     {
-      cat: "ANALYTICS", date: "Apr 18 · 2026", read: "8 min",
-      title: "Why your dashboard is a graveyard, and how to bring it back to life.",
+      cat: "BUSINESS & INDUSTRY", date: "Apr 25 · 2026", read: "8 min",
+      title: "Apple's Next Chapter: John Ternus, New Hardware, and a New Direction.",
       delay: 0,    op: 1.0,  x: 640, y: 100,
     },
     {
-      cat: "AI", date: "Apr 12 · 2026", read: "11 min",
-      title: "AI agents that actually do the boring work nobody else wants.",
+      cat: "DATA STORIES", date: "Apr 22 · 2026", read: "6 min",
+      title: "The Tools Turning Raw Data Into Business Stories.",
       delay: 0.2,  op: 0.85, x: 720, y: 230,
     },
     {
-      cat: "STRATEGY", date: "Apr 04 · 2026", read: "6 min",
-      title: "Strategy is just a series of small, hard, well-timed decisions.",
+      cat: "AI & TECH", date: "Apr 18 · 2026", read: "8 min",
+      title: "The Rise of AI Agents — And How Work Is Quietly Changing.",
       delay: 0.4,  op: 0.7,  x: 800, y: 360,
     },
   ];
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={780} cy={280} r="240" fill={`url(#modelGlow-${mode})`} />
 
@@ -521,7 +521,7 @@ function SchemIndustries({ t, mode }) {
   };
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={400} cy={280} r="260" fill={`url(#modelGlow-${mode})`} />
 

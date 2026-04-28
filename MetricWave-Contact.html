@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetricWave — Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
+  body { min-height: 100vh; }
+  #fit-wrap  { position: relative; width: 100vw; min-height: 100vh; overflow: hidden; }
+  #fit-stage { position: absolute; top: 0; left: 0; width: 1920px; transform-origin: top left; }
+
+  @keyframes mwDraw     { to { stroke-dashoffset: 0; } }
+  @keyframes mwPulse    { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.45; transform: scale(0.92); } }
+  @keyframes mwPulseStroke { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+  @keyframes mwPulseRing{ 0% { opacity:0.6; r:5; } 100% { opacity:0; r:18; } }
+  @keyframes mwFadeIn   { from { opacity:0; } to { opacity:1; } }
+  @keyframes mwSlideIn  { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideInR { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideUp  { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes mwScaleX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes mwPop      { from { opacity:0; transform: scale(0.6); } to { opacity:1; transform: scale(1); } }
+  @keyframes mwDashFlow { to { stroke-dashoffset: -100; } }
+  @keyframes mwBlink    { 50% { opacity: 0; } }
+  @keyframes mwBlinkOut { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+
+<script>
+  (function() {
+    var saved = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+  })();
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'mw-theme') {
+      var t = e.data.theme || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+    }
+  });
+
+  function fit() {
+    var stage = document.getElementById('fit-stage');
+    var wrap  = document.getElementById('fit-wrap');
+    if (!stage || !wrap) return;
+    var s = Math.min(1, wrap.clientWidth / 1920);
+    stage.style.transform = 'scale(' + s + ')';
+    var h = stage.scrollHeight * s;
+    wrap.style.minHeight = '0';
+    wrap.style.height = h + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'mw-page-height', height: h }, '*');
+    }
+  }
+  window.addEventListener('load',   function() { fit(); setTimeout(fit, 100); setTimeout(fit, 600); });
+  window.addEventListener('resize', fit);
+  if (window.ResizeObserver) {
+    window.addEventListener('load', function() {
+      var stage = document.getElementById('fit-stage');
+      if (stage) new ResizeObserver(fit).observe(stage);
+    });
+  }
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+/* global React */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   MetricWave — Service hero shell (1920 × 800)
+   Auto-detects light/dark via data-theme on <html>.
+   Slot a Schematic into the right column.
+============================================================ */
+
+const HERO_TOKENS = {
+  dark: {
+    bg:        "#0A0A0A",
+    surface1:  "#1A1A1A",
+    surface2:  "#2A2A2A",
+    border:    "#3A3A3A",
+    text1:     "#FFFFFF",
+    text2:     "#E5E5E5",
+    teal:      "#2DD4BF",
+    tealDk:    "#14B8A6",
+    tealLt:    "#5EEAD4",
+    tealGlow:  "rgba(45,212,191,0.15)",
+    warn:      "#F59E0B",
+    warnGlow:  "rgba(245,158,11,0.18)",
+    ok:        "#22C55E",
+    nodeFill:  "#1A1A1A",
+    modelFill: "#1A1A1A",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#2DD4BF",
+    accentInk: "#0A0A0A",
+  },
+  light: {
+    bg:        "#FFFFFF",
+    surface1:  "#F4F4F6",
+    surface2:  "#E8E8EC",
+    border:    "#C8C8D4",
+    text1:     "#0D0D10",
+    text2:     "#404050",
+    teal:      "#0D9488",
+    tealDk:    "#0F766E",
+    tealLt:    "#14B8A6",
+    tealGlow:  "rgba(13,148,136,0.12)",
+    warn:      "#D97706",
+    warnGlow:  "rgba(217,119,6,0.18)",
+    ok:        "#16A34A",
+    nodeFill:  "#FFFFFF",
+    modelFill: "#0D0D10",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#0D9488",
+    accentInk: "#FFFFFF",
+  },
+};
+
+function useTheme() {
+  const initial = (typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme")) || "dark";
+  const [mode, setMode] = useState(initial);
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      const next = document.documentElement.getAttribute("data-theme") || "dark";
+      setMode(next);
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return mode;
+}
+
+function HeroLogo({ color, mode }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+      <img
+        src="../assets/metricwave-mark.png"
+        alt=""
+        style={{
+          height: 34, width: "auto", objectFit: "contain",
+          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
+        }}
+      />
+      <span style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700, fontSize: 22,
+        letterSpacing: "-0.02em", color,
+      }}>MetricWave</span>
+    </div>
+  );
+}
+
+/* ============================================================
+   ServiceHero — full 1920×800 panel
+============================================================ */
+function ServiceHero({
+  eyebrow,
+  headline,
+  lead,
+  ctaPrimary,
+  ctaSecondary,
+  ticker,
+  Schematic,
+  navActive = "Services",
+  showNav = true,
+}) {
+  const mode = useTheme();
+  const t = HERO_TOKENS[mode];
+  const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
+
+  // When nav is hidden, shift content up to fill the extra space
+  const copyTop    = showNav ? 240 : 130;
+  const schemTop   = showNav ? 140 :  40;
+  const schemHeight = showNav ? 560 : 660;
+
+  return (
+    <div style={{
+      width: 1920, height: 800,
+      background: t.bg,
+      position: "relative", overflow: "hidden",
+      fontFamily: "'Inter', system-ui, sans-serif",
+      color: t.text1,
+      isolation: "isolate",
+    }}>
+      {/* fine grid */}
+      <svg width="1920" height="800" style={{ position: "absolute", inset: 0, opacity: mode === "dark" ? 0.4 : 0.55 }}>
+        <defs>
+          <pattern id={`heroGrid-${mode}`} width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 0H40M0 0V40" stroke={t.border} strokeWidth="0.5" />
+          </pattern>
+          <pattern id={`heroGridBig-${mode}`} width="200" height="200" patternUnits="userSpaceOnUse">
+            <path d="M0 0H200M0 0V200" stroke={t.border} strokeWidth="0.7" />
+          </pattern>
+        </defs>
+        <rect width="1920" height="800" fill={`url(#heroGrid-${mode})`} />
+        <rect width="1920" height="800" fill={`url(#heroGridBig-${mode})`} opacity="0.7" />
+      </svg>
+
+      {mode === "dark" && (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `radial-gradient(900px 600px at 70% 50%, ${t.tealGlow}, transparent 70%)`,
+          zIndex: 1,
+        }} />
+      )}
+
+      {/* nav — only shown in standalone/preview mode */}
+      {showNav && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          padding: "30px 80px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          zIndex: 4,
+        }}>
+          <HeroLogo color={t.text1} mode={mode} />
+          <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2, letterSpacing: "-0.005em" }}>
+            {navItems.map((n) => (
+              <span key={n} style={{
+                color: n === navActive ? t.text1 : t.text2,
+                fontWeight: n === navActive ? 600 : 400,
+                paddingBottom: 2,
+                borderBottom: n === navActive ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
+              }}>{n}</span>
+            ))}
+          </nav>
+          <button style={{
+            fontFamily: "inherit", fontSize: 13, fontWeight: 600,
+            padding: "10px 18px", borderRadius: 7, cursor: "pointer",
+            border: "none", background: t.accentBg, color: t.accentInk,
+          }}>Contact</button>
+        </div>
+      )}
+
+      {/* LEFT COLUMN — copy */}
+      <div style={{
+        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+      }}>
+        <div style={{
+          fontFamily: "'Courier New', monospace",
+          fontSize: "0.7rem",
+          letterSpacing: "0.15em",
+          textTransform: "uppercase",
+          color: t.teal, marginBottom: 22,
+        }}>{eyebrow}</div>
+
+        <h1 style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontWeight: 900,
+          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          lineHeight: 1.1,
+          letterSpacing: "-0.025em",
+          color: t.text1, margin: 0, textWrap: "balance",
+        }}>
+          {headline.pre}
+          {headline.italic && (
+            <>{" "}<span style={{ color: t.teal }}>{headline.italic}</span></>
+          )}
+          {headline.post && <>{" "}{headline.post}</>}
+          {headline.cursor && <BlinkCursor color={t.teal} />}
+        </h1>
+
+        <p style={{
+          fontSize: "1.05rem", lineHeight: 1.6,
+          color: t.text2, marginTop: 26, marginBottom: 0,
+          maxWidth: 460, textWrap: "pretty", fontWeight: 400,
+        }}>{lead}</p>
+
+        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+          <button style={{
+            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
+            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            border: "none", background: t.teal, color: t.bg,
+            letterSpacing: "-0.01em",
+          }}>{ctaPrimary} →</button>
+          <button style={{
+            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
+            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            background: "transparent", color: t.teal,
+            border: `2px solid ${t.teal}`,
+            letterSpacing: "-0.01em",
+          }}>{ctaSecondary}</button>
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN — schematic */}
+      <div style={{
+        position: "absolute",
+        left: 620, top: schemTop, width: 1220, height: schemHeight,
+        zIndex: 2,
+      }}>
+        <Schematic t={t} mode={mode} />
+      </div>
+
+      {/* TICKER strip */}
+      <div style={{
+        position: "absolute", left: 0, right: 0, bottom: 0, height: 30,
+        zIndex: 5,
+        background: t.surface1,
+        borderTop: `1px solid ${t.border}`,
+        display: "flex", alignItems: "center",
+        padding: "0 80px",
+        justifyContent: "space-between",
+        fontFamily: "'Courier New', monospace",
+        fontSize: "0.65rem",
+        color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
+      }}>
+        <span>{ticker}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: 999,
+            background: t.teal, animation: "mwPulse 1.6s infinite",
+          }} />
+          Live · Always in sync
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function BlinkCursor({ color }) {
+  return (
+    <span style={{
+      display: "inline-block", width: "0.5ch", marginLeft: 4,
+      animation: "mwBlinkOut 4s linear forwards, mwBlink 0.6s steps(2) infinite",
+      color,
+    }}>|</span>
+  );
+}
+
+Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   Shared schematic primitives — used by every service hero.
+   Right-column canvas: 1220 × 560 (svg viewBox 0 0 1220 560)
+============================================================ */
+
+function NodeCard({
+  x, y, w = 200, h = 56, label, sub,
+  t, accent = false, status = "live",
+}) {
+  const dotColor = status === "warn" ? t.warn : status === "ok" ? t.ok : t.teal;
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={10}
+        fill={t.nodeFill}
+        stroke={accent ? t.teal : t.border}
+        strokeWidth={accent ? 1.4 : 1} />
+      <circle cx={x + 14} cy={y + h/2 - 8} r={3.5} fill={dotColor} opacity="0.95">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <text x={x + 26} y={y + h/2 - 4}
+        fontFamily="'Courier New', monospace" fontSize="11" fontWeight="600"
+        fill={t.text1} letterSpacing="0.06em">{label}</text>
+      {sub && (
+        <text x={x + 26} y={y + h/2 + 11}
+          fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.text2} letterSpacing="0.1em">{sub.toUpperCase()}</text>
+      )}
+    </g>
+  );
+}
+
+function FlowEdge({
+  d, t, mode, gradId, strokeWidth = 1.6,
+  drawDelay = 0, particleDelay = 0, particleColor, particleDur = 3.2,
+  particles = 1,
+}) {
+  const arr = Array.from({ length: particles });
+  return (
+    <g>
+      <path d={d} fill="none" stroke={`url(#${gradId})`} strokeWidth={strokeWidth}
+        style={{
+          strokeDasharray: 1000, strokeDashoffset: 1000,
+          animation: `mwDraw 1.4s ${drawDelay}ms cubic-bezier(.5,0,.2,1) forwards`,
+        }} />
+      {arr.map((_, i) => (
+        <circle key={i} r="3.5" fill={particleColor || t.teal} opacity="0">
+          <animateMotion dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" path={d} />
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1"
+            dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" />
+        </circle>
+      ))}
+    </g>
+  );
+}
+
+function EdgeDefs({ t, mode }) {
+  return (
+    <>
+      <linearGradient id={`edgeIn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.15" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.85" />
+      </linearGradient>
+      <linearGradient id={`edgeOut-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.85" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.15" />
+      </linearGradient>
+      <linearGradient id={`edgeWarn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.2" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0.85" />
+      </linearGradient>
+      <radialGradient id={`modelGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.4" />
+        <stop offset="60%" stopColor={t.teal} stopOpacity="0.05" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0" />
+      </radialGradient>
+      <radialGradient id={`warnGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.45" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0" />
+      </radialGradient>
+    </>
+  );
+}
+
+function Crosshairs({ t, w = 1220, h = 560, inset = 12 }) {
+  return (
+    <>
+      {[[inset, inset], [w - inset, inset], [inset, h - inset], [w - inset, h - inset]].map(([x, y], i) => (
+        <g key={`c-${i}`} stroke={t.text2} strokeWidth="0.7" opacity="0.35">
+          <line x1={x - 6} y1={y} x2={x + 6} y2={y} />
+          <line x1={x} y1={y - 6} x2={x} y2={y + 6} />
+        </g>
+      ))}
+    </>
+  );
+}
+
+/* count-up text node */
+function CountUp({ to, dur = 1.5, prefix = "", suffix = "", x, y, ...rest }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let raf, start;
+    const animate = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min(1, (ts - start) / (dur * 1000));
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(to * eased);
+      if (p < 1) raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [to, dur]);
+  const display = to >= 1000
+    ? Math.round(v).toLocaleString()
+    : (to % 1 === 0 ? Math.round(v) : v.toFixed(1));
+  return <text x={x} y={y} {...rest}>{prefix}{display}{suffix}</text>;
+}
+
+/* "x s ago" rolling label */
+function AgoTicker({ x, y, ...rest }) {
+  const [s, setS] = useState(2);
+  useEffect(() => {
+    const id = setInterval(() => setS((p) => (p + 1) % 8), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const txt = s === 0 ? "just now" : `${s}s ago`;
+  return <text x={x} y={y} {...rest}>last sync: {txt}</text>;
+}
+
+Object.assign(window, { NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React, useTheme, HERO_TOKENS */
+const { useState: useStateP, useEffect: useEffectP } = React;
+
+/* ============================================================
+   MetricWave — Page chrome shared across Services/About/Contact.
+   Provides Nav, Ticker strip, GridBg, Logo so each page just
+   focuses on its own body content.
+============================================================ */
+
+function PageLogo({ color, mode }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+      <img
+        src="mwlogo.png"
+        alt=""
+        style={{
+          height: 34, width: "auto", objectFit: "contain",
+          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
+        }}
+      />
+      <span style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700, fontSize: 22,
+        letterSpacing: "-0.02em", color,
+      }}>MetricWave</span>
+    </div>
+  );
+}
+
+function GridBg({ t, mode, w = 1920, h = 1200 }) {
+  return (
+    <>
+      <svg width={w} height={h} style={{ position: "absolute", inset: 0, opacity: mode === "dark" ? 0.32 : 0.5, pointerEvents: "none" }}>
+        <defs>
+          <pattern id={`pgGrid-${mode}`} width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 0H40M0 0V40" stroke={t.border} strokeWidth="0.5" />
+          </pattern>
+          <pattern id={`pgGridBig-${mode}`} width="200" height="200" patternUnits="userSpaceOnUse">
+            <path d="M0 0H200M0 0V200" stroke={t.border} strokeWidth="0.7" />
+          </pattern>
+        </defs>
+        <rect width={w} height={h} fill={`url(#pgGrid-${mode})`} />
+        <rect width={w} height={h} fill={`url(#pgGridBig-${mode})`} opacity="0.7" />
+      </svg>
+      {mode === "dark" && (
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: `radial-gradient(900px 600px at 70% 25%, ${t.tealGlow}, transparent 70%)`,
+        }} />
+      )}
+    </>
+  );
+}
+
+function PageNav({ t, mode, active }) {
+  const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
+  return (
+    <div style={{
+      position: "absolute", top: 0, left: 0, right: 0,
+      padding: "30px 80px",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      zIndex: 10,
+    }}>
+      <PageLogo color={t.text1} mode={mode} />
+      <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2 }}>
+        {navItems.map((n) => (
+          <span key={n} style={{
+            color: n === active ? t.text1 : t.text2,
+            fontWeight: n === active ? 600 : 400,
+            paddingBottom: 2,
+            borderBottom: n === active ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
+          }}>{n}</span>
+        ))}
+      </nav>
+      <button style={{
+        fontFamily: "inherit", fontSize: 13, fontWeight: 600,
+        padding: "10px 18px", borderRadius: 7, cursor: "pointer",
+        border: "none", background: t.accentBg, color: t.accentInk,
+      }}>Contact</button>
+    </div>
+  );
+}
+
+function PageTicker({ t, mode, label }) {
+  return (
+    <div style={{
+      position: "absolute", left: 0, right: 0, bottom: 0, height: 30, zIndex: 10,
+      background: t.surface1,
+      borderTop: `1px solid ${t.border}`,
+      display: "flex", alignItems: "center", padding: "0 80px",
+      justifyContent: "space-between",
+      fontFamily: "'Courier New', monospace", fontSize: "0.65rem",
+      color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
+    }}>
+      <span>{label}</span>
+      <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
+        Live · Always in sync
+      </span>
+    </div>
+  );
+}
+
+function PageEyebrow({ color, children }) {
+  return (
+    <div style={{
+      fontFamily: "'Courier New', monospace", fontSize: "0.7rem",
+      letterSpacing: "0.15em", textTransform: "uppercase",
+      color, marginBottom: 22,
+    }}>{children}</div>
+  );
+}
+
+Object.assign(window, { PageLogo, GridBg, PageNav, PageTicker, PageEyebrow });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React, Crosshairs, EdgeDefs, PageNav, PageTicker, GridBg, PageEyebrow, useTheme, HERO_TOKENS */
+const { useState: cUseState, useEffect: cUseEffect } = React;
+
+/* ============================================================
+   CONTACT — world map with client dots + contact form
+============================================================ */
+
+// Equirectangular projection clipped to lat 74 → -52 (removes unused polar voids)
+const _LAT_MAX = 74, _LAT_MIN = -52, _LAT_RANGE = _LAT_MAX - _LAT_MIN; // 126°
+function project(lon, lat, w = 980, h = 460) {
+  const x = ((lon + 180) / 360) * w;
+  const y = ((_LAT_MAX - lat) / _LAT_RANGE) * h;
+  return [x, y];
+}
+
+const CLIENTS = [
+  { city: "Montreal",  country: "Canada",  lon: -73.55,  lat: 45.50, count: "12 clients", featured: true },
+  { city: "Brussels",  country: "Belgium", lon:   4.35,  lat: 50.85, count: "18 clients", featured: true },
+  { city: "New York",  country: "USA",     lon: -74.00,  lat: 40.71, count:  "9 clients" },
+  { city: "Tbilisi",   country: "Georgia", lon:  44.78,  lat: 41.71, count: "14 clients", featured: true },
+  { city: "Valletta",  country: "Malta",   lon:  14.51,  lat: 35.90, count:  "6 clients" },
+];
+
+function WorldMap({ t, mode }) {
+  const W = 980, H = 460;
+  const [eqX0] = project(-180, 0, W, H);
+  const [, eqY]  = project(0, 0, W, H);
+
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="auto"
+           style={{ display: "block", overflow: "hidden", borderRadius: 8 }}>
+        <defs>
+          <pattern id={`mapDots-${mode}`} width="8" height="8" patternUnits="userSpaceOnUse">
+            <circle cx="4" cy="4" r="0.6" fill={mode === "dark" ? "#2E3838" : "#CACAD8"} />
+          </pattern>
+          <linearGradient id={`oceanGrad-${mode}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor={mode === "dark" ? "#0A1010" : "#F2F4F7"} />
+            <stop offset="100%" stopColor={mode === "dark" ? "#0D1818" : "#ECEEF3"} />
+          </linearGradient>
+        </defs>
+
+        {/* ocean background */}
+        <rect width={W} height={H} fill={`url(#oceanGrad-${mode})`} />
+        <rect width={W} height={H} fill={`url(#mapDots-${mode})`} opacity="0.9" />
+
+        {/* lat/lon grid */}
+        <g stroke={t.border} strokeWidth="0.4" opacity="0.35" fill="none">
+          {[-30, 0, 30, 60].map(lat => {
+            const [, y] = project(0, lat, W, H);
+            return y >= 0 && y <= H
+              ? <line key={lat} x1="0" y1={y} x2={W} y2={y} strokeDasharray="3 5" />
+              : null;
+          })}
+          {[-150,-120,-90,-60,-30,0,30,60,90,120,150].map(lon => {
+            const [x] = project(lon, 0, W, H);
+            return <line key={lon} x1={x} y1="0" x2={x} y2={H} strokeDasharray="3 5" />;
+          })}
+        </g>
+
+        {/* equator highlight */}
+        <line x1="0" y1={eqY} x2={W} y2={eqY}
+              stroke={t.teal} strokeWidth="0.8" opacity="0.35" strokeDasharray="5 7" />
+
+        {/* CONTINENTS */}
+        <ContinentShapes t={t} mode={mode} W={W} H={H} />
+
+        {/* connecting arcs (featured cities only) */}
+        {CLIENTS.filter(c => c.featured).map((a, i, arr) => arr.slice(i + 1).map((b, j) => {
+          const [ax, ay] = project(a.lon, a.lat, W, H);
+          const [bx, by] = project(b.lon, b.lat, W, H);
+          const mx = (ax + bx) / 2, my = Math.min(ay, by) - 44;
+          return (
+            <path key={`${i}-${j}`}
+              d={`M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}`}
+              fill="none" stroke={t.teal} strokeWidth="0.9" opacity="0.35"
+              strokeDasharray="4 6"
+              style={{ animation: "mwDashFlow 14s linear infinite" }} />
+          );
+        }))}
+
+        {/* CLIENT MARKERS */}
+        {CLIENTS.map((c, i) => {
+          const [x, y] = project(c.lon, c.lat, W, H);
+          const rPulse = c.featured ? 14 : 10;
+          const rDot   = c.featured ? 8  : 6;
+          const rInner = c.featured ? 3  : 2;
+          return (
+            <g key={c.city} style={{ animation: `mwFadeIn 0.5s ${0.8 + i * 0.18}s backwards` }}>
+              {/* pulse ring */}
+              <circle cx={x} cy={y} r={rPulse} fill={t.teal} opacity="0.15">
+                <animate attributeName="r"       values={`${rPulse};${rPulse*2.4};${rPulse}`} dur="2.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.45;0;0.45"                          dur="2.6s" repeatCount="indefinite" />
+              </circle>
+              {/* dot */}
+              <circle cx={x} cy={y} r={rDot}   fill={t.teal} stroke={mode==="dark"?"#0A1010":"#F2F4F7"} strokeWidth="2" />
+              <circle cx={x} cy={y} r={rInner} fill={mode==="dark"?"#0A1010":"#F2F4F7"} />
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function ContinentShapes({ t, mode, W, H }) {
+  const fill   = mode === "dark" ? "#1C2A2A" : "#D8DBE6";
+  const stroke = mode === "dark" ? "#243030" : "#C4C8D8";
+  const continentsLL = [
+    // ── North America ──────────────────────────────────────────────────────
+    [
+      [-168,57],[-163,54],[-160,54],[-153,57],[-149,60],[-145,60],
+      [-140,60],[-136,58],[-130,55],[-126,50],[-124,47],[-124,42],
+      [-122,37],[-118,34],[-117,32],[-111,23],[-106,20],[-97,18],
+      [-90,16],[-84,10],[-80,8],[-76,8],[-78,10],[-83,10],[-87,16],
+      [-90,18],[-88,21],[-90,21],[-96,19],[-97,26],[-97,28],[-96,29],
+      [-89,29],[-85,30],[-82,30],[-81,25],[-80,25],[-80,27],[-80,32],
+      [-77,35],[-76,37],[-74,41],[-70,42],[-67,45],[-64,44],[-60,47],
+      [-53,47],[-56,52],[-60,55],[-65,60],[-72,63],[-80,65],[-80,72],
+      [-90,74],[-100,73],[-110,72],[-120,71],[-130,68],[-140,68],
+      [-148,61],[-154,59],[-160,55],[-165,54],[-168,57]
+    ],
+    // ── Greenland ──────────────────────────────────────────────────────────
+    [
+      [-44,60],[-42,65],[-52,68],[-54,72],[-46,74],[-36,74],[-22,70],
+      [-18,68],[-20,64],[-26,64],[-34,63],[-44,60]
+    ],
+    // ── South America ──────────────────────────────────────────────────────
+    [
+      [-78,8],[-76,2],[-72,-2],[-70,-8],[-65,-6],[-52,4],[-50,2],
+      [-51,0],[-36,-4],[-35,-10],[-38,-15],[-40,-22],[-44,-23],
+      [-47,-24],[-48,-28],[-50,-30],[-52,-33],[-58,-38],[-62,-44],
+      [-65,-50],[-66,-54],[-68,-54],[-72,-50],[-75,-42],[-72,-36],
+      [-71,-30],[-70,-18],[-70,-10],[-75,-4],[-78,2],[-78,8]
+    ],
+    // ── Europe (mainland + Scandinavia fused) ──────────────────────────────
+    [
+      [-9,36],[-7,37],[-9,39],[-9,44],[-2,44],[2,47],[2,51],
+      [5,51],[7,53],[8,55],[10,56],[12,56],[14,57],[16,57],
+      [18,59],[20,59],[23,60],[26,62],[28,65],[28,68],[26,70],
+      [28,72],[22,70],[18,70],[16,68],[14,66],[13,64],[15,63],
+      [12,57],[8,57],[7,57],[5,58],[4,55],[8,55],[7,53],
+      [12,55],[14,55],[15,52],[15,50],[18,48],[17,45],[14,44],
+      [15,41],[14,38],[12,38],[10,40],[8,41],[4,43],[2,43],
+      [-2,44],[-3,43],[-2,38],[-5,36],[-9,36]
+    ],
+    // ── British Isles ──────────────────────────────────────────────────────
+    [[-5,50],[-3,50],[-1,51],[1,52],[0,54],[-2,58],[-6,58],[-8,56],[-8,53],[-5,50]],
+    // ── Iceland ────────────────────────────────────────────────────────────
+    [[-24,63],[-14,63],[-13,65],[-16,66],[-20,66],[-22,65],[-24,63]],
+    // ── Africa ─────────────────────────────────────────────────────────────
+    [
+      [-17,15],[-17,11],[-15,10],[-13,9],[-8,5],[-4,5],[2,5],
+      [8,4],[10,2],[11,0],[14,-4],[16,-7],[18,-12],[18,-16],
+      [20,-18],[24,-23],[26,-30],[28,-34],[30,-35],[33,-28],
+      [36,-22],[40,-10],[42,-3],[42,4],[42,10],[44,12],[42,14],
+      [40,16],[36,12],[36,14],[38,18],[42,20],[44,25],[38,28],
+      [35,30],[32,32],[26,32],[22,32],[18,30],[12,24],[8,22],
+      [2,18],[-4,18],[-10,20],[-16,20],[-17,15]
+    ],
+    // ── Madagascar ─────────────────────────────────────────────────────────
+    [[44,-12],[50,-14],[50,-24],[44,-24],[42,-17],[44,-12]],
+    // ── Arabia + Middle East ───────────────────────────────────────────────
+    [
+      [36,32],[38,28],[42,14],[44,12],[52,12],[56,22],[58,22],
+      [58,26],[54,24],[50,28],[50,30],[46,30],[42,30],[38,36],[36,32]
+    ],
+    // ── Eurasia (Europe→Russia→Siberia→East Asia body) ─────────────────────
+    [
+      [28,42],[36,36],[36,32],[38,28],[38,36],[44,30],[52,28],
+      [60,22],[64,24],[68,22],[72,20],[76,10],[80,10],[84,14],
+      [88,22],[92,22],[95,24],[100,14],[102,6],[104,2],[104,-2],
+      [106,-6],[108,-4],[110,0],[112,4],[116,4],[120,10],
+      [122,22],[122,28],[118,32],[120,36],[124,38],[126,38],
+      [130,42],[134,46],[130,52],[130,58],[132,56],[135,46],
+      [140,38],[140,40],[141,44],[139,46],[136,50],[138,60],
+      [140,68],[156,72],[168,68],[176,68],[178,56],[168,54],
+      [156,52],[148,46],[144,36],[140,36],[136,36],[130,32],
+      [126,26],[120,22],[114,18],[108,14],[102,14],[98,18],
+      [94,20],[90,22],[86,26],[82,28],[76,20],[72,20],[68,22],
+      [64,24],[60,22],[56,24],[52,22],[50,28],[46,30],[42,30],
+      [38,36],[36,36],[34,36],[30,38],[28,42]
+    ],
+    // ── Indian subcontinent ────────────────────────────────────────────────
+    [[66,24],[72,20],[78,8],[80,10],[84,14],[88,22],[88,26],[84,28],[80,28],[76,20],[68,24],[66,24]],
+    // ── Indochina + Malay peninsula ────────────────────────────────────────
+    [
+      [98,20],[100,14],[102,6],[104,2],[104,-2],[106,-6],
+      [108,-4],[110,0],[112,4],[116,4],[120,10],[120,20],
+      [116,24],[108,20],[102,12],[100,6],[96,8],[92,22],[98,20]
+    ],
+    // ── Japan ──────────────────────────────────────────────────────────────
+    [[130,32],[132,34],[134,34],[136,36],[138,38],[141,40],[141,44],[138,44],[135,36],[131,33],[130,32]],
+    // ── Australia ──────────────────────────────────────────────────────────
+    [
+      [114,-22],[118,-18],[122,-18],[126,-14],[130,-12],[134,-12],
+      [136,-12],[138,-14],[140,-16],[142,-11],[146,-18],[150,-22],
+      [152,-26],[152,-30],[150,-36],[148,-38],[145,-38],[143,-38],
+      [140,-36],[136,-36],[132,-34],[128,-35],[122,-34],[116,-34],
+      [114,-30],[114,-22]
+    ],
+    // ── New Zealand ────────────────────────────────────────────────────────
+    [[172,-36],[176,-38],[178,-38],[178,-42],[174,-44],[172,-42],[172,-36]],
+    [[166,-44],[172,-44],[172,-47],[168,-46],[166,-44]],
+  ];
+
+  const toPath = (poly) => {
+    return poly.map(([lon, lat], i) => {
+      const [x, y] = project(lon, lat, W, H);
+      return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(" ") + " Z";
+  };
+
+  return (
+    <g>
+      {continentsLL.map((poly, i) => (
+        <path key={i} d={toPath(poly)} fill={fill} stroke={stroke} strokeWidth="0.8" opacity="0.95" />
+      ))}
+    </g>
+  );
+}
+
+function ContactForm({ t, mode }) {
+  const fields = [
+    { id: "name",    label: "Your name",        type: "text",  ph: "Jane Doe" },
+    { id: "email",   label: "Work email",       type: "email", ph: "jane@company.com" },
+    { id: "company", label: "Company",          type: "text",  ph: "Acme Co." },
+  ];
+  const services = ["Analytics & BI", "Web", "Process Mining", "Automation", "Strategy", "Data Engineering"];
+  const [picked, setPicked] = cUseState(["Analytics & BI"]);
+  const toggle = (s) => setPicked(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
+
+  return (
+    <form onSubmit={(e) => e.preventDefault()} style={{
+      background: t.surface1, border: `1px solid ${t.border}`, borderRadius: 16,
+      padding: 36,
+    }}>
+      <PageEyebrow color={t.teal}>· SEND US A NOTE ·</PageEyebrow>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: "-0.02em", margin: "0 0 22px", color: t.text1 }}>
+        Reply usually within 1 working day.
+      </h3>
+
+      {fields.map((f) => (
+        <div key={f.id} style={{ marginBottom: 18 }}>
+          <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>{f.label}</label>
+          <input type={f.type} placeholder={f.ph} style={{
+            width: "100%", boxSizing: "border-box",
+            padding: "14px 16px", borderRadius: 8,
+            border: `1px solid ${t.border}`, background: t.bg, color: t.text1,
+            fontFamily: "'Inter', sans-serif", fontSize: 15,
+            outline: "none",
+          }} />
+        </div>
+      ))}
+
+      <div style={{ marginBottom: 18 }}>
+        <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 10, textTransform: "uppercase" }}>Services of interest</label>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {services.map(s => (
+            <button key={s} type="button" onClick={() => toggle(s)} style={{
+              fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer",
+              padding: "8px 14px", borderRadius: 999,
+              border: `1px solid ${picked.includes(s) ? t.teal : t.border}`,
+              background: picked.includes(s) ? t.teal : "transparent",
+              color: picked.includes(s) ? t.bg : t.text2,
+              transition: "all 0.18s ease",
+            }}>{s}</button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 24 }}>
+        <label style={{ display: "block", fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>What's the problem to solve?</label>
+        <textarea rows={5} placeholder="A few sentences about what you're trying to figure out…" style={{
+          width: "100%", boxSizing: "border-box",
+          padding: "14px 16px", borderRadius: 8,
+          border: `1px solid ${t.border}`, background: t.bg, color: t.text1,
+          fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.5,
+          outline: "none", resize: "vertical",
+        }} />
+      </div>
+
+      <button type="submit" style={{
+        fontFamily: "inherit", fontSize: 15, fontWeight: 700,
+        padding: "16px 32px", borderRadius: 8, cursor: "pointer",
+        border: "none", background: t.teal, color: t.bg,
+        width: "100%",
+      }}>Send message →</button>
+    </form>
+  );
+}
+
+function ContactPage() {
+  const mode = useTheme();
+  const t = HERO_TOKENS[mode];
+  const embedded = window.parent !== window;
+
+  return (
+    <div style={{
+      width: 1920, minHeight: 1700,
+      background: t.bg, color: t.text1,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      position: "relative", overflow: "hidden", isolation: "isolate",
+    }}>
+      <GridBg t={t} mode={mode} w={1920} h={1700} />
+      {!embedded && <PageNav t={t} mode={mode} active="" />}
+
+      {/* HERO */}
+      <div style={{ position: "relative", padding: embedded ? "80px 80px 50px" : "180px 80px 50px", zIndex: 3, maxWidth: 1500 }}>
+        <PageEyebrow color={t.teal}>· CONTACT · WORLDWIDE ·</PageEyebrow>
+        <h1 style={{
+          fontFamily: "'Inter', sans-serif", fontWeight: 900,
+          fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
+          letterSpacing: "-0.03em", margin: 0, textWrap: "balance",
+        }}>
+          Five offices. <span style={{ color: t.teal }}>One team.</span> Always one timezone away.
+        </h1>
+        <p style={{ fontSize: 18, lineHeight: 1.55, color: t.text2, marginTop: 26, maxWidth: 760, textWrap: "pretty" }}>
+          We work across North America and Europe — wherever your data, your team, or your regulators are.
+        </p>
+      </div>
+
+      {/* MAP + Locations */}
+      <div style={{ position: "relative", padding: "0 80px 80px", zIndex: 3, display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 50, alignItems: "start" }}>
+        <div style={{
+          background: t.surface1, border: `1px solid ${t.border}`,
+          borderRadius: 16, padding: 28, position: "relative",
+        }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            marginBottom: 16,
+            fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em",
+          }}>
+            <span>· CLIENT FOOTPRINT · LIVE ·</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: t.teal }}>
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
+              {CLIENTS.length} OFFICES · 5 COUNTRIES
+            </span>
+          </div>
+          <WorldMap t={t} mode={mode} />
+        </div>
+
+        <div>
+          <PageEyebrow color={t.teal}>· OFFICES ·</PageEyebrow>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {CLIENTS.map((c, i) => (
+              <div key={c.city} style={{
+                padding: "18px 20px", borderRadius: 10,
+                background: t.surface1, border: `1px solid ${c.featured ? t.teal : t.border}`,
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
+                <div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 18, letterSpacing: "-0.01em", color: t.text1 }}>
+                    {c.city}, {c.country}
+                  </div>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.12em", marginTop: 4 }}>
+                    · {c.count.toUpperCase()} ·
+                  </div>
+                </div>
+                <div style={{ width: 12, height: 12, borderRadius: 999, background: t.teal, boxShadow: `0 0 0 4px ${t.teal}22` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FORM + DIRECT CHANNELS */}
+      <div style={{ position: "relative", padding: "60px 80px 100px", zIndex: 3, display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 50, alignItems: "start" }}>
+        <ContactForm t={t} mode={mode} />
+
+        <div>
+          <PageEyebrow color={t.teal}>· OR REACH US DIRECTLY ·</PageEyebrow>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 32 }}>
+            {[
+              { lbl: "GENERAL",  val: "hello@metricwave.net" },
+              { lbl: "PRESS",    val: "press@metricwave.net" },
+              { lbl: "CAREERS",  val: "join@metricwave.net" },
+              { lbl: "PHONE",    val: "+32 2 555 01 88" },
+            ].map((row) => (
+              <div key={row.lbl} style={{ padding: "16px 20px", borderRadius: 10, background: t.surface1, border: `1px solid ${t.border}` }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em", marginBottom: 6 }}>· {row.lbl} ·</div>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 16, fontWeight: 700, color: t.teal, letterSpacing: "0.02em" }}>{row.val}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            padding: 24, borderRadius: 12,
+            background: t.surface2,
+            border: `1px solid ${t.border}`,
+          }}>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· OPERATING HOURS ·</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.7, color: t.text1 }}>
+              Mon–Fri · 09:00–19:00 CET<br/>
+              Mon–Fri · 09:00–18:00 EST<br/>
+              Async support 24/7 via shared Slack
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <PageTicker t={t} mode={mode} label="· MONTREAL · BRUSSELS · NEW YORK · TBILISI · VALLETTA · FOLLOW THE SUN ·" />
+    </div>
+  );
+}
+
+Object.assign(window, { ContactPage });
+
+
+</script>
+
+<script type="text/babel" data-presets="env,react">
+  ReactDOM.createRoot(document.getElementById("root")).render(<window.ContactPage />);
+</script>
+</body>
+</html>

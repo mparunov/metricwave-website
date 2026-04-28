@@ -10,7 +10,7 @@
 
 // Applies theme to all hero iframes on the page (both landing-page and service-page iframes)
 function syncIframeThemes(theme) {
-    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe').forEach(function(iframe) {
+    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe, iframe.page-iframe').forEach(function(iframe) {
         // Direct contentDocument access (same-origin, most reliable — triggers MutationObserver in useTheme())
         try {
             if (iframe.contentDocument && iframe.contentDocument.documentElement) {
@@ -22,12 +22,26 @@ function syncIframeThemes(theme) {
     });
 }
 
+// Auto-resize page iframes when inner content reports its height
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'mw-page-height') {
+        document.querySelectorAll('iframe.page-iframe').forEach(function(iframe) {
+            try {
+                if (iframe.contentWindow === e.source) {
+                    iframe.style.minHeight = '0';
+                    iframe.style.height = e.data.height + 'px';
+                }
+            } catch(ex) {}
+        });
+    }
+});
+
 // On DOMContentLoaded: apply current theme to any already-loaded iframes, and wire up load handlers
 document.addEventListener('DOMContentLoaded', function() {
     var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 
     // Apply theme to iframes that load after DOMContentLoaded
-    document.querySelectorAll('iframe.service-hero-iframe').forEach(function(iframe) {
+    document.querySelectorAll('iframe.service-hero-iframe, iframe.page-iframe').forEach(function(iframe) {
         iframe.addEventListener('load', function() {
             syncIframeThemes(currentTheme);
         });

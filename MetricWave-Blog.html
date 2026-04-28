@@ -66,12 +66,10 @@
     if (!stage || !wrap) return;
     const sx = wrap.clientWidth / 1920;
     const sy = wrap.clientHeight / 800;
-    const s = Math.min(sx, sy);
+    const s = Math.max(sx, sy);
     stage.style.transform = 'scale(' + s + ')';
-    // center
-    const w = 1920 * s, h = 800 * s;
-    stage.style.left = ((wrap.clientWidth  - w) / 2) + 'px';
-    stage.style.top  = ((wrap.clientHeight - h) / 2) + 'px';
+    stage.style.left = '0px';
+    stage.style.top  = '0px';
   }
   window.addEventListener('load',  fit);
   window.addEventListener('resize', fit);
@@ -81,10 +79,1541 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" data-presets="env,react" src="hero-shell.jsx"></script>
-<script type="text/babel" data-presets="env,react" src="hero-parts.jsx"></script>
-<script type="text/babel" data-presets="env,react" src="schemes-1.jsx"></script>
-<script type="text/babel" data-presets="env,react" src="schemes-2.jsx"></script>
+<script type="text/babel" data-presets="env,react">
+/* global React */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   MetricWave — Service hero shell (1920 × 800)
+   Auto-detects light/dark via data-theme on <html>.
+   Slot a Schematic into the right column.
+============================================================ */
+
+const HERO_TOKENS = {
+  dark: {
+    bg:        "#0A0A0A",
+    surface1:  "#1A1A1A",
+    surface2:  "#2A2A2A",
+    border:    "#3A3A3A",
+    text1:     "#FFFFFF",
+    text2:     "#E5E5E5",
+    teal:      "#2DD4BF",
+    tealDk:    "#14B8A6",
+    tealLt:    "#5EEAD4",
+    tealGlow:  "rgba(45,212,191,0.15)",
+    warn:      "#F59E0B",
+    warnGlow:  "rgba(245,158,11,0.18)",
+    ok:        "#22C55E",
+    nodeFill:  "#1A1A1A",
+    modelFill: "#1A1A1A",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#2DD4BF",
+    accentInk: "#0A0A0A",
+  },
+  light: {
+    bg:        "#FFFFFF",
+    surface1:  "#F4F4F6",
+    surface2:  "#E8E8EC",
+    border:    "#C8C8D4",
+    text1:     "#0D0D10",
+    text2:     "#404050",
+    teal:      "#0D9488",
+    tealDk:    "#0F766E",
+    tealLt:    "#14B8A6",
+    tealGlow:  "rgba(13,148,136,0.12)",
+    warn:      "#D97706",
+    warnGlow:  "rgba(217,119,6,0.18)",
+    ok:        "#16A34A",
+    nodeFill:  "#FFFFFF",
+    modelFill: "#0D0D10",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#0D9488",
+    accentInk: "#FFFFFF",
+  },
+};
+
+function useTheme() {
+  const initial = (typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme")) || "dark";
+  const [mode, setMode] = useState(initial);
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      const next = document.documentElement.getAttribute("data-theme") || "dark";
+      setMode(next);
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return mode;
+}
+
+function HeroLogo({ color, mode }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+      <img
+        src="../assets/metricwave-mark.png"
+        alt=""
+        style={{
+          height: 34, width: "auto", objectFit: "contain",
+          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
+        }}
+      />
+      <span style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700, fontSize: 22,
+        letterSpacing: "-0.02em", color,
+      }}>MetricWave</span>
+    </div>
+  );
+}
+
+/* ============================================================
+   ServiceHero — full 1920×800 panel
+============================================================ */
+function ServiceHero({
+  eyebrow,
+  headline,
+  lead,
+  ctaPrimary,
+  ctaSecondary,
+  ticker,
+  Schematic,
+  navActive = "Services",
+  showNav = true,
+}) {
+  const mode = useTheme();
+  const t = HERO_TOKENS[mode];
+  const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
+
+  // When nav is hidden, shift content up to fill the extra space
+  const copyTop    = showNav ? 240 : 130;
+  const schemTop   = showNav ? 140 :  40;
+  const schemHeight = showNav ? 560 : 660;
+
+  return (
+    <div style={{
+      width: 1920, height: 800,
+      background: t.bg,
+      position: "relative", overflow: "hidden",
+      fontFamily: "'Inter', system-ui, sans-serif",
+      color: t.text1,
+      isolation: "isolate",
+    }}>
+      {/* fine grid */}
+      <svg width="1920" height="800" style={{ position: "absolute", inset: 0, opacity: mode === "dark" ? 0.4 : 0.55 }}>
+        <defs>
+          <pattern id={`heroGrid-${mode}`} width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 0H40M0 0V40" stroke={t.border} strokeWidth="0.5" />
+          </pattern>
+          <pattern id={`heroGridBig-${mode}`} width="200" height="200" patternUnits="userSpaceOnUse">
+            <path d="M0 0H200M0 0V200" stroke={t.border} strokeWidth="0.7" />
+          </pattern>
+        </defs>
+        <rect width="1920" height="800" fill={`url(#heroGrid-${mode})`} />
+        <rect width="1920" height="800" fill={`url(#heroGridBig-${mode})`} opacity="0.7" />
+      </svg>
+
+      {mode === "dark" && (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `radial-gradient(900px 600px at 70% 50%, ${t.tealGlow}, transparent 70%)`,
+          zIndex: 1,
+        }} />
+      )}
+
+      {/* nav — only shown in standalone/preview mode */}
+      {showNav && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          padding: "30px 80px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          zIndex: 4,
+        }}>
+          <HeroLogo color={t.text1} mode={mode} />
+          <nav style={{ display: "flex", gap: 36, fontSize: 14, color: t.text2, letterSpacing: "-0.005em" }}>
+            {navItems.map((n) => (
+              <span key={n} style={{
+                color: n === navActive ? t.text1 : t.text2,
+                fontWeight: n === navActive ? 600 : 400,
+                paddingBottom: 2,
+                borderBottom: n === navActive ? `1.5px solid ${t.teal}` : "1.5px solid transparent",
+              }}>{n}</span>
+            ))}
+          </nav>
+          <button style={{
+            fontFamily: "inherit", fontSize: 13, fontWeight: 600,
+            padding: "10px 18px", borderRadius: 7, cursor: "pointer",
+            border: "none", background: t.accentBg, color: t.accentInk,
+          }}>Contact</button>
+        </div>
+      )}
+
+      {/* LEFT COLUMN — copy */}
+      <div style={{
+        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+      }}>
+        <div style={{
+          fontFamily: "'Courier New', monospace",
+          fontSize: "0.7rem",
+          letterSpacing: "0.15em",
+          textTransform: "uppercase",
+          color: t.teal, marginBottom: 22,
+        }}>{eyebrow}</div>
+
+        <h1 style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontWeight: 900,
+          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          lineHeight: 1.1,
+          letterSpacing: "-0.025em",
+          color: t.text1, margin: 0, textWrap: "balance",
+        }}>
+          {headline.pre}
+          {headline.italic && (
+            <>{" "}<span style={{ color: t.teal }}>{headline.italic}</span></>
+          )}
+          {headline.post && <>{" "}{headline.post}</>}
+          {headline.cursor && <BlinkCursor color={t.teal} />}
+        </h1>
+
+        <p style={{
+          fontSize: "1.05rem", lineHeight: 1.6,
+          color: t.text2, marginTop: 26, marginBottom: 0,
+          maxWidth: 460, textWrap: "pretty", fontWeight: 400,
+        }}>{lead}</p>
+
+        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+          <button style={{
+            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
+            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            border: "none", background: t.teal, color: t.bg,
+            letterSpacing: "-0.01em",
+          }}>{ctaPrimary} →</button>
+          <button style={{
+            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
+            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            background: "transparent", color: t.teal,
+            border: `2px solid ${t.teal}`,
+            letterSpacing: "-0.01em",
+          }}>{ctaSecondary}</button>
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN — schematic */}
+      <div style={{
+        position: "absolute",
+        left: 620, top: schemTop, width: 1220, height: schemHeight,
+        zIndex: 2,
+      }}>
+        <Schematic t={t} mode={mode} />
+      </div>
+
+      {/* TICKER strip */}
+      <div style={{
+        position: "absolute", left: 0, right: 0, bottom: 0, height: 30,
+        zIndex: 5,
+        background: t.surface1,
+        borderTop: `1px solid ${t.border}`,
+        display: "flex", alignItems: "center",
+        padding: "0 80px",
+        justifyContent: "space-between",
+        fontFamily: "'Courier New', monospace",
+        fontSize: "0.65rem",
+        color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
+      }}>
+        <span>{ticker}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: 999,
+            background: t.teal, animation: "mwPulse 1.6s infinite",
+          }} />
+          Live · Always in sync
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function BlinkCursor({ color }) {
+  return (
+    <span style={{
+      display: "inline-block", width: "0.5ch", marginLeft: 4,
+      animation: "mwBlinkOut 4s linear forwards, mwBlink 0.6s steps(2) infinite",
+      color,
+    }}>|</span>
+  );
+}
+
+Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   Shared schematic primitives — used by every service hero.
+   Right-column canvas: 1220 × 560 (svg viewBox 0 0 1220 560)
+============================================================ */
+
+function NodeCard({
+  x, y, w = 200, h = 56, label, sub,
+  t, accent = false, status = "live",
+}) {
+  const dotColor = status === "warn" ? t.warn : status === "ok" ? t.ok : t.teal;
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={10}
+        fill={t.nodeFill}
+        stroke={accent ? t.teal : t.border}
+        strokeWidth={accent ? 1.4 : 1} />
+      <circle cx={x + 14} cy={y + h/2 - 8} r={3.5} fill={dotColor} opacity="0.95">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <text x={x + 26} y={y + h/2 - 4}
+        fontFamily="'Courier New', monospace" fontSize="11" fontWeight="600"
+        fill={t.text1} letterSpacing="0.06em">{label}</text>
+      {sub && (
+        <text x={x + 26} y={y + h/2 + 11}
+          fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.text2} letterSpacing="0.1em">{sub.toUpperCase()}</text>
+      )}
+    </g>
+  );
+}
+
+function FlowEdge({
+  d, t, mode, gradId, strokeWidth = 1.6,
+  drawDelay = 0, particleDelay = 0, particleColor, particleDur = 3.2,
+  particles = 1,
+}) {
+  const arr = Array.from({ length: particles });
+  return (
+    <g>
+      <path d={d} fill="none" stroke={`url(#${gradId})`} strokeWidth={strokeWidth}
+        style={{
+          strokeDasharray: 1000, strokeDashoffset: 1000,
+          animation: `mwDraw 1.4s ${drawDelay}ms cubic-bezier(.5,0,.2,1) forwards`,
+        }} />
+      {arr.map((_, i) => (
+        <circle key={i} r="3.5" fill={particleColor || t.teal} opacity="0">
+          <animateMotion dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" path={d} />
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1"
+            dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" />
+        </circle>
+      ))}
+    </g>
+  );
+}
+
+function EdgeDefs({ t, mode }) {
+  return (
+    <>
+      <linearGradient id={`edgeIn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.15" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.85" />
+      </linearGradient>
+      <linearGradient id={`edgeOut-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.85" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.15" />
+      </linearGradient>
+      <linearGradient id={`edgeWarn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.2" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0.85" />
+      </linearGradient>
+      <radialGradient id={`modelGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.4" />
+        <stop offset="60%" stopColor={t.teal} stopOpacity="0.05" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0" />
+      </radialGradient>
+      <radialGradient id={`warnGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.45" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0" />
+      </radialGradient>
+    </>
+  );
+}
+
+function Crosshairs({ t, w = 1220, h = 560, inset = 12 }) {
+  return (
+    <>
+      {[[inset, inset], [w - inset, inset], [inset, h - inset], [w - inset, h - inset]].map(([x, y], i) => (
+        <g key={`c-${i}`} stroke={t.text2} strokeWidth="0.7" opacity="0.35">
+          <line x1={x - 6} y1={y} x2={x + 6} y2={y} />
+          <line x1={x} y1={y - 6} x2={x} y2={y + 6} />
+        </g>
+      ))}
+    </>
+  );
+}
+
+/* count-up text node */
+function CountUp({ to, dur = 1.5, prefix = "", suffix = "", x, y, ...rest }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let raf, start;
+    const animate = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min(1, (ts - start) / (dur * 1000));
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(to * eased);
+      if (p < 1) raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [to, dur]);
+  const display = to >= 1000
+    ? Math.round(v).toLocaleString()
+    : (to % 1 === 0 ? Math.round(v) : v.toFixed(1));
+  return <text x={x} y={y} {...rest}>{prefix}{display}{suffix}</text>;
+}
+
+/* "x s ago" rolling label */
+function AgoTicker({ x, y, ...rest }) {
+  const [s, setS] = useState(2);
+  useEffect(() => {
+    const id = setInterval(() => setS((p) => (p + 1) % 8), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const txt = s === 0 ? "just now" : `${s}s ago`;
+  return <text x={x} y={y} {...rest}>last sync: {txt}</text>;
+}
+
+Object.assign(window, { NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React, NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker */
+const { useState, useEffect } = React;
+
+/* All schematics render into 1220 × 560 viewBox.
+   Right column container is 1220 × 560. */
+
+/* ============================================================
+   1. DATA ANALYTICS — Dashboard Assembly
+============================================================ */
+function SchemAnalytics({ t, mode }) {
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={680} cy={280} r="240" fill={`url(#modelGlow-${mode})`} />
+
+      {/* 3 floating data cards entering from left */}
+      {/* Card 1: KPI tile */}
+      <g style={{ animation: "mwSlideIn 0.6s 0.2s cubic-bezier(.5,0,.2,1) backwards" }}>
+        <rect x={40} y={80} width={220} height={140} rx="12"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={60} y={108} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.text2} letterSpacing="0.15em">REVENUE MTD</text>
+        <CountUp to={2.4} dur={1.5} prefix="$" suffix="M"
+          x={60} y={170}
+          fontFamily="'Inter', sans-serif" fontSize="42" fontWeight="900"
+          fill={t.text1} letterSpacing="-0.03em" />
+        <g transform="translate(60, 188)">
+          <path d="M0 0 L7 -8 L14 0" stroke={t.teal} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <text x={20} y={2} fontFamily="'Courier New', monospace" fontSize="11" fontWeight="700"
+            fill={t.teal} letterSpacing="0.05em">+18.4%</text>
+        </g>
+      </g>
+
+      {/* Card 2: sparkline */}
+      <g style={{ animation: "mwSlideIn 0.6s 0.5s cubic-bezier(.5,0,.2,1) backwards" }}>
+        <rect x={40} y={240} width={220} height={120} rx="12"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={60} y={266} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.text2} letterSpacing="0.15em">TRAFFIC · 30D</text>
+        <polyline
+          points="60,330 80,318 100,322 120,308 140,312 160,294 180,300 200,282 220,288 240,270"
+          fill="none" stroke={t.teal} strokeWidth="2"
+          style={{ strokeDasharray: 400, strokeDashoffset: 400,
+            animation: "mwDraw 1.2s 0.8s cubic-bezier(.5,0,.2,1) forwards" }} />
+        <circle cx={240} cy={270} r="3.5" fill={t.teal}
+          style={{ animation: "mwFadeIn 0.4s 2s backwards" }} />
+      </g>
+
+      {/* Card 3: bar chart */}
+      <g style={{ animation: "mwSlideIn 0.6s 0.8s cubic-bezier(.5,0,.2,1) backwards" }}>
+        <rect x={40} y={380} width={220} height={130} rx="12"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={60} y={406} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.text2} letterSpacing="0.15em">CHANNELS</text>
+        {[60, 100, 70, 90, 50].map((h, i) => (
+          <rect key={i}
+            x={70 + i * 36} y={490 - h} width={24} height={h} rx="2"
+            fill={t.teal} opacity={0.6 + i * 0.08}
+            style={{
+              transformOrigin: `${82 + i * 36}px 490px`,
+              animation: `mwGrow 1s ${1.0 + i * 0.08}s cubic-bezier(.5,0,.2,1) backwards`,
+            }} />
+        ))}
+      </g>
+
+      {/* converging arrows from cards to dashboard */}
+      {[150, 300, 445].map((y, i) => {
+        const d = `M 260 ${y} C 380 ${y}, 380 280, 500 280`;
+        return <FlowEdge key={i} d={d} t={t} mode={mode}
+          gradId={`edgeIn-${mode}`} drawDelay={1400 + i * 150}
+          particleDelay={2.4 + i * 0.3} particleDur={2.6} />;
+      })}
+
+      {/* CENTRAL LIVE DASHBOARD frame */}
+      <g style={{ animation: "mwFadeIn 0.6s 1.2s backwards" }}>
+        <rect x={500} y={140} width={420} height={300} rx="14"
+          fill={t.modelFill} stroke={t.teal} strokeWidth="1.6" />
+        {/* inner grid */}
+        <g opacity="0.25">
+          {[1,2,3].map(i => (
+            <line key={`h${i}`} x1={500} y1={140 + i * 75} x2={920} y2={140 + i * 75}
+              stroke={t.surface2} strokeWidth="1" />
+          ))}
+          {[1,2,3,4,5].map(i => (
+            <line key={`v${i}`} x1={500 + i * 70} y1={140} x2={500 + i * 70} y2={440}
+              stroke={t.surface2} strokeWidth="1" />
+          ))}
+        </g>
+        {/* dashboard header */}
+        <text x={520} y={172} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / LIVE DASHBOARD</text>
+        <circle cx={900} cy={167} r={4} fill={t.teal}
+          style={{ animation: "mwPulse 1.6s infinite" }} />
+
+        {/* dashboard tile widgets */}
+        {/* big number */}
+        <text x={520} y={228} fontFamily="'Inter', sans-serif" fontSize="34" fontWeight="900"
+          fill={t.modelInk} letterSpacing="-0.03em">94.2%</text>
+        <text x={520} y={248} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">CONVERSION HEALTH</text>
+
+        {/* mini sparkline */}
+        <polyline points="520,310 555,300 590,304 625,290 660,295 695,278 730,284 765,266 800,272 835,258"
+          fill="none" stroke={t.teal} strokeWidth="2"
+          style={{ strokeDasharray: 400, strokeDashoffset: 400,
+            animation: "mwDraw 1.2s 1.7s cubic-bezier(.5,0,.2,1) forwards" }} />
+        <text x={520} y={332} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">PIPELINE · 30D</text>
+
+        {/* mini bar set */}
+        {[18, 28, 22, 32, 25, 36].map((h, i) => (
+          <rect key={i} x={520 + i * 22} y={420 - h} width={14} height={h} rx="1.5"
+            fill={t.teal} opacity={0.55 + i * 0.06}
+            style={{ transformOrigin: `${527 + i * 22}px 420px`,
+              animation: `mwGrow 0.8s ${1.8 + i * 0.06}s cubic-bezier(.5,0,.2,1) backwards` }} />
+        ))}
+        <text x={520} y={442} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">CHANNELS</text>
+
+        {/* right column tile */}
+        <line x1={690} y1={195} x2={690} y2={420} stroke={t.surface2} strokeWidth="1" opacity="0.4" />
+        <text x={710} y={228} fontFamily="'Inter', sans-serif" fontSize="34" fontWeight="900"
+          fill={t.teal} letterSpacing="-0.03em">$2.4M</text>
+        <text x={710} y={248} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">REVENUE MTD</text>
+        {/* gauge */}
+        <g transform="translate(820, 320)">
+          <circle r="42" fill="none" stroke={t.surface2} strokeWidth="6" opacity="0.5" />
+          <circle r="42" fill="none" stroke={t.teal} strokeWidth="6"
+            strokeDasharray="264" strokeDashoffset="65"
+            transform="rotate(-90)" strokeLinecap="round"
+            style={{ animation: "mwDraw 1.4s 2s cubic-bezier(.5,0,.2,1) forwards" }} />
+          <text textAnchor="middle" y={6} fontFamily="'Inter', sans-serif" fontSize="20" fontWeight="900"
+            fill={t.modelInk}>76</text>
+        </g>
+        <text x={820} y={392} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">NPS</text>
+      </g>
+
+      {/* annotation lines + outcomes */}
+      {[
+        { y: 188, label: "Decisions in minutes" },
+        { y: 290, label: "One source of truth" },
+        { y: 392, label: "Auto-refreshed" },
+      ].map((a, i) => (
+        <g key={i} style={{ animation: `mwFadeIn 0.5s ${2.6 + i * 0.2}s backwards` }}>
+          <line x1={920} y1={a.y} x2={970} y2={a.y} stroke={t.teal} strokeWidth="1" strokeDasharray="3 3" />
+          <circle cx={970} cy={a.y} r={3} fill={t.teal} />
+          <text x={985} y={a.y - 6} fontFamily="'Courier New', monospace" fontSize="11" fontWeight="700"
+            fill={t.teal} letterSpacing="0.06em">✓</text>
+          <text x={1002} y={a.y - 6} fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="600"
+            fill={t.text1}>{a.label}</text>
+        </g>
+      ))}
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   2. WEB DEVELOPMENT — Browser + Performance Metrics
+============================================================ */
+function SchemWeb({ t, mode }) {
+  const bx = 60, by = 100, bw = 580, bh = 380;
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={680} cy={280} r="260" fill={`url(#modelGlow-${mode})`} />
+
+      {/* BROWSER FRAME */}
+      <g>
+        <rect x={bx} y={by} width={bw} height={bh} rx="14"
+          fill={t.modelFill} stroke={t.teal} strokeWidth="1.4" />
+        {/* chrome */}
+        <rect x={bx} y={by} width={bw} height={36} rx="14" fill={t.surface2} />
+        <rect x={bx} y={by + 22} width={bw} height={14} fill={t.surface2} />
+        {[0,1,2].map(i => (
+          <circle key={i} cx={bx + 18 + i * 16} cy={by + 18} r={5}
+            fill={i === 0 ? "#FF5F57" : i === 1 ? "#FEBC2E" : "#28C840"} opacity="0.85" />
+        ))}
+        <rect x={bx + 80} y={by + 8} width={bw - 160} height={20} rx="10"
+          fill={t.bg} fillOpacity="0.4" />
+        <text x={bx + 96} y={by + 22} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.modelInk} fillOpacity="0.6" letterSpacing="0.05em">metricwave.net</text>
+        {/* progress bar — fills */}
+        <rect x={bx} y={by + 36} width={bw} height="2" fill={t.surface2} opacity="0.4" />
+        <rect x={bx} y={by + 36} width={bw} height="2" fill={t.teal}
+          style={{ transformOrigin: `${bx}px ${by + 37}px`,
+            animation: "mwScaleX 2s 0.4s cubic-bezier(.5,0,.2,1) forwards" }} />
+
+        {/* nav bar block */}
+        <g style={{ animation: "mwFadeIn 0.5s 0.8s backwards" }}>
+          <rect x={bx + 24} y={by + 60} width={bw - 48} height={28} rx="4"
+            fill={t.surface1} fillOpacity="0.15" stroke={t.modelInk} strokeOpacity="0.15" strokeWidth="1" />
+          <rect x={bx + 36} y={by + 70} width={50} height={8} rx="2" fill={t.modelInk} fillOpacity="0.4" />
+          {[0,1,2,3].map(i => (
+            <rect key={i} x={bx + bw - 250 + i * 50} y={by + 72} width={36} height={6} rx="2"
+              fill={t.modelInk} fillOpacity="0.25" />
+          ))}
+        </g>
+
+        {/* hero block */}
+        <g style={{ animation: "mwFadeIn 0.5s 1.2s backwards" }}>
+          <rect x={bx + 24} y={by + 100} width={bw - 48} height={140} rx="6"
+            fill={t.teal} fillOpacity="0.12" stroke={t.teal} strokeWidth="0.8" strokeOpacity="0.4" />
+          <rect x={bx + 44} y={by + 124} width={280} height={14} rx="2" fill={t.modelInk} fillOpacity="0.85" />
+          <rect x={bx + 44} y={by + 144} width={220} height={10} rx="2" fill={t.modelInk} fillOpacity="0.5" />
+          <rect x={bx + 44} y={by + 160} width={260} height={10} rx="2" fill={t.modelInk} fillOpacity="0.5" />
+          <rect x={bx + 44} y={by + 192} width={100} height={28} rx="4" fill={t.teal} />
+          <rect x={bx + 156} y={by + 192} width={92} height={28} rx="4" fill="none"
+            stroke={t.modelInk} strokeWidth="1" strokeOpacity="0.4" />
+        </g>
+
+        {/* card row */}
+        <g style={{ animation: "mwSlideUp 0.6s 1.6s backwards" }}>
+          {[0,1,2].map(i => (
+            <g key={i}>
+              <rect x={bx + 24 + i * 184} y={by + 256} width={170} height={104} rx="6"
+                fill={t.surface1} fillOpacity="0.2" stroke={t.modelInk} strokeOpacity="0.2" strokeWidth="1" />
+              <rect x={bx + 36 + i * 184} y={by + 268} width={146} height={50} rx="3"
+                fill={t.teal} fillOpacity="0.15" />
+              <rect x={bx + 36 + i * 184} y={by + 326} width={120} height={8} rx="2"
+                fill={t.modelInk} fillOpacity="0.7" />
+              <rect x={bx + 36 + i * 184} y={by + 340} width={80} height={6} rx="2"
+                fill={t.modelInk} fillOpacity="0.4" />
+            </g>
+          ))}
+        </g>
+
+        <text x={bx + 14} y={by + bh - 12} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / SITE</text>
+      </g>
+
+      {/* PERFORMANCE BADGES — right side */}
+      {[
+        { label: "LIGHTHOUSE", val: 98, suffix: "/100", glow: true,  delay: 1.0, dash: 264, off: 264 - 264 * 0.98 },
+        { label: "SEO",        val: 100, suffix: "/100", delay: 1.3, dash: 264, off: 0 },
+        { label: "LOAD",       val: 0.8, suffix: "s",    delay: 1.6, dash: 264, off: 264 - 264 * 0.85 },
+      ].map((b, i) => {
+        const cx = 940, cy = 130 + i * 150;
+        return (
+          <g key={i} style={{ animation: `mwSlideInR 0.6s ${b.delay}s backwards` }}>
+            <rect x={cx - 80} y={cy - 60} width={220} height={130} rx="12"
+              fill={t.surface1} stroke={b.glow ? t.teal : t.border} strokeWidth={b.glow ? 1.4 : 1} />
+            {b.glow && (
+              <rect x={cx - 80} y={cy - 60} width={220} height={130} rx="12"
+                fill="none" stroke={t.teal} strokeWidth="2" opacity="0.4"
+                style={{ animation: "mwPulseStroke 2s infinite" }} />
+            )}
+            {/* circular ring */}
+            <g transform={`translate(${cx - 30}, ${cy + 5})`}>
+              <circle r="38" fill="none" stroke={t.surface2} strokeWidth="6" opacity="0.6" />
+              <circle r="38" fill="none" stroke={t.teal} strokeWidth="6"
+                strokeDasharray={b.dash} strokeDashoffset={b.dash}
+                strokeLinecap="round" transform="rotate(-90)"
+                style={{ animation: `mwRing-${i} 1.4s ${b.delay + 0.1}s cubic-bezier(.5,0,.2,1) forwards` }} />
+              <text textAnchor="middle" y={6} fontFamily="'Inter', sans-serif" fontSize="22" fontWeight="900"
+                fill={t.text1} letterSpacing="-0.02em">{b.val}</text>
+            </g>
+            <style>{`@keyframes mwRing-${i} { to { stroke-dashoffset: ${b.off}; } }`}</style>
+            <text x={cx + 26} y={cy - 16} fontFamily="'Courier New', monospace" fontSize="10"
+              fill={t.text2} letterSpacing="0.15em">{b.label}</text>
+            <text x={cx + 26} y={cy + 12} fontFamily="'Inter', sans-serif" fontSize="22" fontWeight="900"
+              fill={t.text1} letterSpacing="-0.03em">
+              {b.val}<tspan fontSize="13" fill={t.text2} dx="2" fontWeight="600">{b.suffix}</tspan>
+            </text>
+            <text x={cx + 26} y={cy + 38} fontFamily="'Courier New', monospace" fontSize="9"
+              fill={t.teal} letterSpacing="0.1em">→ EXCELLENT</text>
+          </g>
+        );
+      })}
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   3. PROCESS MINING — Process Flow with Bottleneck
+============================================================ */
+function SchemProcess({ t, mode }) {
+  const nodes = [
+    { id: "REQUEST",  x: 80,   pct: "100%" },
+    { id: "VALIDATE", x: 290,  pct: "94%"  },
+    { id: "APPROVE",  x: 500,  pct: "62%", bn: true },
+    { id: "EXECUTE",  x: 770,  pct: "87%" },
+    { id: "CLOSE",    x: 980,  pct: "92%" },
+  ];
+  const cy = 230;
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={500} cy={cy} r="180" fill={`url(#warnGlow-${mode})`} opacity="0.4" />
+
+      {/* curved connectors */}
+      {nodes.slice(0, -1).map((n, i) => {
+        const next = nodes[i + 1];
+        const isBottleneck = next.bn;
+        const x1 = n.x + 130, x2 = next.x;
+        const d = `M ${x1} ${cy} C ${(x1 + x2) / 2} ${cy - 18}, ${(x1 + x2) / 2} ${cy - 18}, ${x2} ${cy}`;
+        const grad = isBottleneck ? `edgeWarn-${mode}` : `edgeIn-${mode}`;
+        const dur = isBottleneck ? 4.5 : 2.5;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={`url(#${grad})`} strokeWidth={isBottleneck ? 2.4 : 1.8}
+              style={{ strokeDasharray: 400, strokeDashoffset: 400,
+                animation: `mwDraw 1.2s ${0.5 + i * 0.15}s cubic-bezier(.5,0,.2,1) forwards` }} />
+            {/* arrow head */}
+            <polygon points={`${x2 - 7},${cy - 4} ${x2},${cy} ${x2 - 7},${cy + 4}`}
+              fill={isBottleneck ? t.warn : t.teal}
+              style={{ opacity: 0, animation: `mwFadeIn 0.3s ${1.5 + i * 0.15}s forwards` }} />
+            {/* particle */}
+            <circle r="3.5" fill={isBottleneck ? t.warn : t.teal} opacity="0">
+              <animateMotion dur={`${dur}s`} begin={`${1.8 + i * 0.3}s`} repeatCount="indefinite" path={d} />
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1"
+                dur={`${dur}s`} begin={`${1.8 + i * 0.3}s`} repeatCount="indefinite" />
+            </circle>
+          </g>
+        );
+      })}
+
+      {/* nodes */}
+      {nodes.map((n, i) => (
+        <g key={n.id} style={{ animation: `mwFadeIn 0.4s ${0.2 + i * 0.1}s backwards` }}>
+          {n.bn && (
+            <>
+              <rect x={n.x - 4} y={cy - 30 - 4} width={138} height={68} rx="12"
+                fill={t.warn} fillOpacity="0.18" />
+              <rect x={n.x} y={cy - 30} width={130} height={60} rx="10"
+                fill="none" stroke={t.warn} strokeWidth="1.5" opacity="0.6"
+                style={{ animation: "mwPulseStroke 2s infinite" }} />
+            </>
+          )}
+          <rect x={n.x} y={cy - 30} width={130} height={60} rx="10"
+            fill={t.nodeFill} stroke={n.bn ? t.warn : t.teal} strokeWidth={n.bn ? 1.6 : 1.2} />
+          <text x={n.x + 65} y={cy - 6} textAnchor="middle"
+            fontFamily="'Courier New', monospace" fontSize="11" fontWeight="700"
+            fill={t.text1} letterSpacing="0.08em">{n.id}</text>
+          <g transform={`translate(${n.x + 65}, ${cy + 14})`}>
+            {!n.bn ? (
+              <>
+                <text textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+                  fill={t.ok} letterSpacing="0.05em">✓ {n.pct}</text>
+              </>
+            ) : (
+              <text textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+                fill={t.warn} letterSpacing="0.05em">⚠ {n.pct}</text>
+            )}
+          </g>
+        </g>
+      ))}
+
+      {/* warning badge above bottleneck arrow */}
+      <g style={{ animation: "mwFadeIn 0.5s 2s backwards" }}>
+        <rect x={385} y={130} width={170} height={36} rx="6"
+          fill={t.surface1} stroke={t.warn} strokeWidth="1.4"
+          style={{ animation: "mwPulseStroke 2.4s infinite" }} />
+        <text x={401} y={154} fontFamily="'Courier New', monospace" fontSize="13" fontWeight="700"
+          fill={t.warn}>⚠ +4.2 days avg</text>
+        <line x1={470} y1={166} x2={470} y2={196} stroke={t.warn} strokeWidth="1" strokeDasharray="3 3" />
+      </g>
+
+      {/* mini bar tooltip near APPROVE */}
+      <g style={{ animation: "mwFadeIn 0.5s 2.4s backwards" }}>
+        <rect x={420} y={310} width={170} height={120} rx="8"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={436} y={332} fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.text2} letterSpacing="0.12em">TIME · APPROVE STAGE</text>
+        {[20, 36, 64, 28].map((h, i) => (
+          <g key={i}>
+            <rect x={440 + i * 36} y={420 - h} width={26} height={h} rx="2"
+              fill={i === 2 ? t.warn : t.teal} opacity={i === 2 ? 0.95 : 0.6}
+              style={{ transformOrigin: `${453 + i * 36}px 420px`,
+                animation: `mwGrow 0.7s ${2.6 + i * 0.1}s cubic-bezier(.5,0,.2,1) backwards` }} />
+            <text x={453 + i * 36} y={434} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="8"
+              fill={t.text2}>{["1d","2d","4d+","1d"][i]}</text>
+          </g>
+        ))}
+      </g>
+
+      {/* small event log left */}
+      <g style={{ animation: "mwFadeIn 0.5s 0.4s backwards" }}>
+        <rect x={50} y={350} width={280} height={170} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={66} y={374} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="600"
+          fill={t.text2} letterSpacing="0.18em">EVENT LOG · LIVE</text>
+        <line x1={50} y1={384} x2={330} y2={384} stroke={t.border} />
+        {[
+          ["13:42:01", "validate.start  #2841", false],
+          ["13:42:08", "validate.wait   #2841", true],
+          ["13:46:14", "approve.queue   #2841", true],
+          ["13:50:02", "approve.start   #2841", false],
+          ["13:50:11", "approve.done    #2841", false],
+        ].map(([ts, msg, warn], i) => (
+          <g key={i}>
+            <circle cx={66} cy={400 + i * 22} r="2.5" fill={warn ? t.warn : t.teal} opacity="0.85" />
+            <text x={78} y={404 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={warn ? t.warn : t.text1}>{ts}</text>
+            <text x={150} y={404 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={warn ? t.warn : t.text2}>{msg}</text>
+          </g>
+        ))}
+      </g>
+
+      {/* METRIC STRIP — bottom row */}
+      {[
+        { label: "THROUGHPUT TIME", val: "4.2d",  sub: "avg end-to-end", x: 50  },
+        { label: "OPTIMISATION",    val: "74%",   sub: "score",          x: 330 },
+        { label: "EFFICIENCY RATE", val: "82%",   sub: "overall",        x: 610 },
+        { label: "CONFORMANCE",     val: "91%",   sub: "vs reference",   x: 890 },
+      ].map((m, i) => (
+        <g key={i} style={{ animation: `mwFadeIn 0.5s ${0.8 + i * 0.12}s backwards` }}>
+          <rect x={m.x} y={570} width={250} height={70} rx="10"
+            fill={t.surface1} stroke={t.border} strokeWidth="1" />
+          <text x={m.x + 16} y={592} fontFamily="'Courier New', monospace" fontSize="9"
+            fill={t.text2} letterSpacing="0.14em">{m.label}</text>
+          <text x={m.x + 16} y={624} fontFamily="'Inter', sans-serif" fontSize="28" fontWeight="900"
+            fill={t.teal} letterSpacing="-0.02em">{m.val}</text>
+          <text x={m.x + 16} y={637} fontFamily="'Courier New', monospace" fontSize="8.5"
+            fill={t.text2} letterSpacing="0.1em">{m.sub}</text>
+        </g>
+      ))}
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   4. AUTOMATION — Agent Network
+============================================================ */
+function SchemAutomation({ t, mode }) {
+  const cx = 610, cy = 280;
+  const tasks = [
+    { name: "EMAIL TRIAGE",   side: "L", row: 0 },
+    { name: "DATA SYNC",      side: "L", row: 1 },
+    { name: "ALERT ROUTING",  side: "L", row: 2 },
+    { name: "CRM UPDATE",     side: "R", row: 0 },
+    { name: "REPORT GEN",     side: "R", row: 1 },
+    { name: "INVOICE MATCH",  side: "R", row: 2 },
+  ];
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={cx} cy={cy} r="240" fill={`url(#modelGlow-${mode})`} />
+
+      {/* spinning dashed ring */}
+      <g style={{ animation: "mwSpin 40s linear infinite", transformOrigin: `${cx}px ${cy}px` }}>
+        <circle cx={cx} cy={cy} r="115" fill="none" stroke={t.teal} strokeWidth="1.2"
+          strokeOpacity="0.5" strokeDasharray="6 8" />
+      </g>
+      <circle cx={cx} cy={cy} r="155" fill="none" stroke={t.teal} strokeWidth="0.8"
+        strokeOpacity="0.18" strokeDasharray="2 4" />
+
+      {/* central hexagon */}
+      <g>
+        <polygon
+          points={`${cx},${cy-90} ${cx+78},${cy-45} ${cx+78},${cy+45} ${cx},${cy+90} ${cx-78},${cy+45} ${cx-78},${cy-45}`}
+          fill={t.modelFill} stroke={t.teal} strokeWidth="1.6" />
+        <text x={cx} y={cy - 14} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE</text>
+        <text x={cx} y={cy + 8} textAnchor="middle" fontFamily="'Inter', sans-serif" fontSize="18" fontWeight="900"
+          fill={t.modelInk} letterSpacing="-0.02em">AI AGENT</text>
+        <text x={cx} y={cy + 30} textAnchor="middle" fontFamily="'Inter', sans-serif" fontSize="18" fontWeight="900"
+          fill={t.modelInk} letterSpacing="-0.02em">CORE</text>
+        <circle cx={cx + 55} cy={cy - 60} r={4} fill={t.teal}
+          style={{ animation: "mwPulse 1.6s infinite" }} />
+      </g>
+
+      {/* task nodes around it */}
+      {tasks.map((task, i) => {
+        const isLeft = task.side === "L";
+        const x = isLeft ? 80 : 920;
+        const y = 130 + task.row * 150;
+        const tx = isLeft ? x + 200 : x;
+        const sx = isLeft ? cx - 80 : cx + 80;
+        const sy = cy + (task.row - 1) * 35;
+        const d = isLeft
+          ? `M ${tx} ${y + 28} C ${(tx + sx) / 2} ${y + 28}, ${(tx + sx) / 2} ${sy}, ${sx} ${sy}`
+          : `M ${tx} ${y + 28} C ${(tx + sx) / 2} ${y + 28}, ${(tx + sx) / 2} ${sy}, ${sx} ${sy}`;
+        const phase = (i % 3); // stagger statuses
+        const statusKey = ["queued", "running", "done"][phase];
+        const statusColor = phase === 0 ? t.text2 : phase === 1 ? t.teal : t.ok;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={t.teal} strokeOpacity="0.6" strokeWidth="1.2"
+              strokeDasharray="5 5"
+              style={{
+                strokeDashoffset: 0,
+                animation: `mwDashFlow ${isLeft ? 6 : -6}s linear infinite`,
+              }} />
+            <rect x={x} y={y} width={200} height={56} rx="10"
+              fill={t.nodeFill} stroke={t.border} strokeWidth="1"
+              style={{ animation: `mwFadeIn 0.5s ${0.3 + i * 0.1}s backwards` }} />
+            <text x={x + 16} y={y + 24} fontFamily="'Courier New', monospace" fontSize="11" fontWeight="700"
+              fill={t.text1} letterSpacing="0.08em">{task.name}</text>
+            {/* status badge */}
+            <g style={{ animation: `mwBadgeCycle 6s ${i * 0.5}s infinite` }}>
+              <rect x={x + 16} y={y + 32} width={70} height={16} rx="3"
+                fill={statusColor} fillOpacity="0.18" />
+              <circle cx={x + 25} cy={y + 40} r="2.5" fill={statusColor}>
+                {phase === 1 && <animate attributeName="opacity" values="1;0.3;1" dur="0.8s" repeatCount="indefinite" />}
+              </circle>
+              <text x={x + 32} y={y + 44} fontFamily="'Courier New', monospace" fontSize="9" fontWeight="700"
+                fill={statusColor} letterSpacing="0.1em">{statusKey.toUpperCase()}</text>
+            </g>
+            <text x={x + 184} y={y + 44} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9"
+              fill={t.text2} letterSpacing="0.08em">→ {Math.floor(Math.random() * 40 + 10)}/h</text>
+          </g>
+        );
+      })}
+
+      {/* stat counter */}
+      <g style={{ animation: "mwFadeIn 0.6s 1.6s backwards" }}>
+        <rect x={920} y={490} width={280} height={50} rx="10"
+          fill={t.surface1} stroke={t.teal} strokeWidth="1" />
+        <CountUp to={247} dur={1.8}
+          x={940} y={522}
+          fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700"
+          fill={t.teal} letterSpacing="0.06em" />
+        <text x={970} y={522} fontFamily="'Courier New', monospace" fontSize="11" fontWeight="600"
+          fill={t.text2} letterSpacing="0.08em">tasks · 31h saved this week</text>
+      </g>
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+Object.assign(window, { SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* global React, NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   5. STRATEGY — Quadrant matrix + OKR bars
+============================================================ */
+function SchemStrategy({ t, mode }) {
+  // 2x2 quadrant on the left (60-540 x 80-440)
+  const qx0 = 90, qy0 = 110, qw = 460, qh = 360;
+  const cx = qx0 + qw / 2, cy = qy0 + qh / 2;
+
+  const bubbles = [
+    { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,           label: "Quick Wins",      sub: "5 ITEMS",  delay: 0.8 },
+    { x: qx0 + 360, y: qy0 + 110, r: 38, fill: t.surface2,        label: "Market Expansion", sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
+    { x: qx0 + 130, y: qy0 + 270, r: 26, fill: t.surface2,        label: "Foundation",      sub: "4 ITEMS",  delay: 1.3,  stroke: t.teal },
+    { x: qx0 + 360, y: qy0 + 280, r: 18, fill: t.surface2,        label: "Defer",           sub: "2 ITEMS",  delay: 1.55, muted: true },
+  ];
+
+  const okrs = [
+    { label: "Market Share Growth",   pct: 78, delay: 1.4 },
+    { label: "Operational Efficiency",pct: 92, delay: 1.7 },
+    { label: "Customer NPS",          pct: 61, delay: 2.0 },
+  ];
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={cx} cy={cy} r="220" fill={`url(#modelGlow-${mode})`} opacity="0.6" />
+
+      {/* QUADRANT */}
+      <g>
+        {/* axes */}
+        <line x1={qx0} y1={qy0} x2={qx0} y2={qy0 + qh} stroke={t.teal} strokeWidth="1.4" />
+        <line x1={qx0} y1={qy0 + qh} x2={qx0 + qw} y2={qy0 + qh} stroke={t.teal} strokeWidth="1.4" />
+        {/* dashed midlines */}
+        <line x1={qx0 + qw / 2} y1={qy0} x2={qx0 + qw / 2} y2={qy0 + qh}
+          stroke={t.border} strokeWidth="1" strokeDasharray="3 4" />
+        <line x1={qx0} y1={qy0 + qh / 2} x2={qx0 + qw} y2={qy0 + qh / 2}
+          stroke={t.border} strokeWidth="1" strokeDasharray="3 4" />
+
+        {/* axis arrows */}
+        <polygon points={`${qx0 - 4},${qy0 + 8} ${qx0 + 4},${qy0 + 8} ${qx0},${qy0 - 4}`} fill={t.teal} />
+        <polygon points={`${qx0 + qw - 8},${qy0 + qh - 4} ${qx0 + qw - 8},${qy0 + qh + 4} ${qx0 + qw + 4},${qy0 + qh}`} fill={t.teal} />
+
+        {/* labels */}
+        <text x={qx0 - 12} y={qy0 + 8} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+          fontWeight="700" fill={t.teal} letterSpacing="0.12em">IMPACT</text>
+        <text x={qx0 + qw + 14} y={qy0 + qh + 4} fontFamily="'Courier New', monospace" fontSize="10"
+          fontWeight="700" fill={t.teal} letterSpacing="0.12em">EFFORT</text>
+        {/* quadrant captions */}
+        <text x={qx0 + 10} y={qy0 + 22} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.text2} letterSpacing="0.15em">HIGH IMPACT · LOW EFFORT</text>
+        <text x={qx0 + qw / 2 + 10} y={qy0 + 22} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.text2} letterSpacing="0.15em">HIGH IMPACT · HIGH EFFORT</text>
+        <text x={qx0 + 10} y={qy0 + qh / 2 + 16} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.text2} letterSpacing="0.15em">LOW IMPACT · LOW EFFORT</text>
+        <text x={qx0 + qw / 2 + 10} y={qy0 + qh / 2 + 16} fontFamily="'Courier New', monospace" fontSize="9"
+          fill={t.text2} letterSpacing="0.15em">LOW IMPACT · HIGH EFFORT</text>
+
+        {/* bubbles */}
+        {bubbles.map((b, i) => (
+          <g key={i} style={{
+            transformOrigin: `${b.x}px ${b.y}px`,
+            animation: `mwPop 0.6s ${b.delay}s cubic-bezier(.2,1.4,.4,1) backwards`,
+          }}>
+            <circle cx={b.x} cy={b.y} r={b.r} fill={b.fill} stroke={b.stroke || "none"}
+              strokeWidth="1.4" opacity={b.muted ? 0.5 : 0.95} />
+            <text x={b.x} y={b.y - 2} textAnchor="middle" fontFamily="'Inter', sans-serif"
+              fontSize="13" fontWeight="900"
+              fill={b.fill === t.teal ? t.bg : t.text1}
+              letterSpacing="-0.01em">{b.label}</text>
+            <text x={b.x} y={b.y + 14} textAnchor="middle" fontFamily="'Courier New', monospace"
+              fontSize="9" fill={b.fill === t.teal ? t.bg : t.text2}
+              letterSpacing="0.1em" opacity="0.75">{b.sub}</text>
+          </g>
+        ))}
+
+        <text x={qx0 + 10} y={qy0 + qh + 24} fontFamily="'Courier New', monospace" fontSize="10"
+          fontWeight="600" fill={t.text2} letterSpacing="0.18em">PRIORITISATION MATRIX</text>
+      </g>
+
+      {/* RIGHT — OKR bars */}
+      <g>
+        <text x={620} y={120} fontFamily="'Courier New', monospace" fontSize="11"
+          fontWeight="700" fill={t.text2} letterSpacing="0.18em">OKRs · Q4 PROGRESS</text>
+        {okrs.map((o, i) => {
+          const y = 160 + i * 70, w = 540;
+          return (
+            <g key={i}>
+              <text x={620} y={y - 8} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="600"
+                fill={t.text1}>{o.label}</text>
+              <text x={620 + w} y={y - 8} textAnchor="end" fontFamily="'Inter', sans-serif" fontSize="14"
+                fontWeight="900" fill={t.text1} letterSpacing="-0.02em">{o.pct}%</text>
+              <rect x={620} y={y} width={w} height={14} rx="3" fill={t.surface2} />
+              <rect x={620} y={y} width={w} height={14} rx="3" fill={t.teal}
+                style={{
+                  transformOrigin: `620px ${y}px`,
+                  animation: `mwBarFill-${i} 1.4s ${o.delay}s cubic-bezier(.5,0,.2,1) forwards`,
+                  transform: "scaleX(0)",
+                }} />
+              <style>{`@keyframes mwBarFill-${i} { to { transform: scaleX(${o.pct / 100}); } }`}</style>
+            </g>
+          );
+        })}
+
+        {/* line chart below */}
+        <g style={{ animation: "mwFadeIn 0.6s 2.4s backwards" }}>
+          <text x={620} y={400} fontFamily="'Courier New', monospace" fontSize="10"
+            fontWeight="700" fill={t.text2} letterSpacing="0.15em">PERFORMANCE · 6 PERIODS</text>
+          <rect x={620} y={414} width={540} height={110} rx="8"
+            fill={t.surface1} stroke={t.border} strokeWidth="1" />
+          {/* gridlines */}
+          {[0, 1, 2, 3].map(i => (
+            <line key={i} x1={636} y1={428 + i * 28} x2={1144} y2={428 + i * 28}
+              stroke={t.surface2} strokeWidth="1" opacity="0.5" />
+          ))}
+          <polyline
+            points="640,500 720,488 800,494 880,470 960,462 1040,448 1120,422"
+            fill="none" stroke={t.teal} strokeWidth="2.4" strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ strokeDasharray: 600, strokeDashoffset: 600,
+              animation: "mwDraw 1.6s 2.6s cubic-bezier(.5,0,.2,1) forwards" }} />
+          {/* end dot with pulse */}
+          <circle cx={1120} cy={422} r="5" fill={t.teal}
+            style={{ animation: "mwFadeIn 0.4s 4s backwards" }} />
+          <circle cx={1120} cy={422} r="10" fill="none" stroke={t.teal} strokeWidth="1.5"
+            style={{ animation: "mwPulseRing 1.6s 4s infinite" }} />
+        </g>
+      </g>
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   6. DATA ENGINEERING — ETL Pipeline
+============================================================ */
+function SchemDataEng({ t, mode }) {
+  const sources = [
+    { y: 95,  label: "CRM",            sub: "salesforce · hubspot",  status: "ok"   },
+    { y: 230, label: "ERP",            sub: "netsuite · sap",        status: "warn" },
+    { y: 365, label: "3rd-PARTY APIs", sub: "stripe · meta · ga4",   status: "ok"   },
+  ];
+
+  const outs = [
+    { y: 110, label: "BI LAYER",   sub: "dashboards · reports" },
+    { y: 250, label: "ML MODELS",  sub: "forecasts · scoring"  },
+    { y: 390, label: "AUTOMATION", sub: "agents · workflows"   },
+  ];
+
+  const wx = 460, wy = 130, ww = 320, wh = 320;
+  const cx = wx + ww / 2, cy = wy + wh / 2;
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs>
+        <EdgeDefs t={t} mode={mode} />
+        <linearGradient id={`edgeOk-${mode}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={t.ok} stopOpacity="0.2" />
+          <stop offset="100%" stopColor={t.ok} stopOpacity="0.85" />
+        </linearGradient>
+      </defs>
+      <circle cx={cx} cy={cy} r="220" fill={`url(#modelGlow-${mode})`} />
+
+      {/* SOURCE icons */}
+      {sources.map((s, i) => {
+        const x = 50, w = 220;
+        return (
+          <g key={i} style={{ animation: `mwFadeIn 0.5s ${0.2 + i * 0.1}s backwards` }}>
+            <rect x={x} y={s.y - 32} width={w} height={64} rx="10"
+              fill={t.nodeFill} stroke={t.border} strokeWidth="1" />
+            {/* icon */}
+            <g transform={`translate(${x + 16}, ${s.y - 16})`}>
+              {i === 0 && (
+                <g stroke={t.teal} strokeWidth="1.6" fill="none">
+                  <circle cx={16} cy={12} r="6" />
+                  <path d="M4 30 Q 16 20, 28 30" strokeLinecap="round" />
+                </g>
+              )}
+              {i === 1 && (
+                <g stroke={t.teal} strokeWidth="1.6" fill="none">
+                  {[0,1,2].map(r => [0,1,2].map(c => (
+                    <rect key={`${r}${c}`} x={c * 10} y={r * 10} width={8} height={8} rx="1" />
+                  )))}
+                </g>
+              )}
+              {i === 2 && (
+                <g stroke={t.teal} strokeWidth="1.6" fill="none">
+                  <circle cx={6}  cy={6}  r="3" />
+                  <circle cx={26} cy={6}  r="3" />
+                  <circle cx={16} cy={20} r="3" />
+                  <circle cx={6}  cy={32} r="3" />
+                  <circle cx={26} cy={32} r="3" />
+                  <line x1={6}  y1={6}  x2={16} y2={20} />
+                  <line x1={26} y1={6}  x2={16} y2={20} />
+                  <line x1={16} y1={20} x2={6}  y2={32} />
+                  <line x1={16} y1={20} x2={26} y2={32} />
+                </g>
+              )}
+            </g>
+            <text x={x + 70} y={s.y - 6} fontFamily="'Courier New', monospace" fontSize="13" fontWeight="700"
+              fill={t.text1} letterSpacing="0.08em">{s.label}</text>
+            <text x={x + 70} y={s.y + 12} fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={t.text2} letterSpacing="0.08em">{s.sub.toUpperCase()}</text>
+            <circle cx={x + w - 16} cy={s.y - 16} r="3.5"
+              fill={s.status === "warn" ? t.warn : t.ok}>
+              <animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        );
+      })}
+
+      {/* INCOMING arrows (1 amber, briefly) */}
+      {sources.map((s, i) => {
+        const x1 = 270, x2 = wx;
+        const y2 = wy + 50 + i * 110;
+        const d = `M ${x1} ${s.y} C ${(x1 + x2) / 2} ${s.y}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`;
+        const isWarn = i === 1;
+        const grad = isWarn ? `edgeWarn-${mode}` : `edgeOk-${mode}`;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={`url(#${grad})`} strokeWidth="1.8"
+              style={{ strokeDasharray: 600, strokeDashoffset: 600,
+                animation: `mwDraw 1.4s ${0.7 + i * 0.12}s cubic-bezier(.5,0,.2,1) forwards` }} />
+            {/* moving packet */}
+            <rect width="6" height="6" rx="1" fill={isWarn ? t.warn : t.ok} opacity="0">
+              <animateMotion dur={isWarn ? "3.4s" : "2.8s"} begin={`${1.8 + i * 0.4}s`}
+                repeatCount="indefinite" path={d} />
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1"
+                dur={isWarn ? "3.4s" : "2.8s"} begin={`${1.8 + i * 0.4}s`} repeatCount="indefinite" />
+            </rect>
+          </g>
+        );
+      })}
+
+      {/* WAREHOUSE */}
+      <g>
+        <rect x={wx} y={wy} width={ww} height={wh} rx="14"
+          fill={t.modelFill} stroke={t.teal} strokeWidth="1.6" />
+        {/* pulsing inner glow */}
+        <rect x={wx + 4} y={wy + 4} width={ww - 8} height={wh - 8} rx="11"
+          fill="none" stroke={t.teal} strokeWidth="1" opacity="0.3"
+          style={{ animation: "mwPulseStroke 2.4s infinite" }} />
+        {/* inner grid */}
+        <g opacity="0.18">
+          {[1,2,3,4,5].map(i => (
+            <line key={`h${i}`} x1={wx} y1={wy + i * 50} x2={wx + ww} y2={wy + i * 50}
+              stroke={t.surface2} strokeWidth="1" />
+          ))}
+          {[1,2,3,4,5].map(i => (
+            <line key={`v${i}`} x1={wx + i * 53} y1={wy} x2={wx + i * 53} y2={wy + wh}
+              stroke={t.surface2} strokeWidth="1" />
+          ))}
+        </g>
+        {/* DB cylinder icon */}
+        <g transform={`translate(${cx - 32}, ${wy + 60})`}>
+          <ellipse cx={32} cy={6} rx="32" ry="8" fill={t.teal} fillOpacity="0.9" />
+          <rect x={0} y={6} width={64} height={50} fill={t.teal} fillOpacity="0.55" />
+          <ellipse cx={32} cy={56} rx="32" ry="8" fill={t.teal} fillOpacity="0.65" />
+          <ellipse cx={32} cy={6} rx="32" ry="8" fill="none" stroke={t.teal} strokeWidth="1.2" />
+          <ellipse cx={32} cy={26} rx="32" ry="8" fill="none" stroke={t.modelFill} strokeOpacity="0.4" />
+          <ellipse cx={32} cy={46} rx="32" ry="8" fill="none" stroke={t.modelFill} strokeOpacity="0.4" />
+        </g>
+
+        <text x={cx} y={wy + 24} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / WAREHOUSE</text>
+
+        <text x={cx} y={wy + 200} textAnchor="middle"
+          fontFamily="'Inter', sans-serif" fontSize="22" fontWeight="900"
+          fill={t.modelInk} letterSpacing="-0.02em">14.2M rows</text>
+
+        <AgoTicker x={cx} y={wy + 226}
+          textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.modelInk} fillOpacity="0.55" letterSpacing="0.1em" />
+
+        {/* mini bars at bottom */}
+        <g transform={`translate(${wx + 30}, ${wy + wh - 30})`}>
+          {Array.from({ length: 28 }).map((_, i) => (
+            <rect key={i} x={i * 9} y={-12}
+              width={5} height={3 + Math.abs(Math.sin(i * 0.7)) * 12}
+              fill={t.teal}
+              opacity={0.4 + Math.abs(Math.sin(i * 0.7)) * 0.5}
+              style={{ transformOrigin: "bottom",
+                animation: `mwBar 1.4s ${i * 60}ms ease-in-out infinite alternate` }} />
+          ))}
+        </g>
+        <circle cx={wx + ww - 18} cy={wy + 18} r={4} fill={t.teal}
+          style={{ animation: "mwPulse 1.6s infinite" }} />
+      </g>
+
+      {/* OUTPUTS with packets */}
+      {outs.map((o, i) => {
+        const x = 880, w = 280;
+        const y2 = wy + 50 + i * 110;
+        const x1 = wx + ww;
+        const d = `M ${x1} ${y2} C ${(x1 + x) / 2} ${y2}, ${(x1 + x) / 2} ${o.y}, ${x} ${o.y}`;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={`url(#edgeOut-${mode})`} strokeWidth="1.8"
+              style={{ strokeDasharray: 600, strokeDashoffset: 600,
+                animation: `mwDraw 1.4s ${1.4 + i * 0.12}s cubic-bezier(.5,0,.2,1) forwards` }} />
+            {/* loop of small packets */}
+            {[0, 1, 2].map(p => (
+              <rect key={p} width="5" height="5" rx="1" fill={t.teal} opacity="0">
+                <animateMotion dur="2.8s" begin={`${2.4 + i * 0.3 + p * 0.93}s`}
+                  repeatCount="indefinite" path={d} />
+                <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1"
+                  dur="2.8s" begin={`${2.4 + i * 0.3 + p * 0.93}s`} repeatCount="indefinite" />
+              </rect>
+            ))}
+            <rect x={x} y={o.y - 32} width={w} height={64} rx="10"
+              fill={t.nodeFill} stroke={t.teal} strokeWidth="1.2" />
+            <circle cx={x + 16} cy={o.y - 16} r="3.5" fill={t.teal}>
+              <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite" />
+            </circle>
+            <text x={x + 28} y={o.y - 8} fontFamily="'Courier New', monospace" fontSize="13" fontWeight="700"
+              fill={t.text1} letterSpacing="0.08em">{o.label}</text>
+            <text x={x + 28} y={o.y + 12} fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={t.text2} letterSpacing="0.08em">{o.sub.toUpperCase()}</text>
+            <text x={x + w - 14} y={o.y + 22} textAnchor="end" fontFamily="'Courier New', monospace"
+              fontSize="9" fill={t.teal} letterSpacing="0.1em">→ LIVE</text>
+          </g>
+        );
+      })}
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   7. BLOG — Editorial Stack
+============================================================ */
+function SchemBlog({ t, mode }) {
+  const cards = [
+    {
+      cat: "BUSINESS & INDUSTRY", date: "Apr 25 · 2026", read: "8 min",
+      title: "Apple's Next Chapter: John Ternus, New Hardware, and a New Direction.",
+      delay: 0,    op: 1.0,  x: 640, y: 100,
+    },
+    {
+      cat: "DATA STORIES", date: "Apr 22 · 2026", read: "6 min",
+      title: "The Tools Turning Raw Data Into Business Stories.",
+      delay: 0.2,  op: 0.85, x: 720, y: 230,
+    },
+    {
+      cat: "AI & TECH", date: "Apr 18 · 2026", read: "8 min",
+      title: "The Rise of AI Agents — And How Work Is Quietly Changing.",
+      delay: 0.4,  op: 0.7,  x: 800, y: 360,
+    },
+  ];
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={780} cy={280} r="240" fill={`url(#modelGlow-${mode})`} />
+
+      {/* spine */}
+      <line x1={580} y1={120} x2={580} y2={420} stroke={t.teal} strokeWidth="1.5" />
+      {cards.map((c, i) => (
+        <circle key={i} cx={580} cy={c.y + 100} r="5"
+          fill={t.teal}
+          style={{ animation: `mwFadeIn 0.4s ${c.delay + 0.3}s backwards` }} />
+      ))}
+      <text x={580} y={104} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="9"
+        fontWeight="700" fill={t.text2} letterSpacing="0.18em">EDITORIAL</text>
+
+      {/* cards stacked, fanned */}
+      {cards.slice().reverse().map((c, ri) => {
+        const i = cards.length - 1 - ri;
+        const cw = 380, ch = 200;
+        return (
+          <g key={i}
+            opacity={c.op}
+            style={{ animation: `mwSlideInR 0.6s ${c.delay}s backwards` }}
+          >
+            <rect x={c.x} y={c.y} width={cw} height={ch} rx="14"
+              fill={t.nodeFill} stroke={t.border} strokeWidth="1" />
+            {/* image placeholder block */}
+            <rect x={c.x + 16} y={c.y + 16} width={88} height={88} rx="6"
+              fill={t.teal} fillOpacity="0.18" />
+            {/* category tag */}
+            <text x={c.x + 120} y={c.y + 36} fontFamily="'Courier New', monospace"
+              fontSize="10" fontWeight="700" fill={t.teal} letterSpacing="0.18em">· {c.cat} ·</text>
+            {/* headline */}
+            <foreignObject x={c.x + 120} y={c.y + 46} width={cw - 136} height={70}>
+              <div xmlns="http://www.w3.org/1999/xhtml" style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 14, fontWeight: 700, lineHeight: 1.3,
+                color: t.text1, textWrap: "balance",
+              }}>{c.title}</div>
+            </foreignObject>
+            {/* footer */}
+            <line x1={c.x + 16} y1={c.y + ch - 38} x2={c.x + cw - 16} y2={c.y + ch - 38}
+              stroke={t.border} />
+            <rect x={c.x + 16} y={c.y + ch - 28} width={56} height={18} rx="9"
+              fill={t.surface2} />
+            <text x={c.x + 44} y={c.y + ch - 15} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="9" fontWeight="700"
+              fill={t.text1} letterSpacing="0.1em">{c.read.toUpperCase()}</text>
+            <text x={c.x + cw - 16} y={c.y + ch - 14} textAnchor="end"
+              fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={t.text2} letterSpacing="0.1em">{c.date.toUpperCase()}</text>
+          </g>
+        );
+      })}
+
+      {/* reader stats badge */}
+      <g style={{ animation: "mwFadeIn 0.6s 1.2s backwards" }}>
+        <rect x={840} y={485} width={340} height={50} rx="10"
+          fill={t.surface1} stroke={t.teal} strokeWidth="1" />
+        <text x={860} y={517} fontFamily="'Courier New', monospace" fontSize="12" fontWeight="700"
+          fill={t.teal} letterSpacing="0.06em">8 min avg read · 2,400 monthly readers</text>
+      </g>
+
+      {/* small "read more" arrows */}
+      {cards.map((c, i) => (
+        <g key={i} style={{ animation: `mwFadeIn 0.4s ${c.delay + 0.6}s backwards` }} opacity={c.op}>
+          <text x={c.x + 380 - 32} y={c.y + 36} textAnchor="end"
+            fontFamily="'Courier New', monospace" fontSize="11" fill={t.text2}>→</text>
+        </g>
+      ))}
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+/* ============================================================
+   8. INDUSTRIES — Hexagon Cluster
+============================================================ */
+function SchemIndustries({ t, mode }) {
+  const hexes = [
+    { id: "logistics", row: 0, col: 0, label: "LOGISTICS",      stat: "MTL Moving · Dynamic Movers" },
+    { id: "saas",      row: 0, col: 1, label: "REGULATED SAAS", stat: "150+ product releases" },
+    { id: "gov",       row: 0, col: 2, label: "GOV & POLICY",   stat: "€3.3M EU programme" },
+    { id: "nonprofit", row: 1, col: 0, label: "NON-PROFIT",     stat: "3,000+ municipalities" },
+    { id: "edu",       row: 1, col: 1, label: "EDUCATION",      stat: "2 Notre Dame alumni" },
+    { id: "ai",        row: 1, col: 2, label: "AI GOVERNANCE",  stat: "The Future Society" },
+  ];
+
+  const HEX_R = 75;        // radius
+  const HEX_W = HEX_R * Math.sqrt(3);
+  const HEX_H = HEX_R * 2;
+  const VERT_GAP = HEX_R * 1.5;
+  const ORIGIN_X = 250, ORIGIN_Y = 160;
+
+  function hexPos(row, col) {
+    const x = ORIGIN_X + col * HEX_W + (row % 2 === 1 ? HEX_W / 2 : 0);
+    const y = ORIGIN_Y + row * VERT_GAP;
+    return { x, y };
+  }
+
+  function hexPoints(cx, cy, r = HEX_R) {
+    const pts = [];
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI / 3) * i - Math.PI / 2;
+      pts.push(`${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`);
+    }
+    return pts.join(" ");
+  }
+
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setActive((p) => (p + 1) % hexes.length), 2500);
+    return () => clearInterval(id);
+  }, []);
+
+  const activeHex = hexes[active];
+  const pos = hexPos(activeHex.row, activeHex.col);
+
+  // Simple icons per industry
+  const Icon = ({ id, color, x, y }) => {
+    const s = 1.4;
+    return (
+      <g transform={`translate(${x - 14}, ${y - 14}) scale(${s})`} stroke={color} strokeWidth="1.4" fill="none" strokeLinecap="round">
+        {id === "logistics" && (
+          <g>
+            <rect x={1} y={6} width={12} height={8} />
+            <path d="M13 8 L18 8 L20 12 L20 14 L13 14" />
+            <circle cx={5}  cy={16} r="1.6" fill={color} />
+            <circle cx={16} cy={16} r="1.6" fill={color} />
+          </g>
+        )}
+        {id === "saas" && (
+          <path d="M10 1 L18 4 L18 11 C 18 15, 14 18, 10 19 C 6 18, 2 15, 2 11 L 2 4 Z" />
+        )}
+        {id === "gov" && (
+          <g>
+            <path d="M2 18 L18 18" />
+            <path d="M3 18 L3 7 M7 18 L7 7 M13 18 L13 7 M17 18 L17 7" />
+            <path d="M1 7 L19 7 L10 1 Z" />
+          </g>
+        )}
+        {id === "nonprofit" && (
+          <g>
+            <circle cx={10} cy={10} r="8" />
+            <ellipse cx={10} cy={10} rx="3" ry="8" />
+            <path d="M2 10 L18 10" />
+          </g>
+        )}
+        {id === "edu" && (
+          <g>
+            <path d="M1 7 L10 3 L19 7 L10 11 Z" />
+            <path d="M5 9 L5 14 C 5 16, 15 16, 15 14 L 15 9" />
+            <path d="M19 7 L19 12" />
+          </g>
+        )}
+        {id === "ai" && (
+          <g>
+            <circle cx={10} cy={10} r="6" />
+            <circle cx={10} cy={10} r="2" fill={color} />
+            <path d="M10 4 L10 1 M10 16 L10 19 M4 10 L1 10 M16 10 L19 10" />
+          </g>
+        )}
+      </g>
+    );
+  };
+
+  return (
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <circle cx={400} cy={280} r="260" fill={`url(#modelGlow-${mode})`} />
+
+      {/* connector lines between adjacent hexes */}
+      {hexes.map((h, i) => hexes.slice(i + 1).map((other, j) => {
+        const pa = hexPos(h.row, h.col), pb = hexPos(other.row, other.col);
+        const dist = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+        if (dist > HEX_W * 1.4) return null;
+        return (
+          <line key={`${i}-${j}`} x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
+            stroke={t.teal} strokeWidth="0.7" strokeDasharray="2 4" opacity="0.35" />
+        );
+      }))}
+
+      {/* hexes */}
+      {hexes.map((h, i) => {
+        const p = hexPos(h.row, h.col);
+        const isActive = i === active;
+        return (
+          <g key={h.id}
+            style={{
+              transformOrigin: `${p.x}px ${p.y}px`,
+              animation: `mwPop 0.5s ${0.2 + i * 0.15}s cubic-bezier(.2,1.4,.4,1) backwards`,
+              transition: "all 0.3s ease",
+            }}>
+            <polygon points={hexPoints(p.x, p.y)}
+              fill={isActive ? t.teal : t.nodeFill}
+              stroke={isActive ? t.teal : t.border}
+              strokeWidth={isActive ? 1.8 : 1.2} />
+            {isActive && (
+              <polygon points={hexPoints(p.x, p.y, HEX_R + 6)}
+                fill="none" stroke={t.teal} strokeWidth="1.2" opacity="0.4"
+                style={{ animation: "mwPulseStroke 2s infinite" }} />
+            )}
+            <Icon id={h.id} x={p.x} y={p.y - 18}
+              color={isActive ? (mode === "dark" ? t.bg : "#FFFFFF") : t.teal} />
+            <text x={p.x} y={p.y + 22} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+              fill={isActive ? (mode === "dark" ? t.bg : "#FFFFFF") : t.text1}
+              letterSpacing="0.08em">{h.label}</text>
+          </g>
+        );
+      })}
+
+      {/* floating stat card to the right of active hex */}
+      <g key={active} style={{ animation: "mwStatPop 2.5s ease forwards" }}>
+        <rect x={840} y={pos.y - 50} width={340} height={100} rx="12"
+          fill={t.surface1} stroke={t.teal} strokeWidth="1.4" />
+        <text x={860} y={pos.y - 22} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+          fill={t.teal} letterSpacing="0.18em">· CASE · {activeHex.label} ·</text>
+        <text x={860} y={pos.y + 6} fontFamily="'Inter', sans-serif" fontSize="20" fontWeight="900"
+          fill={t.text1} letterSpacing="-0.02em">{activeHex.stat}</text>
+        <text x={860} y={pos.y + 30} fontFamily="'Courier New', monospace" fontSize="10"
+          fill={t.text2} letterSpacing="0.1em">→ INDUSTRY EXPERIENCE</text>
+        {/* connector */}
+        <line x1={pos.x + HEX_R} y1={pos.y} x2={840} y2={pos.y}
+          stroke={t.teal} strokeWidth="1" strokeDasharray="3 4" opacity="0.6" />
+      </g>
+
+      <Crosshairs t={t} />
+    </svg>
+  );
+}
+
+Object.assign(window, { SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries });
+
+</script>
 
 <script type="text/babel" data-presets="env,react">
   window.MW_SERVICE = {
@@ -103,6 +1632,33 @@
   "navActive": "Blog"
 };
 </script>
-<script type="text/babel" data-presets="env,react" src="hero-app.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+/* global React, ServiceHero,
+   SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation,
+   SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries */
+
+/* Each page sets window.MW_SERVICE = { Schematic, eyebrow, headline, lead, ctaPrimary, ctaSecondary, ticker } */
+
+const MW_SCHEMATICS = {
+  analytics:   SchemAnalytics,
+  web:         SchemWeb,
+  process:     SchemProcess,
+  automation:  SchemAutomation,
+  strategy:    SchemStrategy,
+  dataeng:     SchemDataEng,
+  blog:        SchemBlog,
+  industries:  SchemIndustries,
+};
+
+function App() {
+  const cfg = window.MW_SERVICE;
+  const Schem = MW_SCHEMATICS[cfg.schematic];
+  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
 </body>
 </html>

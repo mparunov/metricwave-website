@@ -9,7 +9,7 @@ const { useState, useEffect } = React;
 ============================================================ */
 function SchemAnalytics({ t, mode }) {
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={680} cy={280} r="240" fill={`url(#modelGlow-${mode})`} />
 
@@ -165,7 +165,7 @@ function SchemWeb({ t, mode }) {
   const bx = 60, by = 100, bw = 580, bh = 380;
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={680} cy={280} r="260" fill={`url(#modelGlow-${mode})`} />
 
@@ -291,7 +291,7 @@ function SchemProcess({ t, mode }) {
   const cy = 230;
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={500} cy={cy} r="180" fill={`url(#warnGlow-${mode})`} opacity="0.4" />
 
@@ -406,6 +406,25 @@ function SchemProcess({ t, mode }) {
         ))}
       </g>
 
+      {/* METRIC STRIP — bottom row */}
+      {[
+        { label: "THROUGHPUT TIME", val: "4.2d",  sub: "avg end-to-end", x: 50  },
+        { label: "OPTIMISATION",    val: "74%",   sub: "score",          x: 330 },
+        { label: "EFFICIENCY RATE", val: "82%",   sub: "overall",        x: 610 },
+        { label: "CONFORMANCE",     val: "91%",   sub: "vs reference",   x: 890 },
+      ].map((m, i) => (
+        <g key={i} style={{ animation: `mwFadeIn 0.5s ${0.8 + i * 0.12}s backwards` }}>
+          <rect x={m.x} y={570} width={250} height={70} rx="10"
+            fill={t.surface1} stroke={t.border} strokeWidth="1" />
+          <text x={m.x + 16} y={592} fontFamily="'Courier New', monospace" fontSize="9"
+            fill={t.text2} letterSpacing="0.14em">{m.label}</text>
+          <text x={m.x + 16} y={624} fontFamily="'Inter', sans-serif" fontSize="28" fontWeight="900"
+            fill={t.teal} letterSpacing="-0.02em">{m.val}</text>
+          <text x={m.x + 16} y={637} fontFamily="'Courier New', monospace" fontSize="8.5"
+            fill={t.text2} letterSpacing="0.1em">{m.sub}</text>
+        </g>
+      ))}
+
       <Crosshairs t={t} />
     </svg>
   );
@@ -426,7 +445,7 @@ function SchemAutomation({ t, mode }) {
   ];
 
   return (
-    <svg viewBox="0 0 1220 560" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={cx} cy={cy} r="240" fill={`url(#modelGlow-${mode})`} />
 
