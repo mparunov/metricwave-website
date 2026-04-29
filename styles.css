@@ -61,10 +61,10 @@ body {
 [data-theme="light"] body {
     background-color: #FFFFFF;
     background-image:
-        linear-gradient(rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(rgba(200,200,212,0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 1px, transparent 1px);
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
     background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
     background-attachment: fixed;
     background-position: 0 36px, 0 0, 0 76px, 0 0;
@@ -672,10 +672,10 @@ a:hover {
     background-color: #f5f5f5;
     overflow: hidden;
     background-image:
-        linear-gradient(rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(rgba(200,200,212,0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 1px, transparent 1px);
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
     background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
     background-attachment: fixed;
     background-position: 0 36px, 0 0, 0 76px, 0 0;
@@ -869,10 +869,10 @@ a:hover {
 
 [data-theme="light"] .footer {
     background-image:
-        linear-gradient(rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 1px, transparent 1px),
-        linear-gradient(rgba(200,200,212,0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 1px, transparent 1px);
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
 }
 
 .footer-grid {
