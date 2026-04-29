@@ -47,6 +47,27 @@ body {
     background-color: var(--black);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Global grid pattern — matches the hero section grid */
+    background-image:
+        linear-gradient(rgba(58,58,58,0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58,58,58,0.16) 1px, transparent 1px),
+        linear-gradient(rgba(58,58,58,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58,58,58,0.10) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: fixed;
+    background-position: 0 36px, 0 0, 0 76px, 0 0;
+}
+
+[data-theme="light"] body {
+    background-color: #FFFFFF;
+    background-image:
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: fixed;
+    background-position: 0 36px, 0 0, 0 76px, 0 0;
 }
 
 /* Typography */
@@ -504,8 +525,9 @@ a:hover {
 
 .services-overview {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
+
+
 
 .section-title {
     text-align: center;
@@ -525,10 +547,11 @@ a:hover {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: var(--spacing-lg);
-    overflow: visible;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    gap: 1.75rem;
+    max-width: 1060px;
+    margin: var(--spacing-lg) auto 0;
 }
 
 .service-card {
@@ -582,23 +605,6 @@ a:hover {
     transform: scale(1.04);
     transform-origin: center center;
     transition: transform 0.4s ease;
-}
-
-/* number badge inside preview */
-.service-num {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 9px;
-    color: var(--teal);
-    letter-spacing: 0.18em;
-    background: var(--charcoal);
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: 1px solid var(--medium-gray);
-    z-index: 2;
-    line-height: 1;
 }
 
 /* monospace tag above title */
@@ -665,6 +671,14 @@ a:hover {
     padding: var(--spacing-xl) 0;
     background-color: #f5f5f5;
     overflow: hidden;
+    background-image:
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: fixed;
+    background-position: 0 36px, 0 0, 0 76px, 0 0;
 }
 
 .client-logos .section-title {
@@ -730,8 +744,9 @@ a:hover {
 
 .success-stories {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
+
+
 
 .stories-grid {
     display: grid;
@@ -799,7 +814,16 @@ a:hover {
 
 .cta-section {
     padding: var(--spacing-xl) 0;
-    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    background-color: var(--teal);
+    background-image:
+        linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%),
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: scroll, fixed, fixed, fixed, fixed;
+    background-position: 0 0, 0 36px, 0 0, 0 76px, 0 0;
     text-align: center;
 }
 
@@ -833,6 +857,22 @@ a:hover {
     background-color: var(--charcoal);
     padding: var(--spacing-lg) 0 var(--spacing-md);
     border-top: 2px solid var(--teal);
+    background-image:
+        linear-gradient(rgba(58,58,58,0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58,58,58,0.16) 1px, transparent 1px),
+        linear-gradient(rgba(58,58,58,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58,58,58,0.10) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: fixed;
+    background-position: 0 36px, 0 0, 0 76px, 0 0;
+}
+
+[data-theme="light"] .footer {
+    background-image:
+        linear-gradient(rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.25) 1px, transparent 1px),
+        linear-gradient(rgba(200,200,212,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,212,0.15) 1px, transparent 1px);
 }
 
 .footer-grid {
@@ -928,11 +968,12 @@ a:hover {
    =================================== */
 
 .page-hero {
-    background: linear-gradient(135deg, var(--charcoal) 0%, var(--black) 100%);
     padding: var(--spacing-lg) 0;
     text-align: center;
     border-bottom: 2px solid var(--teal);
 }
+
+
 
 .page-title {
     color: var(--white);
@@ -958,21 +999,21 @@ a:hover {
     padding: var(--spacing-xl) 0;
 }
 
-.mission-section {
-    background-color: var(--black);
-}
 
-.team-section {
-    background-color: var(--charcoal);
-}
 
-.credentials-section {
-    background-color: var(--black);
-}
 
-.philosophy-section {
-    background-color: var(--charcoal);
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 .content-grid {
     display: grid;
@@ -1039,7 +1080,6 @@ a:hover {
 /* Industries Section */
 .industries-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
 
 .industries-grid {
@@ -1083,7 +1123,6 @@ a:hover {
 /* Industries Main Page */
 .industries-main-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
 
 .industries-intro {
@@ -1175,7 +1214,6 @@ a:hover {
 /* Industry Detail Pages */
 .industry-detail-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
 
 .industry-detail-header {
@@ -1367,9 +1405,7 @@ a:hover {
     padding: var(--spacing-xl) 0;
 }
 
-.service-detail.alt-bg {
-    background-color: var(--charcoal);
-}
+
 
 .service-detail-grid {
     display: grid;
@@ -1583,8 +1619,9 @@ a:hover {
 /* How We Work */
 .how-we-work {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
+
+
 
 .process-grid {
     display: grid;
@@ -1627,7 +1664,6 @@ a:hover {
 
 .contact-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
 
 .contact-grid {
@@ -1713,7 +1749,6 @@ a:hover {
 /* What to Expect */
 .expect-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
 
 .expect-grid {
@@ -1760,8 +1795,9 @@ a:hover {
 /* FAQ Section */
 .faq-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
+
+
 
 .faq-grid {
     display: grid;
@@ -1789,10 +1825,99 @@ a:hover {
 }
 
 /* ===================================
+   Service Tools / Stack Section
+   =================================== */
+
+.service-tools {
+    padding: var(--spacing-xl) 0;
+}
+
+
+
+.service-tools-heading {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+}
+
+[data-theme="light"] .service-tools-heading {
+    color: var(--black);
+}
+
+.service-tools-subhead {
+    color: var(--light-gray);
+    font-size: 1rem;
+    margin-bottom: 2.25rem;
+    max-width: 580px;
+}
+
+[data-theme="light"] .service-tools-subhead {
+    color: var(--light-gray);
+}
+
+.tools-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    background-color: var(--dark-gray);
+    border: 1px solid rgba(45, 212, 191, 0.2);
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--light-gray);
+    transition: var(--transition);
+    white-space: nowrap;
+    cursor: default;
+}
+
+.tool-chip:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+    background-color: rgba(45, 212, 191, 0.08);
+}
+
+.tool-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+[data-theme="light"] .tool-chip {
+    background-color: var(--dark-gray);
+    border-color: rgba(13, 148, 136, 0.25);
+    color: var(--light-gray);
+}
+
+[data-theme="light"] .tool-chip:hover {
+    background-color: rgba(13, 148, 136, 0.08);
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+/* ===================================
    Responsive Design
    =================================== */
 
 @media (max-width: 768px) {
+    /* Disable fixed grid attachment on mobile to prevent iOS jank */
+    body,
+    .client-logos,
+    .cta-section,
+    .newsletter-cta,
+    .footer {
+        background-attachment: scroll;
+    }
+
     /* Navigation */
     .mobile-toggle {
         display: flex;
@@ -2248,8 +2373,9 @@ a:hover {
 
 .blog-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
+
+
 
 .blog-grid {
     display: grid;
@@ -2354,9 +2480,17 @@ a:hover {
 }
 
 .newsletter-cta {
-    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
     padding: var(--spacing-xl) 0;
     text-align: center;
+    background-image:
+        linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%),
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+    background-attachment: scroll, fixed, fixed, fixed, fixed;
+    background-position: 0 0, 0 36px, 0 0, 0 76px, 0 0;
 }
 
 .newsletter-content h2 {
@@ -2456,7 +2590,6 @@ a:hover {
    =================================== */
 
 .pricing-hero {
-    background: linear-gradient(135deg, var(--charcoal) 0%, var(--black) 100%);
     padding: var(--spacing-lg) 0;
     text-align: center;
     border-bottom: 2px solid var(--teal);
@@ -2464,8 +2597,9 @@ a:hover {
 
 .pricing-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
+
+
 
 .pricing-grid {
     display: grid;
@@ -2572,7 +2706,6 @@ a:hover {
 
 .pricing-faq {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
 
 .pricing-cta-section {
@@ -2945,7 +3078,6 @@ a:hover {
 /* Tech stack section */
 .tech-stack-section {
     padding: var(--spacing-lg) 0;
-    background-color: var(--charcoal);
 }
 
 .tech-grid {
@@ -3049,9 +3181,6 @@ a:hover {
 }
 
 /* Light mode overrides for service pages */
-[data-theme="light"] .tech-stack-section {
-    background-color: #f0f4f4;
-}
 
 [data-theme="light"] .tech-badge {
     background-color: #ffffff;
@@ -3316,7 +3445,6 @@ a:hover {
 /* ─── Origin Section ─────────────────────── */
 .about-origin-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
 
 .about-origin-grid {
@@ -3376,7 +3504,6 @@ a:hover {
 /* ─── Team Section ───────────────────────── */
 .about-team-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
 
 .about-team-grid {
@@ -3524,7 +3651,6 @@ a:hover {
 /* ─── Credentials Section ─────────────────── */
 .about-credentials-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
 
 .about-credentials-grid {
@@ -3578,8 +3704,9 @@ a:hover {
 /* ─── Sectors Section ─────────────────────── */
 .about-sectors-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--black);
 }
+
+
 
 .about-sectors-grid {
     display: grid;
@@ -3630,7 +3757,6 @@ a:hover {
 /* ─── Values Section ──────────────────────── */
 .about-values-section {
     padding: var(--spacing-xl) 0;
-    background-color: var(--charcoal);
 }
 
 .about-values-grid {

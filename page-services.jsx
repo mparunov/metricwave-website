@@ -10,12 +10,12 @@ const { useState, useEffect, useRef } = React;
 ============================================================ */
 
 const SERVICES = [
-  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs", lead: "Connect every source into one trusted analytics layer.", file: "service-analytics-bi.html" },
+  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs · REPORTING", lead: "Connect every source into one trusted analytics layer.", file: "service-analytics-bi.html" },
   { key: "web",        Schem: () => SchemWeb,        title: "Web Development",     tag: "DESIGN · BUILD · MAINTAIN", lead: "Fast, wired sites built into your analytics stack.", file: "service-web-development.html" },
-  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service-process-mining.html" },
-  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "AGENTS · LLMs · WORKFLOWS", lead: "AI agents handling repetitive work, end to end.", file: "service-automation-ai.html" },
+  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · ANALYSE · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service-process-mining.html" },
+  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "WORKFLOWS · AI AGENTS · LLMs", lead: "AI agents handling repetitive work, end to end.", file: "service-automation-ai.html" },
   { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service-business-strategy.html" },
-  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES", lead: "Pipelines and warehouses you can actually trust.", file: "service-data-engineering.html" },
+  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES · APIs", lead: "Pipelines and warehouses you can actually trust.", file: "service-data-engineering.html" },
 ];
 
 function ServiceTile({ s, t, mode }) {

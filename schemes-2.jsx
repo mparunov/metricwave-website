@@ -439,7 +439,7 @@ function SchemIndustries({ t, mode }) {
     { id: "gov",       row: 0, col: 2, label: "GOV & POLICY",   stat: "€3.3M EU programme" },
     { id: "nonprofit", row: 1, col: 0, label: "NON-PROFIT",     stat: "3,000+ municipalities" },
     { id: "edu",       row: 1, col: 1, label: "EDUCATION",      stat: "2 Notre Dame alumni" },
-    { id: "ai",        row: 1, col: 2, label: "AI GOVERNANCE",  stat: "The Future Society" },
+    { id: "ai",        row: 1, col: 2, label: "AI GOVERNANCE",  stat: "AI governance NGO" },
   ];
 
   const HEX_R = 75;        // radius
