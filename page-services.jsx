@@ -26,7 +26,7 @@ function ServiceTile({ s, t, mode }) {
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{
         display: "block", textDecoration: "none", position: "relative",
-        background: t.surface1,
+        background: "transparent",
         border: `1px solid ${hover ? t.teal : t.border}`,
         borderRadius: 14, overflow: "hidden",
         transition: "all 0.25s ease",
@@ -42,13 +42,6 @@ function ServiceTile({ s, t, mode }) {
         }}>
           <Schem t={t} mode={mode} />
         </div>
-        <div style={{
-          position: "absolute", top: 12, left: 12,
-          fontFamily: "'Courier New', monospace", fontSize: 9,
-          color: t.teal, letterSpacing: "0.18em",
-          background: t.surface1, padding: "4px 8px", borderRadius: 4,
-          border: `1px solid ${t.border}`,
-        }}>0{SERVICES.indexOf(s) + 1}</div>
       </div>
       <div style={{ padding: "22px 24px 24px" }}>
         <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· {s.tag} ·</div>
@@ -119,10 +112,10 @@ function ServicesPage() {
       {/* FOOTER CTA */}
       <div style={{ position: "relative", padding: "80px", zIndex: 3, borderTop: `1px solid ${t.border}` }}>
         <div style={{
-          background: t.surface1,
+          background: "transparent",
           border: `1px solid ${t.teal}`,
-          borderRadius: 16, padding: 60,
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 40,
+          borderRadius: 16, padding: 30,
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24,
         }}>
           <div>
             <PageEyebrow color={t.teal}>· READY TO START ·</PageEyebrow>
