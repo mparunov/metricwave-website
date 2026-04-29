@@ -879,7 +879,7 @@ function ContactForm({ t, mode }) {
   if (status === "sent") {
     return (
       <div style={{
-        background: t.surface1, border: `1px solid ${t.teal}`, borderRadius: 16,
+        background: "transparent", border: `1px solid ${t.teal}`, borderRadius: 16,
         padding: 48, textAlign: "center",
       }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
@@ -900,7 +900,7 @@ function ContactForm({ t, mode }) {
       data-netlify="true"
       netlify-honeypot="bot-field"
       onSubmit={handleSubmit}
-      style={{ background: t.surface1, border: `1px solid ${t.border}`, borderRadius: 16, padding: 36 }}
+      style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 16, padding: 36 }}
     >
       <input type="hidden" name="form-name" value="contact" />
       <div style={{ display: "none" }}><input name="bot-field" /></div>
@@ -1011,7 +1011,7 @@ function ContactPage() {
       {/* MAP + Locations */}
       <div style={{ position: "relative", padding: "0 80px 80px", zIndex: 3, display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 50, alignItems: "start" }}>
         <div style={{
-          background: t.surface1, border: `1px solid ${t.border}`,
+          background: "transparent", border: `1px solid ${t.border}`,
           borderRadius: 16, padding: 28, position: "relative",
         }}>
           <div style={{
@@ -1034,7 +1034,7 @@ function ContactPage() {
             {CLIENTS.map((c, i) => (
               <div key={c.city} style={{
                 padding: "18px 20px", borderRadius: 10,
-                background: t.surface1, border: `1px solid ${c.featured ? t.teal : t.border}`,
+                background: "transparent", border: `1px solid ${c.featured ? t.teal : t.border}`,
                 display: "flex", justifyContent: "space-between", alignItems: "center",
               }}>
                 <div>
@@ -1065,7 +1065,7 @@ function ContactPage() {
               { lbl: "CAREERS",  val: "join@metricwave.net" },
               { lbl: "PHONE",    val: "+32 2 555 01 88" },
             ].map((row) => (
-              <div key={row.lbl} style={{ padding: "16px 20px", borderRadius: 10, background: t.surface1, border: `1px solid ${t.border}` }}>
+              <div key={row.lbl} style={{ padding: "16px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${t.border}` }}>
                 <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em", marginBottom: 6 }}>· {row.lbl} ·</div>
                 <div style={{ fontFamily: "'Courier New', monospace", fontSize: 16, fontWeight: 700, color: t.teal, letterSpacing: "0.02em" }}>{row.val}</div>
               </div>
@@ -1074,7 +1074,7 @@ function ContactPage() {
 
           <div style={{
             padding: 24, borderRadius: 12,
-            background: t.surface2,
+            background: "transparent",
             border: `1px solid ${t.border}`,
           }}>
             <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· OPERATING HOURS ·</div>
