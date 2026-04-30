@@ -33,6 +33,18 @@
 
     /* Transitions */
     --transition: all 0.3s ease;
+
+    /* Glass card tokens — fully transparent fill, just a visible border */
+    --glass-bg: transparent;
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: none;
+    --glass-blur: 0px;
+}
+
+[data-theme="light"] {
+    --glass-bg: transparent;
+    --glass-border: rgba(15, 15, 20, 0.12);
+    --glass-shadow: none;
 }
 
 html {
@@ -47,27 +59,23 @@ body {
     background-color: var(--black);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Global grid — 0.5px lines match SVG GridBg stroke width exactly (1 physical px on Retina) */
+    /* Universal grid — matches About page GridBg, sized at 75% (30px / 150px tiles). */
     background-image:
-        linear-gradient(rgba(58,58,58,0.32) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(58,58,58,0.32) 0.5px, transparent 0.5px),
-        linear-gradient(rgba(58,58,58,0.22) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(58,58,58,0.22) 0.5px, transparent 0.5px);
-    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M0 0H30M0 0V30' fill='none' stroke='%233A3A3A' stroke-opacity='0.32' stroke-width='0.5'/></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><path d='M0 0H150M0 0V150' fill='none' stroke='%233A3A3A' stroke-opacity='0.224' stroke-width='0.7'/></svg>");
+    background-size: 30px 30px, 150px 150px;
     background-attachment: fixed;
-    background-position: 0 36px, 0 0, 0 76px, 0 0;
+    background-position: 0 0, 0 0;
 }
 
 [data-theme="light"] body {
     background-color: #FFFFFF;
     background-image:
-        linear-gradient(rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(rgba(200,200,212,0.35) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 0.5px, transparent 0.5px);
-    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M0 0H30M0 0V30' fill='none' stroke='%23C8C8D4' stroke-opacity='0.5' stroke-width='0.5'/></svg>"),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><path d='M0 0H150M0 0V150' fill='none' stroke='%23C8C8D4' stroke-opacity='0.35' stroke-width='0.7'/></svg>");
+    background-size: 30px 30px, 150px 150px;
     background-attachment: fixed;
-    background-position: 0 36px, 0 0, 0 76px, 0 0;
+    background-position: 0 0, 0 0;
 }
 
 /* Typography */
@@ -555,11 +563,13 @@ a:hover {
 }
 
 .service-card {
-    background-color: var(--charcoal);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 0;
     border-radius: 14px;
     transition: var(--transition);
-    border: 1px solid var(--medium-gray);
+    border: 1px solid var(--glass-border);
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -581,15 +591,14 @@ a:hover {
     width: 100%;
     height: 210px;
     overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--glass-border);
     flex-shrink: 0;
-    background: #0A0A0A;
+    background: transparent;
     position: relative;
 }
 
 [data-theme="light"] .service-preview-wrap {
-    background: #F4F4F6;
-    border-bottom: 1px solid #E0E0EA;
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .schematic-iframe {
@@ -669,21 +678,9 @@ a:hover {
 
 .client-logos {
     padding: var(--spacing-xl) 0;
-    background-color: #f5f5f5;
     overflow: hidden;
-    background-image:
-        linear-gradient(rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(rgba(200,200,212,0.35) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 0.5px, transparent 0.5px);
-    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-    background-attachment: fixed;
-    background-position: 0 36px, 0 0, 0 76px, 0 0;
 }
 
-.client-logos .section-title {
-    color: var(--charcoal);
-}
 
 .logos-carousel-wrapper {
     margin-top: var(--spacing-lg);
@@ -729,7 +726,8 @@ a:hover {
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: grayscale(100%) brightness(0.8) opacity(0.7);
+    /* Dark mode default: boost brightness so dark logos appear light on dark body */
+    filter: grayscale(100%) brightness(2.5) opacity(0.7);
     transition: var(--transition);
 }
 
@@ -756,10 +754,15 @@ a:hover {
 }
 
 .story-card {
-    background: linear-gradient(135deg, var(--dark-gray) 0%, var(--charcoal) 100%);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2.5rem;
     border-radius: 10px;
     border-left: 4px solid var(--teal);
+    border-top: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     transition: var(--transition);
 }
 
@@ -814,6 +817,9 @@ a:hover {
 
 .cta-section {
     padding: var(--spacing-xl) 3rem;
+    max-width: 60%;
+    margin: var(--spacing-lg) auto;
+    border-radius: 16px;
     background-color: var(--teal);
     background-image:
         linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%),
@@ -825,9 +831,6 @@ a:hover {
     background-attachment: scroll, fixed, fixed, fixed, fixed;
     background-position: 0 0, 0 36px, 0 0, 0 76px, 0 0;
     text-align: center;
-    border-radius: 16px;
-    margin: var(--spacing-lg) auto;
-    max-width: 60%;
 }
 
 .cta-content h2 {
@@ -857,43 +860,27 @@ a:hover {
    =================================== */
 
 .footer {
-    background-color: var(--charcoal);
-    padding: var(--spacing-lg) 0 var(--spacing-md);
+    padding: var(--spacing-md) 0 var(--spacing-sm);
     border-top: 2px solid var(--teal);
-    background-image:
-        linear-gradient(rgba(58,58,58,0.32) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(58,58,58,0.32) 0.5px, transparent 0.5px),
-        linear-gradient(rgba(58,58,58,0.22) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(58,58,58,0.22) 0.5px, transparent 0.5px);
-    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-    background-attachment: fixed;
-    background-position: 0 36px, 0 0, 0 76px, 0 0;
-}
-
-[data-theme="light"] .footer {
-    background-image:
-        linear-gradient(rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.50) 0.5px, transparent 0.5px),
-        linear-gradient(rgba(200,200,212,0.35) 0.5px, transparent 0.5px),
-        linear-gradient(90deg, rgba(200,200,212,0.35) 0.5px, transparent 0.5px);
 }
 
 .footer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: var(--spacing-sm);
 }
 
 .footer-col h4 {
     color: var(--teal);
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .footer-col p {
     color: var(--light-gray);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
 }
 
 .footer-col ul {
@@ -901,12 +888,12 @@ a:hover {
 }
 
 .footer-col ul li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .footer-col ul li a {
     color: var(--light-gray);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     transition: var(--transition);
     display: inline-block;
 }
@@ -918,20 +905,20 @@ a:hover {
 
 .footer-social {
     text-align: center;
-    margin-top: var(--spacing-lg);
-    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
     border-top: 1px solid var(--dark-gray);
 }
 
 .footer-social h4 {
     color: var(--white);
-    margin-bottom: 1rem;
-    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .social-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
 }
@@ -950,20 +937,20 @@ a:hover {
 }
 
 .social-links svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
 .footer-bottom {
     text-align: center;
-    padding-top: var(--spacing-md);
+    padding-top: var(--spacing-sm);
     border-top: 1px solid var(--dark-gray);
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-sm);
 }
 
 .footer-bottom p {
     color: var(--light-gray);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
 }
 
 /* ===================================
@@ -1057,12 +1044,14 @@ a:hover {
 }
 
 .expertise-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     text-align: center;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
 }
 
 .expertise-card:hover {
@@ -1093,12 +1082,14 @@ a:hover {
 }
 
 .industry-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     text-align: center;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
 }
 
 .industry-card:hover {
@@ -1147,11 +1138,13 @@ a:hover {
 .industry-main-card {
     text-decoration: none;
     display: block;
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
     cursor: pointer;
 }
 
@@ -1232,10 +1225,15 @@ a:hover {
 .industry-overview {
     max-width: 900px;
     margin: 0 auto var(--spacing-lg);
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2.5rem;
     border-radius: 10px;
     border-left: 4px solid var(--teal);
+    border-top: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .industry-overview p {
@@ -1261,10 +1259,12 @@ a:hover {
 }
 
 .solution-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
     transition: var(--transition);
 }
 
@@ -1310,10 +1310,12 @@ a:hover {
 }
 
 .client-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
     transition: var(--transition);
 }
 
@@ -1389,10 +1391,15 @@ a:hover {
 }
 
 .philosophy-point {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     border-left: 4px solid var(--teal);
+    border-top: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .philosophy-point h3 {
@@ -1531,7 +1538,9 @@ a:hover {
 }
 
 .service-aside-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid rgba(45, 212, 191, 0.12);
     border-radius: 10px;
     padding: 1.5rem;
@@ -1634,12 +1643,14 @@ a:hover {
 }
 
 .process-step {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     text-align: center;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
 }
 
 .process-step:hover {
@@ -1721,10 +1732,15 @@ a:hover {
 }
 
 .response-time {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 1.5rem;
     border-radius: 10px;
     border-left: 4px solid var(--teal);
+    border-top: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .response-time p {
@@ -1743,7 +1759,9 @@ a:hover {
 }
 
 .tally-form-wrapper {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     border: 2px solid var(--teal);
@@ -1762,12 +1780,14 @@ a:hover {
 }
 
 .expect-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     text-align: center;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
 }
 
 .expect-card:hover {
@@ -1810,10 +1830,15 @@ a:hover {
 }
 
 .faq-item {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 2rem;
     border-radius: 10px;
     border-left: 4px solid var(--teal);
+    border-top: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .faq-item h3 {
@@ -2388,11 +2413,13 @@ a:hover {
 }
 
 .blog-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border-radius: 10px;
     padding: 1.25rem 1.5rem;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -2612,11 +2639,13 @@ a:hover {
 }
 
 .pricing-card {
-    background-color: var(--dark-gray);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border-radius: 10px;
     padding: 2.5rem;
     transition: var(--transition);
-    border: 2px solid transparent;
+    border: 2px solid var(--glass-border);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -2808,16 +2837,7 @@ a:hover {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* Client logos band has a hardcoded #f5f5f5 — keep it distinct */
-[data-theme="light"] .client-logos {
-    background-color: var(--charcoal);
-}
-
-[data-theme="light"] .client-logos .section-title {
-    color: var(--white);
-}
-
-/* Logo images need darker filter to stay visible on white */
+/* Light-mode logo images: dark on white background */
 [data-theme="light"] .logo-item img {
     filter: grayscale(100%) brightness(0.25) opacity(0.55);
 }
