@@ -816,43 +816,47 @@ a:hover {
    =================================== */
 
 .cta-section {
-    padding: var(--spacing-xl) 3rem;
-    max-width: 60%;
-    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg) 0;
+    background: transparent;
+}
+
+.cta-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    background: transparent;
+    border: 1px solid var(--teal);
     border-radius: 16px;
-    background-color: var(--teal);
-    background-image:
-        linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%),
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-    background-attachment: scroll, fixed, fixed, fixed, fixed;
-    background-position: 0 0, 0 36px, 0 0, 0 76px, 0 0;
-    text-align: center;
+    padding: 2.5rem 3rem;
 }
 
 .cta-content h2 {
-    color: var(--black);
-    margin-bottom: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    text-align: left;
 }
 
 .cta-content p {
-    color: var(--charcoal);
+    color: var(--text-secondary);
     font-size: 1.125rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    text-align: left;
 }
 
+.cta-content .btn-primary,
 .cta-section .btn-primary {
-    background-color: var(--black);
-    color: var(--white);
-    border-color: var(--black);
+    background-color: var(--teal);
+    color: var(--black);
+    border-color: var(--teal);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
+.cta-content .btn-primary:hover,
 .cta-section .btn-primary:hover {
-    background-color: var(--charcoal);
-    border-color: var(--charcoal);
+    background-color: var(--teal-dark);
+    border-color: var(--teal-dark);
 }
 
 /* ===================================
@@ -1598,14 +1602,16 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background-color: transparent;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid rgba(45, 212, 191, 0.1);
     border-radius: 8px;
     color: var(--text-primary);
     text-decoration: none;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 600;
     transition: var(--transition);
 }
@@ -1944,6 +1950,14 @@ a:hover {
     .newsletter-cta,
     .footer {
         background-attachment: scroll;
+    }
+
+    /* CTA card stacks on mobile */
+    .cta-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 2rem 1.5rem;
     }
 
     /* Navigation */
@@ -2510,73 +2524,81 @@ a:hover {
 }
 
 .newsletter-cta {
-    padding: var(--spacing-xl) 0;
-    text-align: center;
-    background-image:
-        linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%),
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-    background-attachment: scroll, fixed, fixed, fixed, fixed;
-    background-position: 0 0, 0 36px, 0 0, 0 76px, 0 0;
+    padding: var(--spacing-lg) 0;
+    background: transparent;
+}
+
+.newsletter-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    border: 1px solid var(--teal);
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
 }
 
 .newsletter-content h2 {
-    color: var(--black);
-    margin-bottom: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    text-align: left;
 }
 
 .newsletter-content p {
-    color: var(--charcoal);
+    color: var(--text-secondary);
     font-size: 1.125rem;
-    margin-bottom: 2rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.newsletter-text {
+    flex: 1;
 }
 
 .newsletter-form {
     display: flex;
-    gap: 1rem;
-    max-width: 500px;
-    margin: 0 auto;
+    gap: 0.75rem;
+    flex-shrink: 0;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
 }
 
 .newsletter-form input {
-    flex: 1;
-    min-width: 250px;
-    padding: 1rem 1.5rem;
-    border: 2px solid var(--black);
-    border-radius: 5px;
+    width: 260px;
+    padding: 0.875rem 1.25rem;
+    border: 1px solid var(--teal);
+    border-radius: 8px;
     font-size: 1rem;
-    background-color: var(--white);
-    color: var(--black);
+    background-color: transparent;
+    color: var(--text-primary);
+}
+
+.newsletter-form input::placeholder {
+    color: var(--text-secondary);
 }
 
 .newsletter-form input:focus {
     outline: none;
-    border-color: var(--charcoal);
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
 }
 
 .newsletter-form button {
-    padding: 1rem 2rem;
-    background-color: var(--black);
-    color: var(--white);
-    border: 2px solid var(--black);
-    border-radius: 5px;
+    padding: 0.875rem 1.75rem;
+    background-color: var(--teal);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
     font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
 }
 
 .newsletter-form button:hover {
-    background-color: var(--charcoal);
-    border-color: var(--charcoal);
-    transform: translateY(-2px);
+    background-color: var(--teal-dark);
+    transform: translateY(-1px);
 }
 
 .newsletter-form button:disabled {
@@ -2659,7 +2681,7 @@ a:hover {
 
 .pricing-card.featured {
     border-color: var(--teal);
-    background: transparent;
+    background: linear-gradient(135deg, var(--dark-gray) 0%, var(--charcoal) 100%);
 }
 
 .popular-badge {
@@ -3352,7 +3374,7 @@ a:hover {
 }
 
 .industry-hub-card {
-    background-color: transparent;
+    background-color: var(--dark-gray);
     border: 1px solid rgba(45, 212, 191, 0.1);
     border-radius: 12px;
     padding: 2rem;
