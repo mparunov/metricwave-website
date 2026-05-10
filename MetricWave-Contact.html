@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPcM=" crossorigin=""></script>
 <style>
   html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
@@ -634,84 +636,58 @@ const CLIENTS = [
 ];
 
 function WorldMap({ t, mode }) {
-  const W = 980, H = 460;
-  const [eqX0] = project(-180, 0, W, H);
-  const [, eqY]  = project(0, 0, W, H);
+  const mapId = "mw-leaflet-map";
+  const mapRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!window.L) return;
+    if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+
+    const tileUrl = mode === "dark"
+      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
+    const map = window.L.map(mapId, {
+      center: [35, 5],
+      zoom: 2,
+      zoomControl: false,
+      attributionControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+    });
+
+    window.L.tileLayer(tileUrl, { subdomains: "abcd", maxZoom: 19 }).addTo(map);
+
+    const pulseIcon = (featured) => window.L.divIcon({
+      className: "",
+      html: `<div style="
+        width:${featured ? 18 : 13}px;
+        height:${featured ? 18 : 13}px;
+        background:#2DD4BF;
+        border:2.5px solid #fff;
+        border-radius:50%;
+        box-shadow:0 0 0 ${featured ? 6 : 4}px rgba(45,212,191,0.25);
+      "></div>`,
+      iconSize: [featured ? 18 : 13, featured ? 18 : 13],
+      iconAnchor: [featured ? 9 : 6, featured ? 9 : 6],
+    });
+
+    CLIENTS.forEach(c => {
+      window.L.marker([c.lat, c.lon], { icon: pulseIcon(c.featured) })
+        .addTo(map)
+        .bindPopup(`<b>${c.city}, ${c.country}</b><br><span style="color:#2DD4BF">${c.count}</span>`, { closeButton: false });
+    });
+
+    mapRef.current = map;
+    return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
+  }, [mode]);
 
   return (
-    <div style={{ position: "relative", width: "100%" }}>
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="auto"
-           style={{ display: "block", overflow: "hidden", borderRadius: 8 }}>
-        <defs>
-          <pattern id={`mapDots-${mode}`} width="8" height="8" patternUnits="userSpaceOnUse">
-            <circle cx="4" cy="4" r="0.6" fill={mode === "dark" ? "#2E3838" : "#CACAD8"} />
-          </pattern>
-          <linearGradient id={`oceanGrad-${mode}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={mode === "dark" ? "#0A1010" : "#F2F4F7"} />
-            <stop offset="100%" stopColor={mode === "dark" ? "#0D1818" : "#ECEEF3"} />
-          </linearGradient>
-        </defs>
-
-        {/* ocean background */}
-        <rect width={W} height={H} fill={`url(#oceanGrad-${mode})`} />
-        <rect width={W} height={H} fill={`url(#mapDots-${mode})`} opacity="0.9" />
-
-        {/* lat/lon grid */}
-        <g stroke={t.border} strokeWidth="0.4" opacity="0.35" fill="none">
-          {[-30, 0, 30, 60].map(lat => {
-            const [, y] = project(0, lat, W, H);
-            return y >= 0 && y <= H
-              ? <line key={lat} x1="0" y1={y} x2={W} y2={y} strokeDasharray="3 5" />
-              : null;
-          })}
-          {[-150,-120,-90,-60,-30,0,30,60,90,120,150].map(lon => {
-            const [x] = project(lon, 0, W, H);
-            return <line key={lon} x1={x} y1="0" x2={x} y2={H} strokeDasharray="3 5" />;
-          })}
-        </g>
-
-        {/* equator highlight */}
-        <line x1="0" y1={eqY} x2={W} y2={eqY}
-              stroke={t.teal} strokeWidth="0.8" opacity="0.35" strokeDasharray="5 7" />
-
-        {/* CONTINENTS */}
-        <ContinentShapes t={t} mode={mode} W={W} H={H} />
-
-        {/* connecting arcs (featured cities only) */}
-        {CLIENTS.filter(c => c.featured).map((a, i, arr) => arr.slice(i + 1).map((b, j) => {
-          const [ax, ay] = project(a.lon, a.lat, W, H);
-          const [bx, by] = project(b.lon, b.lat, W, H);
-          const mx = (ax + bx) / 2, my = Math.min(ay, by) - 44;
-          return (
-            <path key={`${i}-${j}`}
-              d={`M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}`}
-              fill="none" stroke={t.teal} strokeWidth="0.9" opacity="0.35"
-              strokeDasharray="4 6"
-              style={{ animation: "mwDashFlow 14s linear infinite" }} />
-          );
-        }))}
-
-        {/* CLIENT MARKERS */}
-        {CLIENTS.map((c, i) => {
-          const [x, y] = project(c.lon, c.lat, W, H);
-          const rPulse = c.featured ? 14 : 10;
-          const rDot   = c.featured ? 8  : 6;
-          const rInner = c.featured ? 3  : 2;
-          return (
-            <g key={c.city} style={{ animation: `mwFadeIn 0.5s ${0.8 + i * 0.18}s backwards` }}>
-              {/* pulse ring */}
-              <circle cx={x} cy={y} r={rPulse} fill={t.teal} opacity="0.15">
-                <animate attributeName="r"       values={`${rPulse};${rPulse*2.4};${rPulse}`} dur="2.6s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.45;0;0.45"                          dur="2.6s" repeatCount="indefinite" />
-              </circle>
-              {/* dot */}
-              <circle cx={x} cy={y} r={rDot}   fill={t.teal} stroke={mode==="dark"?"#0A1010":"#F2F4F7"} strokeWidth="2" />
-              <circle cx={x} cy={y} r={rInner} fill={mode==="dark"?"#0A1010":"#F2F4F7"} />
-            </g>
-          );
-        })}
-      </svg>
-    </div>
+    <div id={mapId} style={{ width: "100%", height: 420, borderRadius: 8 }} />
   );
 }
 
@@ -1001,7 +977,7 @@ function ContactPage() {
           fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
           letterSpacing: "-0.03em", margin: 0, textWrap: "balance",
         }}>
-          Five offices. <span style={{ color: t.teal }}>One team.</span> Always one timezone away.
+          Clients across <span style={{ color: t.teal }}>5 countries.</span> Always one timezone away.
         </h1>
         <p style={{ fontSize: 18, lineHeight: 1.55, color: t.text2, marginTop: 26, maxWidth: 760, textWrap: "pretty" }}>
           We work across North America and Europe — wherever your data, your team, or your regulators are.
@@ -1022,14 +998,14 @@ function ContactPage() {
             <span>· CLIENT FOOTPRINT · LIVE ·</span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: t.teal }}>
               <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
-              {CLIENTS.length} OFFICES · 5 COUNTRIES
+              {CLIENTS.length} CLIENT LOCATIONS · 5 COUNTRIES
             </span>
           </div>
           <WorldMap t={t} mode={mode} />
         </div>
 
         <div>
-          <PageEyebrow color={t.teal}>· OFFICES ·</PageEyebrow>
+          <PageEyebrow color={t.teal}>· CLIENT LOCATIONS ·</PageEyebrow>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {CLIENTS.map((c, i) => (
               <div key={c.city} style={{
