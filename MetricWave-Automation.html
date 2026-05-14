@@ -125,8 +125,8 @@ const HERO_TOKENS = {
     warnGlow:  "rgba(217,119,6,0.18)",
     ok:        "#16A34A",
     nodeFill:  "#FFFFFF",
-    modelFill: "#0D0D10",
-    modelInk:  "#FFFFFF",
+    modelFill: "#E6F7F6",
+    modelInk: "#0A3030",
     accentBg:  "#0D9488",
     accentInk: "#FFFFFF",
   },
@@ -134,11 +134,11 @@ const HERO_TOKENS = {
 
 function useTheme() {
   const initial = (typeof document !== "undefined" &&
-    document.documentElement.getAttribute("data-theme")) || "dark";
+    document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light");
   const [mode, setMode] = useState(initial);
   useEffect(() => {
     const obs = new MutationObserver(() => {
-      const next = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light";
       setMode(next);
     });
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
@@ -176,6 +176,8 @@ function ServiceHero({
   lead,
   ctaPrimary,
   ctaSecondary,
+  onClickPrimary,
+  onClickSecondary,
   ticker,
   Schematic,
   navActive = "Services",
@@ -284,18 +286,18 @@ function ServiceHero({
 
         <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
           <button style={{
-            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
-            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            fontFamily: "inherit", fontSize: 15, fontWeight: 700,
+            padding: "14px 32px", borderRadius: 8, cursor: "pointer",
             border: "none", background: t.teal, color: t.bg,
             letterSpacing: "-0.01em",
-          }}>{ctaPrimary} →</button>
+          }} onClick={onClickPrimary}>{ctaPrimary} →</button>
           <button style={{
-            fontFamily: "inherit", fontSize: 14, fontWeight: 700,
-            padding: "12px 28px", borderRadius: 8, cursor: "pointer",
+            fontFamily: "inherit", fontSize: 15, fontWeight: 700,
+            padding: "14px 32px", borderRadius: 8, cursor: "pointer",
             background: "transparent", color: t.teal,
             border: `2px solid ${t.teal}`,
             letterSpacing: "-0.01em",
-          }}>{ctaSecondary}</button>
+          }} onClick={onClickSecondary}>{ctaSecondary}</button>
         </div>
       </div>
 
@@ -537,7 +539,7 @@ function SchemAnalytics({ t, mode }) {
       <g style={{ animation: "mwSlideIn 0.6s 0.8s cubic-bezier(.5,0,.2,1) backwards" }}>
         <rect x={40} y={380} width={220} height={130} rx="12"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
-        <text x={60} y={406} fontFamily="'Courier New', monospace" fontSize="10"
+        <text x={60} y={504} fontFamily="'Courier New', monospace" fontSize="10"
           fill={t.text2} letterSpacing="0.15em">CHANNELS</text>
         {[60, 100, 70, 90, 50].map((h, i) => (
           <rect key={i}
@@ -561,7 +563,7 @@ function SchemAnalytics({ t, mode }) {
       {/* CENTRAL LIVE DASHBOARD frame */}
       <g style={{ animation: "mwFadeIn 0.6s 1.2s backwards" }}>
         <rect x={500} y={140} width={420} height={300} rx="14"
-          fill={t.modelFill} stroke={t.teal} strokeWidth="1.6" />
+          fill={mode === "dark" ? "#0A1A1A" : t.surface1} stroke={t.teal} strokeWidth="1.6" />
         {/* inner grid */}
         <g opacity="0.25">
           {[1,2,3].map(i => (
@@ -575,16 +577,16 @@ function SchemAnalytics({ t, mode }) {
         </g>
         {/* dashboard header */}
         <text x={520} y={172} fontFamily="'Courier New', monospace" fontSize="10"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / LIVE DASHBOARD</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / LIVE DASHBOARD</text>
         <circle cx={900} cy={167} r={4} fill={t.teal}
           style={{ animation: "mwPulse 1.6s infinite" }} />
 
         {/* dashboard tile widgets */}
         {/* big number */}
         <text x={520} y={228} fontFamily="'Inter', sans-serif" fontSize="34" fontWeight="900"
-          fill={t.modelInk} letterSpacing="-0.03em">94.2%</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} letterSpacing="-0.03em">94.2%</text>
         <text x={520} y={248} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">CONVERSION HEALTH</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.15em">CONVERSION HEALTH</text>
 
         {/* mini sparkline */}
         <polyline points="520,310 555,300 590,304 625,290 660,295 695,278 730,284 765,266 800,272 835,258"
@@ -592,7 +594,7 @@ function SchemAnalytics({ t, mode }) {
           style={{ strokeDasharray: 400, strokeDashoffset: 400,
             animation: "mwDraw 1.2s 1.7s cubic-bezier(.5,0,.2,1) forwards" }} />
         <text x={520} y={332} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">PIPELINE · 30D</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.15em">PIPELINE · 30D</text>
 
         {/* mini bar set */}
         {[18, 28, 22, 32, 25, 36].map((h, i) => (
@@ -602,26 +604,27 @@ function SchemAnalytics({ t, mode }) {
               animation: `mwGrow 0.8s ${1.8 + i * 0.06}s cubic-bezier(.5,0,.2,1) backwards` }} />
         ))}
         <text x={520} y={442} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">CHANNELS</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.15em">CHANNELS</text>
 
         {/* right column tile */}
         <line x1={690} y1={195} x2={690} y2={420} stroke={t.surface2} strokeWidth="1" opacity="0.4" />
         <text x={710} y={228} fontFamily="'Inter', sans-serif" fontSize="34" fontWeight="900"
           fill={t.teal} letterSpacing="-0.03em">$2.4M</text>
         <text x={710} y={248} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">REVENUE MTD</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.15em">REVENUE MTD</text>
         {/* gauge */}
         <g transform="translate(820, 320)">
           <circle r="42" fill="none" stroke={t.surface2} strokeWidth="6" opacity="0.5" />
+          <style>{`@keyframes mwNPS { to { stroke-dashoffset: 63; } }`}</style>
           <circle r="42" fill="none" stroke={t.teal} strokeWidth="6"
-            strokeDasharray="264" strokeDashoffset="65"
+            strokeDasharray="264" strokeDashoffset="264"
             transform="rotate(-90)" strokeLinecap="round"
-            style={{ animation: "mwDraw 1.4s 2s cubic-bezier(.5,0,.2,1) forwards" }} />
+            style={{ animation: "mwNPS 1.4s 2s cubic-bezier(.5,0,.2,1) forwards" }} />
           <text textAnchor="middle" y={6} fontFamily="'Inter', sans-serif" fontSize="20" fontWeight="900"
-            fill={t.modelInk}>76</text>
+            fill={mode === "dark" ? "#F0F4F4" : t.text2}>76</text>
         </g>
         <text x={820} y={392} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.15em">NPS</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.15em">NPS</text>
       </g>
 
       {/* annotation lines + outcomes */}
@@ -659,7 +662,7 @@ function SchemWeb({ t, mode }) {
       {/* BROWSER FRAME */}
       <g>
         <rect x={bx} y={by} width={bw} height={bh} rx="14"
-          fill={t.modelFill} stroke={t.teal} strokeWidth="1.4" />
+          fill={mode === "dark" ? "#0A1A1A" : t.surface1} stroke={t.teal} strokeWidth="1.4" />
         {/* chrome */}
         <rect x={bx} y={by} width={bw} height={36} rx="14" fill={t.surface2} />
         <rect x={bx} y={by + 22} width={bw} height={14} fill={t.surface2} />
@@ -670,7 +673,7 @@ function SchemWeb({ t, mode }) {
         <rect x={bx + 80} y={by + 8} width={bw - 160} height={20} rx="10"
           fill={t.bg} fillOpacity="0.4" />
         <text x={bx + 96} y={by + 22} fontFamily="'Courier New', monospace" fontSize="10"
-          fill={t.modelInk} fillOpacity="0.6" letterSpacing="0.05em">metricwave.net</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.6" letterSpacing="0.05em">metricwave.net</text>
         {/* progress bar — fills */}
         <rect x={bx} y={by + 36} width={bw} height="2" fill={t.surface2} opacity="0.4" />
         <rect x={bx} y={by + 36} width={bw} height="2" fill={t.teal}
@@ -680,11 +683,11 @@ function SchemWeb({ t, mode }) {
         {/* nav bar block */}
         <g style={{ animation: "mwFadeIn 0.5s 0.8s backwards" }}>
           <rect x={bx + 24} y={by + 60} width={bw - 48} height={28} rx="4"
-            fill={t.surface1} fillOpacity="0.15" stroke={t.modelInk} strokeOpacity="0.15" strokeWidth="1" />
-          <rect x={bx + 36} y={by + 70} width={50} height={8} rx="2" fill={t.modelInk} fillOpacity="0.4" />
+            fill={t.surface1} fillOpacity="0.15" stroke={mode === "dark" ? "#F0F4F4" : t.border} strokeOpacity="0.15" strokeWidth="1" />
+          <rect x={bx + 36} y={by + 70} width={50} height={8} rx="2" fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.4" />
           {[0,1,2,3].map(i => (
             <rect key={i} x={bx + bw - 250 + i * 50} y={by + 72} width={36} height={6} rx="2"
-              fill={t.modelInk} fillOpacity="0.25" />
+              fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.25" />
           ))}
         </g>
 
@@ -692,12 +695,12 @@ function SchemWeb({ t, mode }) {
         <g style={{ animation: "mwFadeIn 0.5s 1.2s backwards" }}>
           <rect x={bx + 24} y={by + 100} width={bw - 48} height={140} rx="6"
             fill={t.teal} fillOpacity="0.12" stroke={t.teal} strokeWidth="0.8" strokeOpacity="0.4" />
-          <rect x={bx + 44} y={by + 124} width={280} height={14} rx="2" fill={t.modelInk} fillOpacity="0.85" />
-          <rect x={bx + 44} y={by + 144} width={220} height={10} rx="2" fill={t.modelInk} fillOpacity="0.5" />
-          <rect x={bx + 44} y={by + 160} width={260} height={10} rx="2" fill={t.modelInk} fillOpacity="0.5" />
+          <rect x={bx + 44} y={by + 124} width={280} height={14} rx="2" fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.85" />
+          <rect x={bx + 44} y={by + 144} width={220} height={10} rx="2" fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" />
+          <rect x={bx + 44} y={by + 160} width={260} height={10} rx="2" fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" />
           <rect x={bx + 44} y={by + 192} width={100} height={28} rx="4" fill={t.teal} />
           <rect x={bx + 156} y={by + 192} width={92} height={28} rx="4" fill="none"
-            stroke={t.modelInk} strokeWidth="1" strokeOpacity="0.4" />
+            stroke={mode === "dark" ? "#F0F4F4" : t.border} strokeWidth="1" strokeOpacity="0.4" />
         </g>
 
         {/* card row */}
@@ -705,25 +708,25 @@ function SchemWeb({ t, mode }) {
           {[0,1,2].map(i => (
             <g key={i}>
               <rect x={bx + 24 + i * 184} y={by + 256} width={170} height={104} rx="6"
-                fill={t.surface1} fillOpacity="0.2" stroke={t.modelInk} strokeOpacity="0.2" strokeWidth="1" />
+                fill={t.surface1} fillOpacity="0.2" stroke={mode === "dark" ? "#F0F4F4" : t.border} strokeOpacity="0.2" strokeWidth="1" />
               <rect x={bx + 36 + i * 184} y={by + 268} width={146} height={50} rx="3"
                 fill={t.teal} fillOpacity="0.15" />
               <rect x={bx + 36 + i * 184} y={by + 326} width={120} height={8} rx="2"
-                fill={t.modelInk} fillOpacity="0.7" />
+                fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.7" />
               <rect x={bx + 36 + i * 184} y={by + 340} width={80} height={6} rx="2"
-                fill={t.modelInk} fillOpacity="0.4" />
+                fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.4" />
             </g>
           ))}
         </g>
 
         <text x={bx + 14} y={by + bh - 12} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / SITE</text>
+          fill={mode === "dark" ? "#F0F4F4" : t.text2} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE / SITE</text>
       </g>
 
       {/* PERFORMANCE BADGES — right side */}
       {[
         { label: "LIGHTHOUSE", val: 98, suffix: "/100", glow: true,  delay: 1.0, dash: 264, off: 264 - 264 * 0.98 },
-        { label: "SEO",        val: 100, suffix: "/100", delay: 1.3, dash: 264, off: 0 },
+        { label: "SEO",        val: 93, suffix: "/100", delay: 1.3, dash: 264, off: 18 },
         { label: "LOAD",       val: 0.8, suffix: "s",    delay: 1.6, dash: 264, off: 264 - 264 * 0.85 },
       ].map((b, i) => {
         const cx = 940, cy = 130 + i * 150;
@@ -778,7 +781,7 @@ function SchemProcess({ t, mode }) {
   const cy = 230;
 
   return (
-    <svg viewBox="0 0 1220 660" width="100%" height="100%" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 1220 680" width="100%" height="100%" style={{ overflow: "visible" }}>
       <defs><EdgeDefs t={t} mode={mode} /></defs>
       <circle cx={500} cy={cy} r="180" fill={`url(#warnGlow-${mode})`} opacity="0.4" />
 
@@ -850,32 +853,33 @@ function SchemProcess({ t, mode }) {
         <line x1={470} y1={166} x2={470} y2={196} stroke={t.warn} strokeWidth="1" strokeDasharray="3 3" />
       </g>
 
-      {/* mini bar tooltip near APPROVE */}
+      {/* time chart aligned with event log */}
       <g style={{ animation: "mwFadeIn 0.5s 2.4s backwards" }}>
-        <rect x={420} y={310} width={170} height={120} rx="8"
+        <rect x={625} y={330} width={280} height={170} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
-        <text x={436} y={332} fontFamily="'Courier New', monospace" fontSize="9.5"
-          fill={t.text2} letterSpacing="0.12em">TIME · APPROVE STAGE</text>
-        {[20, 36, 64, 28].map((h, i) => (
+        <text x={641} y={354} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="600"
+          fill={t.text2} letterSpacing="0.14em">TIME · APPROVE STAGE</text>
+        <line x1={625} y1={364} x2={905} y2={364} stroke={t.border} />
+        {[30, 54, 96, 42].map((h, i) => (
           <g key={i}>
-            <rect x={440 + i * 36} y={420 - h} width={26} height={h} rx="2"
+            <rect x={636 + i * 62} y={478 - h} width={44} height={h} rx="2"
               fill={i === 2 ? t.warn : t.teal} opacity={i === 2 ? 0.95 : 0.6}
-              style={{ transformOrigin: `${453 + i * 36}px 420px`,
+              style={{ transformOrigin: `${658 + i * 62}px 478px`,
                 animation: `mwGrow 0.7s ${2.6 + i * 0.1}s cubic-bezier(.5,0,.2,1) backwards` }} />
-            <text x={453 + i * 36} y={434} textAnchor="middle"
-              fontFamily="'Courier New', monospace" fontSize="8"
+            <text x={658 + i * 62} y={496} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="9"
               fill={t.text2}>{["1d","2d","4d+","1d"][i]}</text>
           </g>
         ))}
       </g>
 
-      {/* small event log left */}
+      {/* event log centered above metrics */}
       <g style={{ animation: "mwFadeIn 0.5s 0.4s backwards" }}>
-        <rect x={50} y={350} width={280} height={170} rx="10"
+        <rect x={285} y={330} width={280} height={170} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
-        <text x={66} y={374} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="600"
+        <text x={301} y={354} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="600"
           fill={t.text2} letterSpacing="0.18em">EVENT LOG · LIVE</text>
-        <line x1={50} y1={384} x2={330} y2={384} stroke={t.border} />
+        <line x1={285} y1={364} x2={565} y2={364} stroke={t.border} />
         {[
           ["13:42:01", "validate.start  #2841", false],
           ["13:42:08", "validate.wait   #2841", true],
@@ -884,10 +888,10 @@ function SchemProcess({ t, mode }) {
           ["13:50:11", "approve.done    #2841", false],
         ].map(([ts, msg, warn], i) => (
           <g key={i}>
-            <circle cx={66} cy={400 + i * 22} r="2.5" fill={warn ? t.warn : t.teal} opacity="0.85" />
-            <text x={78} y={404 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
+            <circle cx={301} cy={380 + i * 22} r="2.5" fill={warn ? t.warn : t.teal} opacity="0.85" />
+            <text x={313} y={384 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
               fill={warn ? t.warn : t.text1}>{ts}</text>
-            <text x={150} y={404 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
+            <text x={385} y={384 + i * 22} fontFamily="'Courier New', monospace" fontSize="9.5"
               fill={warn ? t.warn : t.text2}>{msg}</text>
           </g>
         ))}
@@ -895,19 +899,19 @@ function SchemProcess({ t, mode }) {
 
       {/* METRIC STRIP — bottom row */}
       {[
-        { label: "THROUGHPUT TIME", val: "4.2d",  sub: "avg end-to-end", x: 50  },
-        { label: "OPTIMISATION",    val: "74%",   sub: "score",          x: 330 },
-        { label: "EFFICIENCY RATE", val: "82%",   sub: "overall",        x: 610 },
-        { label: "CONFORMANCE",     val: "91%",   sub: "vs reference",   x: 890 },
+        { label: "THROUGHPUT TIME", val: "4.2d",  sub: "avg end-to-end", x: 36  },
+        { label: "OPTIMISATION",    val: "74%",   sub: "score",          x: 332 },
+        { label: "EFFICIENCY RATE", val: "82%",   sub: "overall",        x: 628 },
+        { label: "CONFORMANCE",     val: "91%",   sub: "vs reference",   x: 924 },
       ].map((m, i) => (
         <g key={i} style={{ animation: `mwFadeIn 0.5s ${0.8 + i * 0.12}s backwards` }}>
-          <rect x={m.x} y={570} width={250} height={70} rx="10"
+          <rect x={m.x} y={572} width={260} height={84} rx="10"
             fill={t.surface1} stroke={t.border} strokeWidth="1" />
-          <text x={m.x + 16} y={592} fontFamily="'Courier New', monospace" fontSize="9"
+          <text x={m.x + 16} y={590} fontFamily="'Courier New', monospace" fontSize="10"
             fill={t.text2} letterSpacing="0.14em">{m.label}</text>
-          <text x={m.x + 16} y={624} fontFamily="'Inter', sans-serif" fontSize="28" fontWeight="900"
+          <text x={m.x + 16} y={628} fontFamily="'Inter', sans-serif" fontSize="30" fontWeight="900"
             fill={t.teal} letterSpacing="-0.02em">{m.val}</text>
-          <text x={m.x + 16} y={637} fontFamily="'Courier New', monospace" fontSize="8.5"
+          <text x={m.x + 16} y={643} fontFamily="'Courier New', monospace" fontSize="9"
             fill={t.text2} letterSpacing="0.1em">{m.sub}</text>
         </g>
       ))}
@@ -1036,9 +1040,9 @@ function SchemStrategy({ t, mode }) {
 
   const bubbles = [
     { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,           label: "Quick Wins",      sub: "5 ITEMS",  delay: 0.8 },
-    { x: qx0 + 360, y: qy0 + 110, r: 38, fill: t.surface2,        label: "Market Expansion", sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
-    { x: qx0 + 130, y: qy0 + 270, r: 26, fill: t.surface2,        label: "Foundation",      sub: "4 ITEMS",  delay: 1.3,  stroke: t.teal },
-    { x: qx0 + 360, y: qy0 + 280, r: 18, fill: t.surface2,        label: "Defer",           sub: "2 ITEMS",  delay: 1.55, muted: true },
+    { x: qx0 + 360, y: qy0 + 110, r: 45, fill: t.surface2,        label: "Market Expansion", sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
+    { x: qx0 + 130, y: qy0 + 270, r: 52, fill: t.surface2,        label: "Foundation",      sub: "4 ITEMS",  delay: 1.3,  stroke: t.teal },
+    { x: qx0 + 360, y: qy0 + 280, r: 37, fill: t.surface2,        label: "Defer",           sub: "2 ITEMS",  delay: 1.55, muted: true },
   ];
 
   const okrs = [
@@ -1616,23 +1620,65 @@ Object.assign(window, { SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries 
 </script>
 
 <script type="text/babel" data-presets="env,react">
-  window.MW_SERVICE = {
-  "schematic": "automation",
-  "eyebrow": "· WORKFLOWS · AI AGENTS · LLMs ·",
-  "headline": {
-    "pre": "Automate the routine.",
-    "italic": "Focus on what only humans can do.",
-    "post": ""
-  },
-  "lead": "We design and deploy AI agents and automation workflows that handle repetitive tasks end-to-end — so your team can focus on work that matters.",
-  "ctaPrimary": "Map my automation",
-  "ctaSecondary": "See live agents",
-  "ticker": "· TRIGGER → ROUTE → EXECUTE → LOG ·",
-  "navActive": "Services"
-};
+    window.MW_SERVICE_T = {
+    en: {
+    "schematic": "automation",
+    "eyebrow": "· WORKFLOWS · AI AGENTS · LLMs ·",
+    "headline": {
+        "pre": "Automate the routine.",
+        "italic": "Focus on what only humans can do.",
+        "post": ""
+    },
+    "lead": "We design and deploy AI agents and automation workflows that handle repetitive tasks end-to-end — so your team can focus on work that matters.",
+    "ctaPrimary": "Map my automation",
+    "ctaSecondary": "See live agents",
+    "ticker": "· TRIGGER → ROUTE → EXECUTE → LOG ·",
+    "navActive": "Services"
+},
+    fr: {
+    "schematic": "automation",
+    "eyebrow": "· WORKFLOWS · AGENTS IA · LLMs ·",
+    "headline": {
+        "pre": "Automatisez le routinier.",
+        "italic": "Concentrez-vous sur ce que seuls les humains peuvent faire.",
+        "post": ""
+    },
+    "lead": "Nous concevons et déployons des agents IA et des workflows d'automatisation qui gèrent les tâches répétitives de bout en bout — pour que votre équipe se concentre sur ce qui compte.",
+    "ctaPrimary": "Cartographier mon automatisation",
+    "ctaSecondary": "Voir des agents en direct",
+    "ticker": "· DÉCLENCHER → ROUTER → EXÉCUTER → JOURNALISER ·",
+    "navActive": "Services"
+},
+    nl: {
+    "schematic": "automation",
+    "eyebrow": "· WORKFLOWS · AI AGENTS · LLMs ·",
+    "headline": {
+        "pre": "Automatiseer de routine.",
+        "italic": "Focusen op wat alleen mensen kunnen doen.",
+        "post": ""
+    },
+    "lead": "Wij ontwerpen en implementeren AI-agents en automatiseringsworkflows die repetitieve taken van begin tot eind afhandelen — zodat uw team zich kan focussen op werk dat ertoe doet.",
+    "ctaPrimary": "Mijn automatisering in kaart brengen",
+    "ctaSecondary": "Zie live agents",
+    "ticker": "· TRIGGEREN → ROUTEREN → UITVOEREN → LOGGEN ·",
+    "navActive": "Services"
+},
+  };
 </script>
 
 <script type="text/babel" data-presets="env,react">
+
+/* ---------- Language hook ---------- */
+function useLang() {
+  const [lang, setLang] = React.useState(() => localStorage.getItem('language') || 'en');
+  React.useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+  return lang;
+}
+
 /* global React, ServiceHero,
    SchemAnalytics, SchemWeb, SchemProcess, SchemAutomation,
    SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries */
@@ -1651,9 +1697,11 @@ const MW_SCHEMATICS = {
 };
 
 function App() {
-  const cfg = window.MW_SERVICE;
+  const lang = useLang();
+  const cfg = (window.MW_SERVICE_T && (window.MW_SERVICE_T[lang] || window.MW_SERVICE_T.en)) || window.MW_SERVICE;
   const Schem = MW_SCHEMATICS[cfg.schematic];
-  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} />;
+  const handleCTA = () => { window.top.location.href = 'contact.html?service=automation'; };
+  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} onClickPrimary={handleCTA} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetricWave — Content Strategy & Positioning Document</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --teal: #2DD4BF;
+    --teal-dark: #1AA899;
+    --black: #0A0A0A;
+    --dark: #111827;
+    --mid: #374151;
+    --muted: #6B7280;
+    --light: #F9FAFB;
+    --border: #E5E7EB;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 10pt;
+    line-height: 1.65;
+    color: var(--dark);
+    background: var(--white);
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 72px;
+    background: var(--black);
+    color: var(--white);
+    page-break-after: always;
+  }
+  .cover-logo {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .cover-center { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .cover-tag {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    color: var(--teal);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 42pt;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .cover h1 span { color: var(--teal); }
+  .cover-sub {
+    font-size: 13pt;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    border-top: 1px solid rgba(45,212,191,0.3);
+    padding-top: 28px;
+  }
+  .cover-meta-item label {
+    display: block;
+    font-family: 'Courier Prime', monospace;
+    font-size: 7pt;
+    letter-spacing: 0.18em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .cover-meta-item span {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ── LAYOUT ── */
+  .page { padding: 52px 72px; page-break-before: always; }
+  .page:first-of-type { page-break-before: auto; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--teal);
+  }
+  .section-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    margin-top: 6px;
+    min-width: 32px;
+  }
+  .section-header h2 {
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--black);
+  }
+  .section-header h2 span { color: var(--teal); }
+
+  /* ── TYPOGRAPHY ── */
+  h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--black);
+    margin: 24px 0 8px;
+    letter-spacing: -0.01em;
+  }
+  h4 {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin: 20px 0 6px;
+  }
+  p { margin-bottom: 10px; color: var(--mid); font-size: 9.5pt; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--mid); font-size: 9.5pt; }
+  strong { color: var(--dark); font-weight: 600; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    background: #F0FDFA;
+    border-left: 3px solid var(--teal);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+  }
+  .callout.dark {
+    background: var(--black);
+    color: var(--white);
+    border-left-color: var(--teal);
+  }
+  .callout.dark p, .callout.dark li { color: rgba(255,255,255,0.75); }
+  .callout.warn {
+    background: #FFFBEB;
+    border-left-color: #F59E0B;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 7pt;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card h3 { margin-top: 0; font-size: 10pt; }
+  .card.teal { border-color: var(--teal); background: #F0FDFA; }
+  .card.dark { background: var(--black); border-color: var(--dark); }
+  .card.dark h3, .card.dark p, .card.dark li { color: rgba(255,255,255,0.8); }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 9pt; }
+  th {
+    background: var(--black);
+    color: var(--teal);
+    font-family: 'Courier Prime', monospace;
+    font-size: 7.5pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--light); }
+
+  /* ── LOOP DIAGRAM ── */
+  .loop {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+    position: relative;
+  }
+  .loop-item {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .loop-num {
+    width: 36px;
+    min-width: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .loop-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--black);
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .loop-line {
+    width: 2px;
+    background: var(--teal);
+    opacity: 0.3;
+    flex: 1;
+    margin: 0 auto;
+    min-height: 20px;
+  }
+  .loop-content {
+    flex: 1;
+    padding: 0 0 20px 16px;
+  }
+  .loop-content h4 { margin-top: 4px; }
+  .loop-content p { margin-bottom: 0; }
+
+  /* ── VALUE CARDS ── */
+  .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .value-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .value-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--teal);
+  }
+  .value-card h3 { margin: 0 0 6px; font-size: 10.5pt; }
+  .value-card .tagline {
+    font-family: 'Courier Prime', monospace;
+    font-size: 7.5pt;
+    color: var(--teal-dark);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .value-card p { margin: 0; }
+
+  /* ── PAGE CONTENT BLOCK ── */
+  .page-block {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .page-block-header {
+    background: var(--black);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .page-block-header h3 {
+    color: var(--white);
+    margin: 0;
+    font-size: 10pt;
+  }
+  .page-block-header .url {
+    font-family: 'Courier Prime', monospace;
+    font-size: 7.5pt;
+    color: var(--teal);
+    margin-left: auto;
+  }
+  .page-block-body { padding: 18px; }
+  .page-block-section { margin-bottom: 16px; }
+  .page-block-section:last-child { margin-bottom: 0; }
+
+  /* ── REPLACE BLOCK ── */
+  .replace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .replace-old {
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 9pt;
+    position: relative;
+  }
+  .replace-new {
+    background: #F0FDFA;
+    border: 1px solid var(--teal);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 9pt;
+  }
+  .replace-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 7pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .replace-old .replace-label { color: #DC2626; }
+  .replace-new .replace-label { color: var(--teal-dark); }
+  .replace-old p, .replace-new p { margin: 0; font-size: 9pt; color: var(--dark); }
+
+  /* ── PRINT ── */
+  @media print {
+    body { font-size: 9.5pt; }
+    .cover { min-height: 100vh; }
+    .page { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+  }
+
+  /* ── STAT ROW ── */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .stat-card {
+    text-align: center;
+    padding: 16px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .stat-num {
+    font-size: 22pt;
+    font-weight: 900;
+    color: var(--teal);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 7pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── PRIORITY BADGE ── */
+  .badge {
+    display: inline-block;
+    font-family: 'Courier Prime', monospace;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge.high { background: #FEF2F2; color: #DC2626; }
+  .badge.med { background: #FFFBEB; color: #D97706; }
+  .badge.low { background: #F0FDF4; color: #16A34A; }
+
+  /* ── TOC ── */
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--border);
+  }
+  .toc-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    color: var(--teal);
+    min-width: 24px;
+  }
+  .toc-title { font-size: 9.5pt; font-weight: 500; color: var(--dark); flex: 1; }
+  .toc-page {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     COVER
+══════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">MetricWave</div>
+
+  <div class="cover-center">
+    <div class="cover-tag">· Confidential · Internal Strategy Document · 2025 ·</div>
+    <h1>Content Strategy<br>&amp; <span>Brand Positioning</span><br>Playbook</h1>
+    <p class="cover-sub">A comprehensive guide to elevating MetricWave from analytics service provider to integrated operating partner — covering every page, every message, and every conversion moment.</p>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <label>Prepared For</label>
+      <span>MetricWave Founders</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Scope</label>
+      <span>All 20+ Pages · Full Brand System</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Date</label>
+      <span>May 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">TOC</div>
+    <h2>Table of <span>Contents</span></h2>
+  </div>
+
+  <div class="toc-item"><span class="toc-num">01</span><span class="toc-title">Strategic Repositioning — The Core Shift</span><span class="toc-page">3</span></div>
+  <div class="toc-item"><span class="toc-num">02</span><span class="toc-title">Brand Identity — Mission, Vision, Values</span><span class="toc-page">4</span></div>
+  <div class="toc-item"><span class="toc-num">03</span><span class="toc-title">The MetricWave Loop — Signature Framework</span><span class="toc-page">5</span></div>
+  <div class="toc-item"><span class="toc-num">04</span><span class="toc-title">Homepage (index.html)</span><span class="toc-page">6</span></div>
+  <div class="toc-item"><span class="toc-num">05</span><span class="toc-title">Services Overview (services.html)</span><span class="toc-page">8</span></div>
+  <div class="toc-item"><span class="toc-num">06</span><span class="toc-title">Service Pages — 6 Deep Dives</span><span class="toc-page">9</span></div>
+  <div class="toc-item"><span class="toc-num">07</span><span class="toc-title">Industries Overview (industries.html)</span><span class="toc-page">12</span></div>
+  <div class="toc-item"><span class="toc-num">08</span><span class="toc-title">Industry Pages — 6 Deep Dives</span><span class="toc-page">13</span></div>
+  <div class="toc-item"><span class="toc-num">09</span><span class="toc-title">About Page (about.html)</span><span class="toc-page">16</span></div>
+  <div class="toc-item"><span class="toc-num">10</span><span class="toc-title">Pricing Page (pricing.html)</span><span class="toc-page">17</span></div>
+  <div class="toc-item"><span class="toc-num">11</span><span class="toc-title">Contact Page (contact.html)</span><span class="toc-page">18</span></div>
+  <div class="toc-item"><span class="toc-num">12</span><span class="toc-title">Blog Strategy (blog.html)</span><span class="toc-page">18</span></div>
+  <div class="toc-item"><span class="toc-num">13</span><span class="toc-title">New Pages to Build</span><span class="toc-page">19</span></div>
+  <div class="toc-item"><span class="toc-num">14</span><span class="toc-title">SEO &amp; Technical Content</span><span class="toc-page">20</span></div>
+  <div class="toc-item"><span class="toc-num">15</span><span class="toc-title">Implementation Priority Matrix</span><span class="toc-page">21</span></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     01 — STRATEGIC REPOSITIONING
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2>Strategic <span>Repositioning</span></h2>
+  </div>
+
+  <div class="callout dark">
+    <span class="callout-label">Core Insight</span>
+    <p>You are not selling <strong style="color:var(--teal)">6 services</strong>. You are selling <strong style="color:var(--teal)">one integrated operating system</strong> delivered through 6 capabilities. That single shift changes pricing power, client perception, and enterprise credibility.</p>
+  </div>
+
+  <h3>Current vs. Desired Perception</h3>
+  <div class="replace">
+    <div class="replace-old">
+      <span class="replace-label">❌ Current Perception</span>
+      <p>Analytics consultancy · SMB-focused · "data-driven decisions" · traditional agency structure · 6 disconnected services</p>
+    </div>
+    <div class="replace-new">
+      <span class="replace-label">✓ Target Perception</span>
+      <p>Operator-led partner · technical + strategic integration · enterprise-grade thinking · systems ownership · unified intelligence loop</p>
+    </div>
+  </div>
+
+  <h3>The Central Narrative</h3>
+  <p>Most organizations aren't suffering from a <em>data problem</em>. They're suffering from a <em>systems problem</em>. They bought dashboards, added automation, adopted AI tools — but none of it connects. The result: conflicting metrics, duplicated work, delayed decisions, and expensive technical debt.</p>
+  <p><strong>MetricWave exists to eliminate that fragmentation.</strong> Founded by a strategist and a data engineer, MetricWave builds the unified intelligence loop — from raw event to executive decision — owning the entire architecture so clients stop managing software and start making moves.</p>
+
+  <h3>Your 3 Strongest Differentiators (Underutilized)</h3>
+  <div class="grid-3">
+    <div class="card teal">
+      <h3>Brussels + Tbilisi</h3>
+      <p>EU policy proximity, multilingual capability (EN/FR/NL/KA/RU), and Eastern European technical talent. No competitor combines these.</p>
+    </div>
+    <div class="card teal">
+      <h3>Strategy + Engineering Founders</h3>
+      <p>Most firms are strategy-heavy but technically weak, or vice versa. You bridge both — and that matters to every C-suite.</p>
+    </div>
+    <div class="card teal">
+      <h3>5-Language Reach</h3>
+      <p>English, French, Dutch, Georgian, Russian. Enormously valuable for NGOs, EU programmes, and international organizations in EMEA.</p>
+    </div>
+  </div>
+
+  <h3>Proof Points to Lead With</h3>
+  <div class="stats">
+    <div class="stat-card"><span class="stat-num">150+</span><span class="stat-label">Projects Shipped</span></div>
+    <div class="stat-card"><span class="stat-num">31h</span><span class="stat-label">Saved / Week / Client</span></div>
+    <div class="stat-card"><span class="stat-num">€3.3M</span><span class="stat-label">EU Policy Stack</span></div>
+    <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Industries Served</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     02 — BRAND IDENTITY
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2>Brand <span>Identity</span></h2>
+  </div>
+
+  <h3>Mission Statement</h3>
+  <div class="callout dark">
+    <p style="font-size:11pt; font-weight:600; color:white; line-height:1.5;">"To eliminate the friction between data and decision by building cohesive, automated, and accountable systems that empower organizations to operate with clarity and speed."</p>
+  </div>
+
+  <h3>Vision Statement</h3>
+  <div class="callout dark">
+    <p style="font-size:11pt; font-weight:600; color:white; line-height:1.5;">"To become the operating layer behind modern organizations — where every process, decision, and workflow compounds through connected intelligence."</p>
+  </div>
+
+  <h3>The Origin Story — "Two Operators Who Got Tired of Broken Stacks"</h3>
+  <p>Use this narrative consistently across About, Homepage, and pitch materials:</p>
+  <div class="callout">
+    <p><em>MetricWave was founded by a strategist and a data engineer after years of watching organizations buy more software while becoming less operationally aligned. Dashboards nobody trusted. Reports nobody opened. Systems nobody connected.</em></p>
+    <p><em>So we built MetricWave differently — not as another analytics vendor, but as an accountable operating partner that owns the entire intelligence loop: from raw event to operational insight to executive action.</em></p>
+  </div>
+
+  <h3>Core Values (Refined)</h3>
+  <div class="value-grid">
+    <div class="value-card">
+      <h3>Evidence Over Instinct</h3>
+      <span class="tagline">· No gut feelings. Just trusted data lineage. ·</span>
+      <p>We don't ship assumptions. Every recommendation is traceable to operational data we've validated ourselves. Decisions are expensive — ours are always backed.</p>
+    </div>
+    <div class="value-card">
+      <h3>Build for the Operator</h3>
+      <span class="tagline">· Systems are judged on Monday morning. ·</span>
+      <p>Technical debt happens when tools are built for "the project," not the person. We design for the 9:00 AM reality of your front-line teams — not for presentations.</p>
+    </div>
+    <div class="value-card">
+      <h3>One Stack, Not Ten Tools</h3>
+      <span class="tagline">· Complexity compounds faster than value. ·</span>
+      <p>We fight fragmentation. Our services plug into a unified architecture so your intelligence grows instead of fragmenting across disconnected platforms.</p>
+    </div>
+    <div class="value-card">
+      <h3>Show Our Work</h3>
+      <span class="tagline">· Transparency is a feature, not a courtesy. ·</span>
+      <p>Every workflow, model, and automation is documented and audit-ready. You own the logic — not just the results. Audit us anytime.</p>
+    </div>
+  </div>
+
+  <h3>Tone of Voice Guidelines</h3>
+  <table>
+    <tr><th>Attribute</th><th>Sounds Like</th><th>Avoid</th></tr>
+    <tr><td><strong>Authoritative</strong></td><td>"We build unified systems, not dashboards."</td><td>"We help you leverage data to drive insights."</td></tr>
+    <tr><td><strong>Operator</strong></td><td>"Designed for 9am Monday, not the board deck."</td><td>"Our solutions empower stakeholders to optimize outcomes."</td></tr>
+    <tr><td><strong>Precise</strong></td><td>"31 hours returned per week. Per client."</td><td>"We significantly improve your operational efficiency."</td></tr>
+    <tr><td><strong>Direct</strong></td><td>"Most companies don't have a data problem."</td><td>"In today's data-driven landscape, businesses face..."</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     03 — THE METRICWAVE LOOP
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <h2>The MetricWave <span>Loop</span></h2>
+  </div>
+
+  <p>This should become your signature visual framework — visible on the homepage, services page, and a dedicated methodology page. It proves you sell a <em>system</em>, not isolated services.</p>
+
+  <div class="callout">
+    <span class="callout-label">Closing Line for All Loop Displays</span>
+    <p><strong>"One architecture. One loop. One accountable partner."</strong></p>
+  </div>
+
+  <div class="loop">
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">01</div><div class="loop-line"></div></div>
+      <div class="loop-content">
+        <h4>Data Engineering &amp; Integration</h4>
+        <p>Build the infrastructure layer that connects fragmented systems into a reliable source of truth. The plumbing that never leaks — pipelines, warehouses, event systems, and integrations.</p>
+        <p><strong>Key message:</strong> "Every insight depends on clean data. We build the foundation everything else compounds on."</p>
+      </div>
+    </div>
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">02</div><div class="loop-line"></div></div>
+      <div class="loop-content">
+        <h4>Process Mining &amp; Analytics</h4>
+        <p>Map how your operations actually behave. Uncover inefficiencies, delays, and workflow drift using event-level analysis — not assumptions.</p>
+        <p><strong>Key message:</strong> "See how your business actually breathes, not how you think it does."</p>
+      </div>
+    </div>
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">03</div><div class="loop-line"></div></div>
+      <div class="loop-content">
+        <h4>Data Analytics &amp; Business Intelligence</h4>
+        <p>Transform operational events into executive-grade intelligence. Dashboards that connect directly to the operational layer — giving leadership a trusted, unified North Star.</p>
+        <p><strong>Key message:</strong> "Executive visibility built on operational truth, not spreadsheet assumptions."</p>
+      </div>
+    </div>
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">04</div><div class="loop-line"></div></div>
+      <div class="loop-content">
+        <h4>Automation &amp; AI Agents</h4>
+        <p>Remove repetitive operational workload through intelligent automation. From internal copilots to workflow orchestration — recovering 30+ hours per week of your team's time.</p>
+        <p><strong>Key message:</strong> "We recalibrate your team's time so they spend it on work that actually compounds."</p>
+      </div>
+    </div>
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">05</div><div class="loop-line"></div></div>
+      <div class="loop-content">
+        <h4>Business Strategy &amp; Management</h4>
+        <p>Align technical execution with organizational priorities. We bridge the gap between C-suite objectives and the operational systems required to reach them.</p>
+        <p><strong>Key message:</strong> "Strategy without systems is just a slide deck. We make it executable."</p>
+      </div>
+    </div>
+    <div class="loop-item">
+      <div class="loop-num"><div class="loop-circle">06</div></div>
+      <div class="loop-content">
+        <h4>Web Development &amp; Maintenance</h4>
+        <p>Deploy modern platforms that integrate directly into your workflows, analytics, and automation stack. Not brochure websites — operational interfaces.</p>
+        <p><strong>Key message:</strong> "Your website is your data stack's front door. We make sure it's always open."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     04 — HOMEPAGE
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <h2><span>Homepage</span> — index.html</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header">
+      <h3>HERO SECTION</h3><span class="url">index.html / above the fold</span>
+    </div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old">
+          <span class="replace-label">❌ Current</span>
+          <p>"Turn Your Data Into Your Greatest Competitive Advantage" / "Data-Driven Decision Making for Small Businesses"</p>
+        </div>
+        <div class="replace-new">
+          <span class="replace-label">✓ Recommended</span>
+          <p><strong>H1:</strong> "We fix the broken stacks that hold companies back."<br><strong>Sub:</strong> "Most organizations drown in disconnected tools and delayed reporting. MetricWave builds unified intelligence systems — from raw event to executive decision — so your team stops managing software and starts making moves."</p>
+        </div>
+      </div>
+      <h4>CTA Buttons</h4>
+      <p>Primary: <strong>"Get a Stack Audit →"</strong> &nbsp;|&nbsp; Secondary: <strong>"See Our Operating Loop"</strong></p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header">
+      <h3>PROBLEM SECTION</h3><span class="url">index.html / below hero</span>
+    </div>
+    <div class="page-block-body">
+      <h4>Suggested Heading</h4>
+      <p>"Most companies don't have a data problem. They have a systems problem."</p>
+      <h4>Suggested Body Copy</h4>
+      <p>They bought the dashboards. They added automation. They adopted AI tools. But none of it connects.</p>
+      <p>The result: conflicting metrics · duplicated work · delayed decisions · operational drift · expensive technical debt.</p>
+      <p><strong>MetricWave exists to eliminate that fragmentation.</strong> We build unified systems where data, automation, reporting, and operations reinforce each other instead of competing for attention.</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header">
+      <h3>SERVICES LOOP SECTION</h3><span class="url">index.html / mid-page</span>
+    </div>
+    <div class="page-block-body">
+      <p>Replace the current service card grid with a visual "MetricWave Loop" diagram (see Section 03). Add a closing line: <strong>"One architecture. One loop. One accountable partner."</strong></p>
+      <h4>Section Heading</h4>
+      <p>"How We Build the Loop" or "One System. Six Capabilities."</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header">
+      <h3>PROOF / STATS SECTION</h3><span class="url">index.html / results</span>
+    </div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old">
+          <span class="replace-label">❌ Current — Generic stats</span>
+          <p>Vague percentages with no story attached</p>
+        </div>
+        <div class="replace-new">
+          <span class="replace-label">✓ Recommended — Narrative benchmarks</span>
+          <p><strong>31h</strong> returned per week per client through autonomous agents<br><strong>€3.3M</strong> EU policy stack delivered in 2025<br><strong>150+</strong> projects across 6 industries<br><strong>2024→Now</strong> Kitchen table to multi-continent partner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header">
+      <h3>TESTIMONIALS / SOCIAL PROOF</h3><span class="url">index.html</span>
+    </div>
+    <div class="page-block-body">
+      <p>Tag each testimonial with the Operating Principle it demonstrates. Example: MTL Moving &amp; Delivery testimonial → badge <em>"Build for the Operator"</em>. This proves your values are real — not just page decoration.</p>
+      <h4>Recommended CTA Below Testimonials</h4>
+      <p>"Stop paying for tools you can't connect. Join the 150+ projects that have traded broken stacks for unified intelligence." → <strong>[Get an Audit]</strong> | <strong>[See Our Loop]</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     05 — SERVICES OVERVIEW
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <h2>Services <span>Overview</span> — services.html</h2>
+  </div>
+
+  <div class="replace">
+    <div class="replace-old">
+      <span class="replace-label">❌ Current Framing</span>
+      <p>"We offer 6 services" — presented as a flat list</p>
+    </div>
+    <div class="replace-new">
+      <span class="replace-label">✓ Target Framing</span>
+      <p>"One integrated operating system, delivered through 6 capabilities that compound on each other"</p>
+    </div>
+  </div>
+
+  <h4>Page Heading</h4>
+  <p>"The Operating Loop — Six Capabilities. One Architecture."</p>
+  <h4>Lead Paragraph</h4>
+  <p>"Every service we run plugs into the same architecture. Your data engineering feeds your analytics. Your analytics inform your automation. Your automation executes your strategy. Nothing works in isolation — that's the point."</p>
+
+  <table>
+    <tr><th>Service</th><th>Reframed Positioning</th><th>Proof Hook</th></tr>
+    <tr><td><strong>Data Engineering</strong></td><td>The plumbing that never leaks</td><td>Pipeline reliability metric</td></tr>
+    <tr><td><strong>Process Mining</strong></td><td>See how your org actually breathes</td><td>Hidden bottleneck found in X days</td></tr>
+    <tr><td><strong>Analytics &amp; BI</strong></td><td>Executive visibility on operational truth</td><td>Dashboard adoption rate vs. industry avg</td></tr>
+    <tr><td><strong>Automation &amp; AI</strong></td><td>Recalibrate your team's time</td><td>31h returned / week / client</td></tr>
+    <tr><td><strong>Business Strategy</strong></td><td>Strategy made executable</td><td>€3.3M EU programme</td></tr>
+    <tr><td><strong>Web Development</strong></td><td>Your data stack's front door</td><td>Performance scores 92+ Lighthouse</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     06 — SERVICE PAGES
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <h2>Service <span>Pages</span> — Deep Dives</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Data Analytics &amp; Business Intelligence</h3><span class="url">/service/analytics-bi.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Executive visibility built on operational truth."</p>
+      <h4>Lead</h4><p>"Dashboards are useless if the underlying data is unreliable. We build analytics environments that connect directly to your operational layer — giving leadership a single, trusted North Star they actually use on Monday morning."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>End-to-end ownership: from raw events to polished executive dashboard</li><li>Unified source of truth — one number, always trusted</li><li>Built-in refresh cycles — no more "the report isn't ready yet"</li><li>Adoption-first design: built for the person, not the project</li></ul>
+      <h4>CTA</h4><p>Primary: "Audit My Analytics Stack" · Secondary: "See Case Studies"</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Process Mining &amp; Analytics</h3><span class="url">/service/process-mining.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Your processes have hidden leaks. Here's exactly where."</p>
+      <h4>Lead</h4><p>"We use event log data to map exactly where time and money disappear in your operations — producing a precise, navigable process map that shows the gap between how your business is designed and how it actually runs."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>Evidence-based bottleneck detection — not interviews, actual event data</li><li>Conformance checking: designed flow vs. actual flow</li><li>Quantified impact: every bottleneck has a time and cost tag attached</li><li>Actionable output: not a presentation, a prioritized improvement roadmap</li></ul>
+      <h4>CTA</h4><p>Primary: "Find My Leaks →" · Secondary: "See a Demo"</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Automation &amp; AI Agents</h3><span class="url">/service/automation-ai.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Automate the repetitive. Reclaim the strategic."</p>
+      <h4>Lead</h4><p>"Manual reporting, data entry, status updates, and routine decisions are consuming your team's most expensive resource: focus. We deploy AI agents and automation workflows that return 30+ hours per week to the work that actually moves the needle."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>31h average returned per week per client</li><li>Custom LLM agents built for your specific workflows, not generic chatbots</li><li>Full integration with your existing stack (no rip-and-replace)</li><li>Documented, auditable — you own the logic</li></ul>
+      <h4>CTA</h4><p>Primary: "Calculate My Time Savings" · Secondary: "See AI in Action"</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Business Strategy &amp; Management</h3><span class="url">/service/business-strategy.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Strategy that's actually executable."</p>
+      <h4>Lead</h4><p>"Most strategic plans fail not because the thinking was wrong, but because the systems to execute them didn't exist. We bridge the gap between boardroom objectives and the operational architecture required to reach them — then build both."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>OKR design connected directly to your data stack</li><li>Frameworks: PESTLE, SWOT, VRIO, McKinsey 7S — applied, not just delivered</li><li>Strategic roadmaps that plug into your actual technical capacity</li><li>EU programme experience: €3.3M delivered</li></ul>
+      <h4>CTA</h4><p>Primary: "Discuss My Strategy →" · Secondary: "See Our Frameworks"</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Data Engineering &amp; Integration</h3><span class="url">/service/data-engineering.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"The infrastructure layer everything else depends on."</p>
+      <h4>Lead</h4><p>"Every dashboard, automation, and decision in your organization runs on your data infrastructure. If it's fragmented, unreliable, or siloed — everything built on top of it is too. We design pipelines, warehouses, and integration systems that unify your stack and never lose a record."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>End-to-end: ingestion → transformation → storage → delivery</li><li>Stack-agnostic: Kafka, Spark, dbt, Airbyte, Snowflake, BigQuery</li><li>Reliability-first: monitoring, alerting, SLA guarantees built in</li><li>One architecture principle: your data always compounds</li></ul>
+      <h4>CTA</h4><p>Primary: "Audit My Data Stack" · Secondary: "See Our Architecture"</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Web Development &amp; Maintenance</h3><span class="url">/service/web-development.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"A website that earns its keep."</p>
+      <h4>Lead</h4><p>"We design and build high-performance web platforms wired directly into your analytics stack from day one. Not brochure websites — operational interfaces that integrate with your workflows, track your KPIs, and convert your traffic into conversations."</p>
+      <h4>Key Selling Points</h4>
+      <ul><li>92+ Lighthouse score, 0.8s load time — performance is non-negotiable</li><li>Analytics-integrated from launch: every visit tracked, every funnel measured</li><li>Built for operators: CMS, automation hooks, CRM integrations</li><li>Ongoing maintenance included: your site never goes stale</li></ul>
+      <h4>CTA</h4><p>Primary: "Audit My Site →" · Secondary: "See Our Work"</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     07 — INDUSTRIES OVERVIEW
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <h2>Industries <span>Overview</span> — industries.html</h2>
+  </div>
+
+  <div class="replace">
+    <div class="replace-old">
+      <span class="replace-label">❌ Current</span>
+      <p>Simple list of industries with minimal differentiation</p>
+    </div>
+    <div class="replace-new">
+      <span class="replace-label">✓ Recommended</span>
+      <p>Each industry card should include: a fear/challenge specific to that sector + a MetricWave outcome hook + an industry-specific CTA</p>
+    </div>
+  </div>
+
+  <h4>Page Heading</h4>
+  <p>"The same unified loop — adapted for the operational reality of your industry."</p>
+
+  <table>
+    <tr><th>Industry</th><th>Their Fear</th><th>Your Hook</th></tr>
+    <tr><td><strong>Logistics &amp; Mobility</strong></td><td>Margin loss, route inefficiency, visibility gaps</td><td>"Optimize the physical world with digital precision."</td></tr>
+    <tr><td><strong>Technology &amp; SaaS</strong></td><td>Scaling infrastructure without scaling complexity</td><td>"Scale your systems. Not your operational overhead."</td></tr>
+    <tr><td><strong>AI Products &amp; Coaching</strong></td><td>AI stuck in "demo" — not in production</td><td>"Move AI from demo to production-grade asset."</td></tr>
+    <tr><td><strong>Government &amp; Public Sector</strong></td><td>Compliance, auditability, stakeholder reporting</td><td>"Modernize policy stacks. Maintain full governance."</td></tr>
+    <tr><td><strong>Education &amp; Research</strong></td><td>Vast datasets, limited analytical capacity</td><td>"Turn research data into publishable insight, faster."</td></tr>
+    <tr><td><strong>Non-Profit &amp; NGOs</strong></td><td>Donor reporting, impact measurement, lean teams</td><td>"Maximize social impact through lean intelligence systems."</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     08 — INDUSTRY PAGES
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">08</div>
+    <h2>Industry <span>Pages</span> — Deep Dives</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Logistics &amp; Mobility</h3><span class="url">/industry/logistics.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Optimize the physical world with digital precision."</p>
+      <h4>Lead</h4><p>"In logistics, every delayed decision has a physical cost. We build the intelligence layer that gives operations teams real-time visibility into routes, deliveries, fleet performance, and process bottlenecks — turning operational data into competitive advantage."</p>
+      <h4>Use Cases</h4><ul><li>Route optimization with predictive demand signals</li><li>Delivery performance monitoring and SLA tracking</li><li>Fleet analytics and maintenance intelligence</li><li>Process mining across warehouse and distribution workflows</li><li>Automated reporting for carriers, clients, and regulators</li></ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Technology &amp; SaaS</h3><span class="url">/industry/technology.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"We turn product signals into compounding growth."</p>
+      <h4>Lead</h4><p>"From activation to expansion revenue — we build the analytics infrastructure that lets SaaS teams make faster, smarter decisions with the data they already have. MRR, churn, cohorts, NPS — all connected, all trusted."</p>
+      <h4>Use Cases</h4><ul><li>Product analytics: funnel, activation, retention, expansion</li><li>Revenue intelligence: MRR/NRR/churn with drill-down capability</li><li>Customer cohort analysis and lifetime value modeling</li><li>AI copilots for customer success and support teams</li><li>Engineering analytics: deployment frequency, incident metrics</li></ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>AI Products &amp; Coaching</h3><span class="url">/industry/ai-coaching.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"We ship AI products and teach you how."</p>
+      <h4>Lead</h4><p>"Analytics, automation, and growth infrastructure for AI-native startups and coaching businesses — built to scale from your first users to your first million. We move you from demo to production-grade deployment."</p>
+      <h4>Use Cases</h4><ul><li>LLM integrations and custom agent deployment</li><li>AI workflow orchestration and knowledge systems</li><li>Evaluation frameworks (Evals) for production LLMs</li><li>Prompt infrastructure and version control</li><li>Coaching programme analytics and cohort management</li></ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Government &amp; Public Sector</h3><span class="url">/industry/government.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Modernizing public operations with accountable systems."</p>
+      <h4>Lead</h4><p>"Public sector organizations face a unique challenge: the highest standards of accountability, auditability, and stakeholder reporting — with often the least technical capacity to meet them. We've delivered €3.3M EU programme infrastructure. We understand governance."</p>
+      <h4>Use Cases</h4><ul><li>Policy analytics and evidence-based reporting</li><li>Multi-stakeholder data systems with role-based access</li><li>EU programme data infrastructure and grant reporting</li><li>Audit-ready automation with full lineage documentation</li><li>Multilingual reporting systems (EN/FR/NL/KA/RU)</li></ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Education &amp; Research</h3><span class="url">/industry/education.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Turning vast datasets into actionable academic insight."</p>
+      <h4>Lead</h4><p>"Research institutions generate enormous volumes of data. The bottleneck is almost never collection — it's analysis, visualization, and communication. We build the infrastructure and analytics environments that let researchers focus on the question, not the pipeline."</p>
+      <h4>Use Cases</h4><ul><li>Research data pipelines and survey data processing</li><li>Academic analytics dashboards for faculty and leadership</li><li>Grant management reporting and KPI tracking</li><li>Student engagement and retention analytics</li><li>Automated stakeholder reporting for funding bodies</li></ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>Non-Profit &amp; NGOs</h3><span class="url">/industry/nonprofit.html</span></div>
+    <div class="page-block-body">
+      <h4>Hero Headline</h4><p>"Maximizing social impact through lean intelligence systems."</p>
+      <h4>Lead</h4><p>"NGOs operate with constrained resources and expansive mandates. Every hour spent on manual reporting is an hour not spent on impact. We build lean, automated analytics systems that let your team focus on mission — while giving donors and board members the transparency they need."</p>
+      <h4>Use Cases</h4><ul><li>Donor analytics and retention intelligence</li><li>Grant reporting automation and impact dashboards</li><li>Programme monitoring and evaluation frameworks</li><li>Operational efficiency analysis across projects</li><li>Multilingual reporting for international stakeholders</li></ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     09 — ABOUT PAGE
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">09</div>
+    <h2>About <span>Page</span> — about.html</h2>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">Priority</span>
+    <p>This is one of your biggest missed opportunities. Your founder story is genuinely compelling. Use it. B2B buyers evaluate people before they evaluate services.</p>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>HERO SECTION</h3></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old">
+          <span class="replace-label">❌ Current</span>
+          <p>Generic "about us" agency text</p>
+        </div>
+        <div class="replace-new">
+          <span class="replace-label">✓ Recommended</span>
+          <p><strong>"Two operators who got tired of broken stacks."</strong><br>Use this as both the H1 and the emotional anchor for the entire page.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>FOUNDER SECTION</h3></div>
+    <div class="page-block-body">
+      <h4>FB — Founder · Strategy</h4>
+      <p>10 years in EU strategic consulting. Notre Dame. Watched organizations spend millions on strategy that collected dust because the systems to execute it didn't exist. Built MetricWave to be the partner that stays until the system works.</p>
+      <h4>DR — Founder · Tech</h4>
+      <p>ML, data engineering, and automation practitioner. Spent a decade building data infrastructure and watching perfectly good systems fail because nobody connected them to the strategy layer. Built MetricWave to own the full stack.</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>TIMELINE — MILESTONES</h3></div>
+    <div class="page-block-body">
+      <table>
+        <tr><th>Year</th><th>Milestone</th><th>Narrative Hook</th></tr>
+        <tr><td><strong>2024</strong></td><td>MetricWave Founded — Brussels + Tbilisi</td><td>"The kitchen table is still in use."</td></tr>
+        <tr><td><strong>2024</strong></td><td>First 10 clients shipped — Logistics · SaaS · Gov</td><td>"The loop was proven in the real world."</td></tr>
+        <tr><td><strong>2025</strong></td><td>EU programme delivered — €3.3M policy stack</td><td>"Governance-grade. Brussels-approved."</td></tr>
+        <tr><td><strong>2025</strong></td><td>AI agents in production — 31h saved / week / client</td><td>"The ROI became impossible to ignore."</td></tr>
+        <tr><td><strong>2026</strong></td><td>150+ projects across 6 industries</td><td>"One architecture. Multiplying outcomes."</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>OPERATING PRINCIPLES SECTION</h3></div>
+    <div class="page-block-body">
+      <p>Keep the 4 principles but add the <strong>Impact Statement</strong> after each:</p>
+      <ul>
+        <li><strong>Evidence Over Instinct</strong> → "Decisions are expensive. Every recommendation traces to data we trust."</li>
+        <li><strong>Build for the Operator</strong> → "We judge our work on Monday morning — not in the presentation."</li>
+        <li><strong>One Stack, Not Ten Tools</strong> → "Complexity compounds faster than value. We fight fragmentation."</li>
+        <li><strong>Show Our Work</strong> → "Every model, automation, and recommendation is documented. Audit us anytime."</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>BRUSSELS + TBILISI SECTION — ADD THIS</h3></div>
+    <div class="page-block-body">
+      <p>Dedicated section that highlights your unique geographic positioning. Suggested content:</p>
+      <p><em>"Headquartered in Brussels at the center of EU policy, and in Tbilisi — one of Europe's fastest-growing tech hubs — MetricWave operates across borders, time zones, and languages. We're fluent in EN · FR · NL · KA · RU, and in the regulatory requirements of the EMEA region."</em></p>
+      <p>This is a massive trust signal for NGOs, EU-funded projects, and international organizations. Make it prominent.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     10 — PRICING PAGE
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <h2>Pricing <span>Page</span> — pricing.html</h2>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">Strategic Recommendation</span>
+    <p>"Contact for Quote" can be a conversion barrier for high-intent visitors. Offer a low-friction entry point that builds trust before the commitment discussion.</p>
+  </div>
+
+  <h3>Introduce: The Stack Audit</h3>
+  <p>A fixed-price, time-boxed engagement that productizes your expertise and generates qualified leads.</p>
+
+  <div class="card teal">
+    <h3>Stack Audit — Fixed Price Entry Point</h3>
+    <p><strong>Deliverable:</strong> 48-hour operational systems review. You get:</p>
+    <ul>
+      <li>Architecture review — what's connected, what's broken, what's missing</li>
+      <li>Data flow analysis — where data is lost, duplicated, or delayed</li>
+      <li>Automation gap map — what's being done manually that shouldn't be</li>
+      <li>Reporting efficiency review — trusted vs. untrusted data</li>
+      <li>AI opportunity assessment</li>
+      <li>Prioritized roadmap with estimated impact per initiative</li>
+    </ul>
+    <p><strong>Why this works:</strong> It gives the client a concrete deliverable at low risk. It gives you a qualified, engaged prospect to continue with.</p>
+  </div>
+
+  <h3>Pricing Page Heading</h3>
+  <div class="replace">
+    <div class="replace-old">
+      <span class="replace-label">❌ Current</span>
+      <p>Generic pricing tiers with unclear positioning</p>
+    </div>
+    <div class="replace-new">
+      <span class="replace-label">✓ Recommended</span>
+      <p><strong>"Start with the audit. Build on the loop."</strong><br>Entry tier: Stack Audit (fixed price, 48h turnaround). Growth tier: Service retainer (monthly, choose capability). Partner tier: Full loop engagement (custom, multi-service architecture).</p>
+    </div>
+  </div>
+
+  <h3>Pricing Page Footer CTA</h3>
+  <p>"Not sure where to start? Most clients begin with a Stack Audit. 48 hours. A prioritized roadmap. No obligation." → <strong>[Book a Stack Audit]</strong></p>
+</div>
+
+<!-- ══════════════════════════════════════
+     11 — CONTACT PAGE
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <h2>Contact <span>Page</span> — contact.html</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>CONTACT FORM HEADING</h3></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>"Get in Touch" or "Contact Us"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Recommended</span><p><strong>"Tell us where the stack is breaking."</strong><br>Sub: "We respond within 24 hours. No pitch — just a direct conversation about your operational reality."</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>CONTACT FORM OPTIMIZATION</h3></div>
+    <div class="page-block-body">
+      <p>Add a <strong>"What's your primary challenge?"</strong> field with options that mirror the MetricWave Loop:</p>
+      <ul>
+        <li>My data is fragmented / unreliable (Data Engineering)</li>
+        <li>My team spends too much time on manual work (Automation)</li>
+        <li>I don't trust my dashboards / reporting (Analytics &amp; BI)</li>
+        <li>I can't see where my processes break down (Process Mining)</li>
+        <li>My strategy isn't translating into execution (Business Strategy)</li>
+        <li>My website isn't performing or converting (Web Development)</li>
+      </ul>
+      <p>This pre-qualifies leads and routes them to the right service context immediately.</p>
+    </div>
+  </div>
+
+<!-- ══════════════════════════════════════
+     12 — BLOG STRATEGY
+══════════════════════════════════════ -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-num">12</div>
+    <h2>Blog <span>Strategy</span> — blog.html</h2>
+  </div>
+
+  <div class="replace">
+    <div class="replace-old"><span class="replace-label">❌ Current</span><p>Generic "thought leadership" AI articles with no direct connection to MetricWave outcomes</p></div>
+    <div class="replace-new"><span class="replace-label">✓ Recommended</span><p>Operational Intelligence content — grounded in real deliverables, real outcomes, real methodologies</p></div>
+  </div>
+
+  <h3>Priority Content Pillars</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Case Studies (Post-Mortems)</h3>
+      <ul>
+        <li>"How we recovered 31h/week using custom LLM agents"</li>
+        <li>"Inside a €3.3M EU policy data stack"</li>
+        <li>"Process mining exposed 4 hidden bottlenecks in 72 hours"</li>
+        <li>"Replacing 7 disconnected tools with one operating loop"</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Operational Breakdowns</h3>
+      <ul>
+        <li>"Why dashboards fail inside growing companies"</li>
+        <li>"The real cost of tool fragmentation"</li>
+        <li>"What companies misunderstand about AI automation"</li>
+        <li>"How to structure a decision-ready data stack"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     13 — NEW PAGES TO BUILD
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <h2>New <span>Pages</span> to Build</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card teal">
+      <h3>The Operating Loop <span class="badge high">HIGH</span></h3>
+      <p>Your methodology page. Explains how all 6 services connect, how engagements are structured, and why unified systems matter. Becomes the most-linked internal page on your site.</p>
+      <p><strong>URL:</strong> /loop or /methodology</p>
+    </div>
+    <div class="card teal">
+      <h3>Stack Audit Page <span class="badge high">HIGH</span></h3>
+      <p>Your lead generation engine. Fixed-price, 48-hour audit with clear deliverables. Converts high-intent visitors who aren't ready for a full engagement conversation.</p>
+      <p><strong>URL:</strong> /audit or /stack-audit</p>
+    </div>
+    <div class="card">
+      <h3>Case Studies <span class="badge med">MED</span></h3>
+      <p>Before/after narratives with metrics, diagrams, and operational outcomes. Client-specific (anonymized where needed). Critical for trust in enterprise and public sector sales.</p>
+      <p><strong>URL:</strong> /case-studies</p>
+    </div>
+    <div class="card">
+      <h3>Cookie Policy / Legal <span class="badge low">LOW</span></h3>
+      <p>Ensure GDPR compliance documentation is current and multilingual — especially important for EU public sector and NGO clients who will specifically check this.</p>
+      <p><strong>URL:</strong> /cookie-policy (exists)</p>
+    </div>
+  </div>
+
+  <h3>Stack Audit Page — Recommended Structure</h3>
+  <table>
+    <tr><th>Section</th><th>Content</th></tr>
+    <tr><td><strong>Hero</strong></td><td>"Find the leak in your stack. In 48 hours."</td></tr>
+    <tr><td><strong>What's included</strong></td><td>6 deliverable areas (architecture, data flow, automation, reporting, AI, roadmap)</td></tr>
+    <tr><td><strong>What happens next</strong></td><td>3-step process: brief → audit → readout call</td></tr>
+    <tr><td><strong>Who it's for</strong></td><td>Tech leads, ops directors, CDOs feeling the fragmentation pain</td></tr>
+    <tr><td><strong>CTA</strong></td><td>Simple intake form: company, size, primary pain point, preferred slot</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     14 — SEO & TECHNICAL CONTENT
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">14</div>
+    <h2>SEO &amp; <span>Technical Content</span></h2>
+  </div>
+
+  <h3>Meta Title &amp; Description Rewrites</h3>
+  <table>
+    <tr><th>Page</th><th>Recommended Meta Title</th><th>Recommended Meta Description</th></tr>
+    <tr><td>Homepage</td><td>MetricWave — Integrated Intelligence Systems</td><td>We fix broken stacks. MetricWave builds unified data loops — from raw event to executive decision — for organizations across 6 industries.</td></tr>
+    <tr><td>Services</td><td>Services — The MetricWave Operating Loop</td><td>Six capabilities. One architecture. Data engineering, analytics, automation, AI agents, strategy, and web platforms — all connected.</td></tr>
+    <tr><td>Analytics &amp; BI</td><td>Analytics &amp; BI — Executive Visibility | MetricWave</td><td>Build dashboards that connect to your operational layer. MetricWave delivers trusted, unified analytics for leadership teams.</td></tr>
+    <tr><td>Process Mining</td><td>Process Mining — Find Your Hidden Leaks | MetricWave</td><td>We use event log data to map exactly where time and money disappear in your operations.</td></tr>
+    <tr><td>About</td><td>About MetricWave — Two Operators, One Loop</td><td>Founded by a strategist and a data engineer. We build unified intelligence systems for organizations tired of broken stacks.</td></tr>
+  </table>
+
+  <h3>Multilingual SEO Priority</h3>
+  <p>Your 5-language capability is a significant SEO advantage in the EMEA market. Prioritize French and Dutch translations for your highest-converting pages first (Homepage, Services, Contact) given the Brussels positioning.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Primary Keywords to Target</h3>
+      <ul>
+        <li>data engineering consultancy Brussels</li>
+        <li>process mining analytics EU</li>
+        <li>AI automation agents B2B</li>
+        <li>business intelligence consultant Belgium</li>
+        <li>data stack integration consulting</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Long-Tail Opportunities</h3>
+      <ul>
+        <li>"how to connect data tools without IT"</li>
+        <li>"EU programme data reporting automation"</li>
+        <li>"SaaS churn analytics dashboard"</li>
+        <li>"NGO impact reporting software"</li>
+        <li>"AI agent deployment for SMB"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     15 — IMPLEMENTATION PRIORITY MATRIX
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">15</div>
+    <h2>Implementation <span>Priority Matrix</span></h2>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Recommended Sequencing</span>
+    <p>Start with the changes that affect the first 10 seconds a visitor spends on your site. The hero narrative, the proof stats, and the operating principles section drive the highest conversion impact per hour of effort.</p>
+  </div>
+
+  <table>
+    <tr><th>Priority</th><th>Change</th><th>Impact</th><th>Effort</th></tr>
+    <tr><td><span class="badge high">1 — NOW</span></td><td>Rewrite homepage hero headline &amp; subheadline</td><td>🔥 Very High</td><td>Low (copy only)</td></tr>
+    <tr><td><span class="badge high">2 — NOW</span></td><td>Replace generic stats with narrative benchmarks</td><td>🔥 Very High</td><td>Low</td></tr>
+    <tr><td><span class="badge high">3 — NOW</span></td><td>Add Operating Principles with Impact Statements</td><td>High</td><td>Low</td></tr>
+    <tr><td><span class="badge high">4 — NOW</span></td><td>Rewrite all 6 service page leads &amp; CTAs</td><td>High</td><td>Medium</td></tr>
+    <tr><td><span class="badge med">5 — SOON</span></td><td>Build Stack Audit landing page</td><td>🔥 Very High</td><td>Medium</td></tr>
+    <tr><td><span class="badge med">6 — SOON</span></td><td>Rewrite About page with founder narrative</td><td>High</td><td>Medium</td></tr>
+    <tr><td><span class="badge med">7 — SOON</span></td><td>Add Brussels + Tbilisi section to About</td><td>High</td><td>Low</td></tr>
+    <tr><td><span class="badge med">8 — SOON</span></td><td>Update all industry pages with fear/hook/use cases</td><td>High</td><td>Medium</td></tr>
+    <tr><td><span class="badge med">9 — SOON</span></td><td>Build The Operating Loop methodology page</td><td>High</td><td>High</td></tr>
+    <tr><td><span class="badge med">10 — SOON</span></td><td>Rewrite meta titles &amp; descriptions across all pages</td><td>Med (SEO)</td><td>Low</td></tr>
+    <tr><td><span class="badge low">11 — LATER</span></td><td>Publish first 3 case study posts</td><td>High (trust)</td><td>High</td></tr>
+    <tr><td><span class="badge low">12 — LATER</span></td><td>Expand multilingual content to FR &amp; NL</td><td>Med-High</td><td>High</td></tr>
+    <tr><td><span class="badge low">13 — LATER</span></td><td>Build case studies archive page</td><td>Medium</td><td>Medium</td></tr>
+  </table>
+
+  <h3>Quick Win — Do This Today</h3>
+  <div class="callout dark">
+    <p style="color:white;">Change the homepage H1 from <em style="color:rgba(255,255,255,0.5)">"Turn Your Data Into Your Greatest Competitive Advantage"</em> to <span style="color:var(--teal); font-weight:700;">"We fix the broken stacks that hold companies back."</span></p>
+    <p style="color:rgba(255,255,255,0.7); margin-top:8px;">This single change repositions MetricWave from a commodity analytics vendor to a high-value systems partner — in the first 3 seconds of every visit.</p>
+  </div>
+
+  <div style="margin-top:40px; padding-top:20px; border-top:1px solid var(--border); text-align:center;">
+    <p style="font-family:'Courier Prime',monospace; font-size:8pt; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase;">MetricWave · Content Strategy &amp; Brand Positioning Playbook · Confidential · May 2025</p>
+    <p style="font-family:'Courier Prime',monospace; font-size:8pt; color:var(--teal); letter-spacing:0.1em; margin-top:4px;">One architecture. One loop. One accountable partner.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     16 — LINE-BY-LINE TEXT AUDIT
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">16</div>
+    <h2>Line-by-Line <span>Text Audit</span></h2>
+  </div>
+  <div class="callout dark">
+    <span class="callout-label">How to Read This Section</span>
+    <p>Every piece of copy on every page is reviewed below in page order. Red = current text. Green = suggested replacement. Rationale is given for each change. This section is the execution layer — use it when updating each page directly.</p>
+  </div>
+  <div class="callout warn">
+    <span class="callout-label">⚠ Global Issues — Fix on Every Page First</span>
+    <ul>
+      <li><strong>Footer tagline:</strong> "Built for operators who want their data to work as hard as they do." appears on every page. This directly contradicts your enterprise/operator repositioning. Replace with: <strong>"Built for operators who want their data to work as hard as they do."</strong></li>
+      <li><strong>Footer copyright:</strong> Some pages read "MetricWave - Thrive Performance Coaching. All rights reserved." — "Thrive Performance Coaching" is old/incorrect branding. Change to: <strong>"© 2026 MetricWave. All rights reserved."</strong></li>
+      <li><strong>Page meta titles</strong> using "Small Businesses" language (index.html, pricing.html) should be updated to match the repositioned brand.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     16A — HOMEPAGE
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">16A</div>
+    <h2><span>Homepage</span> — index.html</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>META / BROWSER TAB</h3><span class="url">index.html &lt;title&gt;</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>"MetricWave - Data-Driven Decision Making for Small Businesses"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"MetricWave — Unified Intelligence Systems for Modern Organisations"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Drops "Small Businesses" framing; positions as systems-first operator.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>HERO — MAIN HEADLINE</h3><span class="url">MetricWave-Header-Light/Dark.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Line 1 (black): "Your data," / Line 2 (teal): "working as hard as you are." <em>(or similar — verify live)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested Option A</span><p>Line 1 (black): "We fix the broken stacks" / Line 2 (teal): "that hold companies back."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current subheadline</span><p>Generic value proposition referencing data-driven decisions</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested subheadline</span><p>"Most organisations drown in disconnected tools and delayed reporting. MetricWave builds unified intelligence systems — from raw event to executive decision — so your team stops managing software and starts making moves."</p></div>
+      </div>
+      <h4>CTA Buttons</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>"Talk to us →" / "See our work"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Primary: <strong>"Get a Stack Audit →"</strong> &nbsp;|&nbsp; Secondary: <strong>"See the Operating Loop"</strong></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"Get a Stack Audit" is outcome-specific and mirrors the productised entry point. "See the Operating Loop" educates before asking for commitment.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICES SECTION HEADING</h3><span class="url">index.html / services grid</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>"How We Help You Thrive"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"One System. Six Capabilities."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"Thrive" is vague and coaching-adjacent. The new heading signals integration architecture — the core differentiator.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current subheading</span><p>"Comprehensive analytics solutions designed for solo entrepreneurs and small business owners"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Every capability plugs into the same architecture. Your data engineering feeds your analytics. Your analytics inform your automation. Nothing works in isolation — that's the point."</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — DATA ANALYTICS</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Eyebrow: "· DASHBOARDS · KPIs · REPORTING ·"<br>Title: "Data Analytics"<br>Sub: "Connect every source into one trusted analytics layer."<br>CTA: "Explore Data Analytics →"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Eyebrow: keep ✓<br>Title: "Data Analytics &amp; BI" (use full name)<br>Sub: "Executive visibility built on operational truth — not spreadsheet guesswork."<br>CTA: "Explore Analytics →"</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — WEB DEVELOPMENT</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Sub: "Fast, wired sites built into your analytics stack."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Sub: "Your data stack's front door — 92+ Lighthouse, analytics-wired from launch."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Adds the proof point (92+ score) and frames the site as infrastructure, not decoration.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — PROCESS MINING</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Sub: "Map exactly where time and money disappear."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Sub: "Map exactly where time and money disappear — with event-level precision, not assumptions." <span class="badge low">LOW CHANGE</span></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Good already. Adding "event-level precision, not assumptions" highlights the methodology and differentiates from consultant guesswork.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — AUTOMATION</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Title: "Automation"<br>Sub: "AI agents handling repetitive work, end to end."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Title: "Automation &amp; AI Agents" (use full name)<br>Sub: "31 hours returned per week per client. Custom agents built for your exact workflow."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Lead with the proof point — 31h is your most compelling single number.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — STRATEGY</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Title: "Strategy"<br>Sub: "Strategic clarity grounded in real performance data."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Title: "Business Strategy" (use consistent name)<br>Sub: "Strategy without systems is just a slide deck. We make it executable."</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SERVICE CARD — DATA ENGINEERING</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Sub: "Pipelines and warehouses you can actually trust."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Sub: "The infrastructure everything else depends on — pipelines, warehouses, and integrations that never lose a record."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Emphasises the foundational role within the loop architecture.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>SOCIAL PROOF SECTION</h3><span class="url">index.html / testimonials</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current heading</span><p>"Trusted By Leading Organizations"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Operators Who Trusted the Loop"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current subheading</span><p>"Real Results, Real Impact" / "See how we've helped businesses like yours make better decisions with data"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "What Changes When the Stack Works" / Sub: "Three engagements. Three different industries. One architecture."</p></div>
+      </div>
+      <h4>Testimonial Labels — Add Operating Principle Badge</h4>
+      <ul>
+        <li>MTL Moving &amp; Delivery (Angie, COO) → tag badge: <strong>"Build for the Operator"</strong></li>
+        <li>RentAndChill (Archie, CEO) → tag badge: <strong>"Evidence Over Instinct"</strong></li>
+        <li>GFS Georgia (Omar, GM) → tag badge: <strong>"One Stack, Not Ten Tools"</strong></li>
+      </ul>
+      <p>Each badge makes your values concrete — anchored in real-world proof, not page decoration.</p>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>BOTTOM CTA SECTION</h3><span class="url">index.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>"Ready to Transform Your Data Into Growth?" / "Let's discuss how MetricWave can help you make smarter, faster business decisions." / Button: "Schedule a Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "Stop paying for tools you can't connect."<br>Sub: "150+ projects have traded fragmented stacks for a unified intelligence loop. Yours can too."<br>Primary CTA: <strong>"Book a Stack Audit →"</strong><br>Secondary CTA: <strong>"See Our Work"</strong></p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     16B — SERVICE PAGES
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">16B</div>
+    <h2>Service <span>Pages</span> — Line by Line</h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>DATA ANALYTICS &amp; BI</h3><span class="url">/service/analytics-bi.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Meta Title</span><p>"Data Analytics &amp; Business Intelligence — MetricWave"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Analytics &amp; BI — Executive Visibility That Actually Works | MetricWave"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Data Analytics &amp; Business Intelligence"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Executive visibility built on operational truth."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">The current H1 is just the service name. It should be a positioning statement that earns the read.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Stop managing reports manually. We connect every data source you have — GA4, CRM, revenue tools, ad platforms — into a single analytics layer and build dashboards your team actually uses to make decisions."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Dashboards are only useful if the data underneath them is trusted. We build analytics environments that connect directly to your operational layer — giving leadership a single, unified North Star they actually act on Monday morning, not just review in the weekly presentation."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Section Label</span><p>"What You Get"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"What We Build For You"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"What you get" is transactional. "What we build" signals craft and ownership.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For" section</span><p>"SMBs and startups who want to stop guessing..."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Operations and leadership teams who've lost trust in their dashboards — or never had dashboards worth trusting in the first place."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Removes "SMBs and startups" framing. Speaks to the pain directly.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"Full visibility into what's driving (and draining) revenue / Dashboards live within days, not months / 10–15 hours saved weekly on manual reporting / Faster alignment across teams"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"One trusted number across every team — no more conflicting versions / Live within days, not months / 10–15 hours per week reclaimed from manual reporting / Leadership makes decisions on data they actually believe"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ CTA Buttons</span><p>"Discuss This Service" / "View Pricing"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Primary: <strong>"Audit My Analytics Stack →"</strong> &nbsp;|&nbsp; Secondary: <strong>"View Pricing"</strong></p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Start With a Stack Audit →"</strong></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"Free consultation" sounds like every agency. "Stack Audit" is specific, valuable, and positions your entry point product.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>WEB DEVELOPMENT &amp; MAINTENANCE</h3><span class="url">/service/web-development.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Web Development &amp; Maintenance" <em>(service name as H1)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"A website that earns its keep."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Your website should be your best-performing salesperson. We design, build, and maintain fast, conversion-optimised sites that are wired into your analytics stack from day one."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"We design and build high-performance platforms wired directly into your analytics stack from day one — not brochure sites, but operational interfaces that integrate with your workflows, track your KPIs, and convert your traffic into revenue conversations."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Current lead is decent. This version removes the cliché ("best-performing salesperson") and adds the key differentiator: wired analytics, not just aesthetics.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For"</span><p>"Businesses that need a professional web presence that converts visitors, loads fast, and connects cleanly into their broader analytics and marketing infrastructure."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Teams whose current site is a liability — slow, untracked, or disconnected from the rest of their stack. If you can't see who visited, what they did, or why they left, it's costing you."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"Measurable improvement in page load times and Core Web Vitals / Full analytics visibility from first visit to conversion / Zero-maintenance overhead for your internal team / A site that grows with your business"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"92+ Lighthouse performance score — industry benchmark, not aspiration / Full analytics from first click to conversion decision / Zero maintenance overhead for your team — we handle it / Every form, button, and funnel tracked from day one"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Lead the results list with your strongest specific proof point (92+).</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Audit My Site →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>PROCESS MINING &amp; ANALYTICS</h3><span class="url">/service/process-mining.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Process Mining &amp; Analytics" <em>(service name as H1)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Your processes have hidden leaks. Here's exactly where."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Your processes have hidden leaks. We use event log data to show exactly where time and money disappear in your operations — not as a theory, but as a map."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"We use event log data to map precisely where time and money disappear across your operations — producing a navigable process map that shows the gap between how your business is designed and how it actually runs. Not interviews. Not assumptions. Actual event data."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">The current lead opens with a strong hook but then doubles it weakly. This version distinguishes the methodology (event data, not consultant interviews).</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For"</span><p>"Operations managers and founders who suspect their processes are slower or leakier than they should be — and want objective, data-backed evidence before deciding where to invest in change."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Operations leaders who've already spent on process improvements that didn't hold — because they were based on interviews and gut, not event-level data. We bring the evidence."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"20–40% reduction in process cycle times / Clear, prioritised list of highest-impact improvements / Elimination of hidden bottlenecks that erode capacity / Operations infrastructure ready to scale"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"20–40% reduction in cycle times — verified across client engagements / Every bottleneck gets a time and cost tag attached / Prioritised improvement roadmap: not a presentation, an action list / Infrastructure mapped and documented, ready to scale"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Find My Process Leaks →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>AUTOMATION &amp; AI AGENTS</h3><span class="url">/service/automation-ai.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Automation &amp; AI Agents" <em>(service name as H1)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Automate the repetitive. Reclaim the strategic."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Every hour your team spends on repetitive work is an hour not spent on growth. We design and deploy automation and AI agents that handle the routine so your people can focus on what matters."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Manual reporting, data entry, status updates, and routine decisions are consuming your team's most expensive resource: focus. We deploy AI agents and automation workflows that return 31 hours per week — per client — to the work that actually moves the needle."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Lead with the proof point: 31h/week. It's your most compelling single claim and it's missing from the current lead.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For"</span><p>"Teams spending hours each week on tasks a well-configured automation could handle in seconds..."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Teams where senior people are doing junior work — because no one ever built the automation layer. We build it. It runs. Your people focus on what they were actually hired to do."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"Hours of manual work eliminated every week / Faster response times across sales and operations / Fewer errors from manual data handling / Teams focused on high-value work, not admin"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"31 hours returned per week per client — average across our automation engagements / Custom LLM agents built for your specific workflows, not generic chatbots / Full integration with your existing stack — no rip-and-replace / Documented and auditable: you own the logic"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Calculate My Time Savings →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>BUSINESS STRATEGY &amp; MANAGEMENT</h3><span class="url">/service/business-strategy.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Business Strategy &amp; Management" <em>(service name as H1)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Strategy that's actually executable."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Good strategy without data is guesswork. We combine structured strategic thinking with financial modelling and performance analytics to give your leadership team a clearer, faster path to the right decisions."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Most strategic plans fail not because the thinking was wrong — but because the systems to execute them didn't exist. We bridge the gap between boardroom objectives and the operational architecture required to reach them. We've delivered a €3.3M EU programme infrastructure. We don't just plan. We build."</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">The EU programme proof point is your strongest credential in this category. It should appear in the lead, not buried.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For"</span><p>"Founders and leadership teams who need structured thinking, clear priorities, and data to back their strategic bets — without the overhead of a full-time strategy function."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Leadership teams with ambitious roadmaps and the operational reality that nothing is moving fast enough. We come in, map the gaps between strategy and execution, and build the systems that close them."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"Clear strategic direction aligned across the leadership team / Financial models that make planning decisions obvious / Faster identification of growth levers and risk areas / Management reporting that saves hours each month"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"OKR frameworks connected directly to your data stack — not PowerPoint / €3.3M EU programme delivered: governance-grade, Brussels-approved / Strategic roadmaps that plug into actual technical capacity / Management reporting that the leadership team actually uses"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Discuss My Strategy →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>DATA ENGINEERING &amp; INTEGRATION</h3><span class="url">/service/data-engineering.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline</span><p>"Data Engineering &amp; Integration" <em>(service name as H1)</em></p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"The infrastructure layer everything else depends on."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Lead Paragraph</span><p>"Analytics is only as good as the data underneath it. We build the pipelines, warehouses, and integrations that make every dashboard, report, and model you run accurate and reliable."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Every dashboard, automation, and decision in your organisation runs on your data infrastructure. If it's fragmented, unreliable, or siloed — everything built on top of it is too. We design pipelines, warehouses, and integration systems that unify your stack from source to decision, and never lose a record."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ "Perfect For"</span><p>"Organisations whose data lives in silos, making analytics unreliable or impossible..."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Engineering and data teams who've inherited a patchwork of integrations that break silently — or organisations building their data architecture for the first time and refusing to do it wrong."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Typical Results</span><p>"Single source of truth across all business systems / Dashboards and reports that are always up to date / Elimination of broken exports and manual data stitching / Infrastructure that scales as your data volume grows"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"One source of truth — one number every team trusts / No more broken exports or manual data reconciliation at month-end / Monitoring, alerting, and SLA guarantees built in from day one / Stack-agnostic: Kafka, Spark, dbt, Airbyte, Snowflake, BigQuery — we work with what you have"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Bottom CTA</span><p>"Book a Free Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Audit My Data Stack →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     16C — INDUSTRY PAGES
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">16C</div>
+    <h2>Industry <span>Pages</span> — Line by Line</h2>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Pattern Note</span>
+    <p>Each industry page opens with "What We've Seen in This Sector" and closes with a light CTA. The content quality is high — the main improvements are: (1) stronger opening hooks, (2) more specific section labelling, (3) CTA copy that matches the industry's primary concern.</p>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>LOGISTICS &amp; MOBILITY</h3><span class="url">/industry/logistics.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Section label</span><p>"What We've Seen in This Sector"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"The Operational Reality We've Worked In"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">More assertive. "What we've seen" is passive. "Worked in" signals direct experience.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Opening paragraph</span><p>"Moving companies and mobility platforms generate enormous amounts of operational data — job records, route logs, customer interactions, fleet utilization, pricing history. Most of it sits unused..."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"In logistics, every delayed decision has a physical cost. Vehicles idle, routes inefficiency compounds, and customer churn happens before anyone runs a report. We've worked with both established regional operators and early-stage mobility platforms — and in both cases, the problem is the same: the business generates operational signals it isn't reading. We close that gap."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA</span><p>"Running a Logistics or Mobility Business?" / "Let's look at what your operational data is telling you — and what it isn't."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "Your routes are generating data. Are you using it?" / Sub: "Let's find out what your operational signals are actually saying — and what they're costing you." / Button: <strong>"Talk to Us →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>TECHNOLOGY &amp; SaaS</h3><span class="url">/industry/technology.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Section label</span><p>"What We've Seen in This Sector"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Where We've Operated Inside SaaS"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Opening paragraph — first line</span><p>"Technology companies have data — product logs, process events, CRM records, support tickets, release histories. What they often lack is the structure to connect those signals into coherent operational intelligence."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested opener</span><p>"SaaS companies have the data. They almost always lack the architecture to trust it. KPIs diverge across teams. Analytics gets built reactively. Process inefficiencies compound silently until they become expensive. We've been on both sides of this — as the analyst diagnosing it externally, and as the embedded data operator living it."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Proof stats labels</span><p>"In process inefficiencies surfaced via Celonis EMS analysis" (no number shown) / "SaaS product lines managed" / "Promoted across four years" / "Celonis-certified"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — lead with the number</span><p><strong>$32M</strong> in recoverable losses surfaced via Celonis EMS across enterprise engagements / <strong>15+</strong> SaaS product lines managed across data and analytics operations / <strong>4 years</strong> embedded inside a global SaaS product function at Flutter International / <strong>Celonis-certified</strong> process mining using production event log data</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA</span><p>"Need Sharper Process Intelligence?"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "Your product generates the data. We help you act on it." / Button: <strong>"Talk to Us →"</strong></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"Process Intelligence" is too narrow — this page covers BI, engineering, and analytics too. Broaden the CTA.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>AI PRODUCTS &amp; COACHING</h3><span class="url">/industry/ai-coaching.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Section label</span><p>"What We've Seen in This Sector"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"What We've Built Inside This Space"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Opening paragraph — key weakness</span><p>"We've worked across both — building the analytics layers, automation workflows, and reporting infrastructure that let founders and coaches focus on the work that actually matters. We don't consult from a distance. We get into the systems and build the things that need building."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"We don't consult from a distance. We get into the systems and build the things that need building — data infrastructure for AI-native teams that move fast, and client management systems for coaching businesses that need to scale without adding headcount. Both need the same thing: an operating layer that matches the ambition."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Proof stat labels (generic)</span><p>"Product instrumentation from event tracking to model performance monitoring" / "Client lifecycle systems designed and automated for coaching operations" / "Average hours saved per week per client through workflow automation" / "Integration pipelines connecting AI tools, CRMs, and reporting stacks"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — add numbers to each</span><p><strong>Full-stack</strong> product instrumentation — event tracking to model performance monitoring / <strong>End-to-end</strong> client lifecycle systems designed and automated / <strong>31h</strong> average returned per week per client through workflow automation / <strong>Multi-tool</strong> integration pipelines connecting AI tools, CRMs, and reporting stacks</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA</span><p>"Building with AI or Coaching at Scale?" / "Whether you're shipping AI products or running a coaching operation, your data infrastructure should be working as hard as you are."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "AI in production. Coaching at scale. The infrastructure has to keep up." / Button: <strong>"Build With Us →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>GOVERNMENT &amp; PUBLIC SECTOR</h3><span class="url">/industry/government.html</span></div>
+    <div class="page-block-body">
+      <div class="callout">
+        <span class="callout-label">Note — This page is your strongest industry page</span>
+        <p>The €3.3M, 3,000+ municipalities, 45+ stakeholder engagements, and Council of Europe/NLC/UNDP/NSF credentials are exceptional. The primary improvement is making the opening hook match the strength of the proof.</p>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Opening paragraph — too slow</span><p>"Government and multilateral institutions operate under a different kind of pressure than private sector organisations: public accountability, multi-stakeholder coordination, and the requirement to produce work that withstands political and technical scrutiny."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — lead with the credential</span><p>"We've administered a €3.3M EU cybersecurity programme at the Council of Europe. We've published policy research across 3,000+ municipalities through the National League of Cities. We've worked with UNDP and NSF-backed research programmes. When we say we understand public sector accountability standards — we mean it at the institutional level."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA</span><p>"Working on a Public Sector Programme?" / "Whether it's EU grant reporting, policy research, or stakeholder documentation — let's talk."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "Public sector work requires a different standard. We've met it." / Sub: "EU grant reporting, multi-stakeholder coordination, policy research — with full documentation and audit-ready outputs." / Button: <strong>"Talk to Our Team →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>EDUCATION &amp; RESEARCH</h3><span class="url">/industry/education.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Opening paragraph</span><p>"Academic institutions and research organisations work with some of the most complex data environments: multi-year longitudinal studies, cross-institutional collaborations..."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — make the Notre Dame angle more prominent</span><p>"Both members of our team are Notre Dame alumni. We've supported analytics work at Notre Dame, the McKenna Center for Human Development, and NSF-funded research programmes. That means we approach academic and research-adjacent work with methodological care and an understanding of what institutional stakeholders actually need — not just what looks good in a presentation."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Proof stat labels — missing numbers</span><p>"Notre Dame alumni — MS Business Analytics and interdisciplinary research" / "Analytics support for National Science Foundation-funded research" / "R, SQL — Statistical and data analysis tools applied in academic research contexts" / "Stakeholder interviews conducted across research and policy projects"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>2</strong> Notre Dame alumni — MS Business Analytics and interdisciplinary research / <strong>NSF</strong>-funded research analytics support / <strong>R, Python, SQL</strong> — statistical tools applied in peer-reviewed research contexts / <strong>50+</strong> stakeholder interviews conducted across research and policy projects</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA</span><p>"Supporting a Research Programme?" / "Whether you need analytical capacity, programme support, or institutional reporting — let's talk."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "Research-quality analytics, built by people who've done the research." / Button: <strong>"Talk to Our Team →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>NON-PROFIT &amp; NGOs</h3><span class="url">/industry/nonprofit.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Section label</span><p>"What We've Seen in This Sector"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"The Constraints We've Worked Within"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">NGOs are acutely aware of resource constraints — this framing signals empathy, not just capability.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Likely opening (verify live)</span><p>Generic description of NGO data challenges</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested opener</span><p>"NGOs operate with constrained resources and expansive mandates. Every hour spent on manual donor reporting is an hour not spent on impact. We build lean, automated analytics systems that let your team focus on mission — while giving donors, funders, and board members the transparency they require."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Closing CTA (likely generic)</span><p>Generic contact CTA</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: "More impact. Less reporting overhead." / Sub: "We build the reporting infrastructure so your team can focus on the work that actually matters." / Button: <strong>"Talk to Our Team →"</strong></p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     16D — ABOUT, PRICING, CONTACT, BLOG
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">16D</div>
+    <h2>About · Pricing · Contact · <span>Blog</span></h2>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>ABOUT PAGE</h3><span class="url">about.html + MetricWave-About.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Meta Title</span><p>"About MetricWave — Who We Are"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"About MetricWave — Two Operators, One Unified Loop"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline (in MetricWave-About.html iframe)</span><p>Generic about page framing</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p><strong>"Two operators who got tired of broken stacks."</strong></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">This is the emotional anchor the entire page should build from. B2B buyers evaluate people before services.</p></div>
+      </div>
+      <h4>Hero Subheadline</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Not present or generic</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"MetricWave was founded after years of watching organisations buy more software while becoming less aligned. Dashboards nobody trusted. Reports nobody opened. Systems nobody connected. So we built the partner that owns the entire loop — and stays until it works."</p></div>
+      </div>
+      <h4>Founders Section</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ FB Label</span><p>"FOUNDER · STRATEGY" / "10 YRS · EU · NOTRE DAME"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Add bio text beneath the label</span><p>"10 years in EU strategic consulting. Notre Dame alumni. Watched organisations spend millions on strategy that collected dust because the execution systems didn't exist. Built MetricWave to be the partner that stays until the system works."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ DR Label</span><p>"FOUNDER · TECH" / "ML · DATA ENG · AUTOMATION"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Add bio text beneath the label</span><p>"ML, data engineering, and automation practitioner. A decade building data infrastructure and watching good systems fail because no one connected them to the strategy layer. Built MetricWave to own the full stack — not just the technical parts."</p></div>
+      </div>
+      <h4>Operating Principles — Add Impact Lines</h4>
+      <ul>
+        <li><strong>Evidence Over Instinct</strong> → add: <em>"Every recommendation traces to operational data we've validated. Decisions are expensive — ours are always backed."</em></li>
+        <li><strong>Build for the Operator</strong> → add: <em>"We judge our work at 9am Monday — not in the Friday presentation."</em></li>
+        <li><strong>One Stack, Not Ten Tools</strong> → add: <em>"Complexity compounds faster than value. We fight fragmentation by design."</em></li>
+        <li><strong>Show Our Work</strong> → add: <em>"Every model, automation, and recommendation is documented and audit-ready. You own the logic."</em></li>
+      </ul>
+      <h4>Missing Section — Add: Brussels + Tbilisi</h4>
+      <div class="callout">
+        <p>Add a dedicated section with this copy: <em>"Headquartered in Brussels at the centre of EU policy, and in Tbilisi — one of Europe's fastest-growing tech hubs — MetricWave operates across borders, time zones, and languages. We're fluent in English, French, Dutch, Georgian, and Russian. And in the regulatory requirements of the EMEA region."</em></p>
+        <p>This is a major trust signal for NGOs, EU programmes, and international organisations.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>PRICING PAGE</h3><span class="url">pricing.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Meta Title</span><p>"Pricing - MetricWave Analytics Solutions"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Pricing — Start With the Audit | MetricWave"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Page Heading (verify live in iframe)</span><p>Likely: tier names with vague descriptions</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: <strong>"Start with the audit. Build on the loop."</strong><br>Sub: "Our engagements are structured around your operational reality — not a predetermined package. Most clients start with a Stack Audit, then build from there."</p></div>
+      </div>
+      <h4>Tier Framing</h4>
+      <ul>
+        <li><strong>Entry:</strong> "Stack Audit" — fixed price, 48h turnaround, prioritised roadmap. No obligation.</li>
+        <li><strong>Growth:</strong> "Service Retainer" — monthly engagement, single capability, integrated reporting.</li>
+        <li><strong>Partner:</strong> "Full Loop" — custom, multi-service architecture, accountable ownership.</li>
+      </ul>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Pricing page footer CTA</span><p>Generic "Contact Us" or "Get a Quote"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Not sure where to start? Most clients begin with a Stack Audit. 48 hours. A prioritised roadmap. No obligation." → <strong>[Book a Stack Audit →]</strong></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>CONTACT PAGE</h3><span class="url">contact.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Meta Title</span><p>"Contact MetricWave - Schedule a Consultation"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Contact MetricWave — Tell Us Where the Stack Is Breaking"</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Form Heading (verify live in iframe)</span><p>Likely: "Get in Touch" or "Contact Us"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: <strong>"Tell us where the stack is breaking."</strong><br>Sub: "We respond within 24 hours. No pitch — just a direct conversation about your operational reality."</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Form field — likely missing</span><p>No service/challenge pre-qualifier field</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — Add this dropdown</span><p>Label: "What's your primary challenge?"<br>Options mirroring the Loop: My data is fragmented / My team does too much manually / I don't trust my dashboards / I can't see where processes break / My strategy isn't executing / My website isn't performing</p></div>
+      </div>
+      <h4>Contact Info Block</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current email label</span><p>"Email : mikheil@metricwave.net" (with spaces around colon, inconsistent)</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Standardise to: "Email: hello@metricwave.net" or keep mikheil@ but apply consistent formatting across all pages</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block no-break">
+    <div class="page-block-header"><h3>BLOG PAGE</h3><span class="url">blog.html</span></div>
+    <div class="page-block-body">
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Meta Title</span><p>"Blog - MetricWave | Analytics Insights &amp; Industry Trends"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>"Blog — MetricWave | Operational Intelligence &amp; Data Strategy"</p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">"Operational Intelligence" replaces "Analytics Insights" — more distinctive and more aligned with your positioning.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Headline (in iframe)</span><p>"Ideas worth reading." / "Analysis worth acting on."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — keep, minor refinement</span><p>"Ideas worth reading." is a TED-adjacent cliché. Consider: <strong>"Insight without spin."</strong> / <em>"Analysis worth acting on."</em> — the second line is strong, keep it.</p></div>
+      </div>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Hero Sub (in iframe)</span><p>"Our take on AI, analytics, and the decisions businesses face right now — grounded in real work, not trend-chasing."</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested — this is already good, minor edit</span><p>"Our take on AI, analytics, and the decisions organisations face right now — grounded in real client work, not trend-chasing." <span class="badge low">LOW CHANGE</span></p></div>
+      </div>
+      <h4>Newsletter Section</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current</span><p>Heading: "Stay Ahead of the Curve"<br>Sub: "Get the latest analytics insights, industry trends, and expert tips delivered to your inbox"</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested</span><p>Heading: <strong>"Operational intelligence, weekly."</strong><br>Sub: "No trend-chasing. No filler. Just clear analysis on AI, data systems, and the decisions that compound — delivered directly to operators who want to think clearly."<br>Button: <strong>"Subscribe →"</strong> <em>(already correct)</em></p></div>
+      </div>
+      <h4>Blog Post Categories — Standardise</h4>
+      <div class="replace">
+        <div class="replace-old"><span class="replace-label">❌ Current categories</span><p>"BUSINESS &amp; INDUSTRY" / "DATA STORIES" / "AI &amp; TECH" — broad and generic</p></div>
+        <div class="replace-new"><span class="replace-label">✓ Suggested categories aligned with the Loop</span><p><strong>OPERATIONAL INTELLIGENCE</strong> · <strong>AI &amp; AGENTS</strong> · <strong>DATA ARCHITECTURE</strong> · <strong>STRATEGY &amp; EXECUTION</strong> · <strong>INDUSTRY DEEP-DIVE</strong></p><p style="font-size:8pt;color:var(--muted);margin-top:6px;">Category names become internal SEO anchors and reinforce your service positioning.</p></div>
+      </div>
+      <h4>Post Titles — Current Posts</h4>
+      <table>
+        <tr><th>Current Title</th><th>Suggested Improvement</th></tr>
+        <tr><td>"Apple's Next Chapter: John Ternus, New Hardware, and a New Direction"</td><td>Good. Add sub-tag: <em>what this means for your AI procurement decisions.</em></td></tr>
+        <tr><td>"The Tools Turning Raw Data Into Business Stories"</td><td>Stronger: <strong>"From Data to Decision: The Tools Your Analytics Stack Is Missing"</strong></td></tr>
+        <tr><td>"The Rise of AI Agents — And How Work Is Quietly Changing"</td><td>Good hook. Keep.</td></tr>
+        <tr><td>"Why Data Without a Story Is Just Noise"</td><td>Good. Keep.</td></tr>
+        <tr><td>"What AI Actually Is — And Why Your Business Can't Afford to Wait"</td><td>Slightly alarmist. Consider: <strong>"What AI Actually Is — And Where It Starts Paying Off"</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:40px; padding-top:20px; border-top:1px solid var(--border); text-align:center;">
+    <p style="font-family:'Courier Prime',monospace; font-size:8pt; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase;">MetricWave · Content Strategy &amp; Brand Positioning Playbook · Sections 16A–16D · Confidential · May 2026</p>
+    <p style="font-family:'Courier Prime',monospace; font-size:8pt; color:var(--teal); letter-spacing:0.1em; margin-top:4px;">Every word earns its place. Every page earns its conversion.</p>
+  </div>
+</div>
+
+</body>
+</html>

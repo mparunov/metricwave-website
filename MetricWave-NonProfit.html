@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetricWave — Non-Profit &amp; NGOs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+  #fit-stage { position: absolute; width: 1920px; height: 800px; transform-origin: top left; top: 0; left: 0; }
+  #fit-wrap  { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+  @keyframes mwDraw     { to { stroke-dashoffset: 0; } }
+  @keyframes mwPulse    { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.45; transform: scale(0.92); } }
+  @keyframes mwPulseRing{ 0% { opacity:0.6; r:5; } 100% { opacity:0; r:18; } }
+  @keyframes mwBar      { from { transform: scaleY(0.3); } to { transform: scaleY(1.05); } }
+  @keyframes mwSpin     { to { transform: rotate(360deg); } }
+  @keyframes mwFadeIn   { from { opacity:0; } to { opacity:1; } }
+  @keyframes mwSlideIn  { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideInR { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes mwSlideUp  { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes mwGrow     { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes mwScaleX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes mwPop      { from { opacity:0; transform: scale(0.6); } to { opacity:1; transform: scale(1); } }
+  @keyframes mwDashFlow { to { stroke-dashoffset: -100; } }
+  @keyframes mwBlink    { 50% { opacity: 0; } }
+</style>
+<script>(function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+</head>
+<body>
+<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+<script>
+  function fit() {
+    var stage = document.getElementById('fit-stage');
+    var wrap  = document.getElementById('fit-wrap');
+    if (!stage || !wrap) return;
+    var s = wrap.clientWidth / 1920;
+    stage.style.transform = 'scale(' + s + ')';
+    stage.style.left = '0px';
+    stage.style.top  = '0px';
+  }
+  window.addEventListener('load',   fit);
+  window.addEventListener('resize', fit);
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script type="text/babel" data-presets="env,react">
+/* === HERO SHELL === */
+const { useState, useEffect } = React;
+
+const HERO_TOKENS = {
+  dark: {
+    bg:        "#0A0A0A",
+    surface1:  "#1A1A1A",
+    surface2:  "#2A2A2A",
+    border:    "#3A3A3A",
+    text1:     "#FFFFFF",
+    text2:     "#E5E5E5",
+    teal:      "#2DD4BF",
+    tealDk:    "#14B8A6",
+    tealLt:    "#5EEAD4",
+    tealGlow:  "rgba(45,212,191,0.15)",
+    warn:      "#F59E0B",
+    warnGlow:  "rgba(245,158,11,0.18)",
+    ok:        "#22C55E",
+    nodeFill:  "#1A1A1A",
+    modelFill: "#1A1A1A",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#2DD4BF",
+    accentInk: "#0A0A0A",
+  },
+  light: {
+    bg:        "#FFFFFF",
+    surface1:  "#F4F4F6",
+    surface2:  "#E8E8EC",
+    border:    "#C8C8D4",
+    text1:     "#0D0D10",
+    text2:     "#404050",
+    teal:      "#0D9488",
+    tealDk:    "#0F766E",
+    tealLt:    "#14B8A6",
+    tealGlow:  "rgba(13,148,136,0.12)",
+    warn:      "#D97706",
+    warnGlow:  "rgba(217,119,6,0.18)",
+    ok:        "#16A34A",
+    nodeFill:  "#FFFFFF",
+    modelFill: "#0D0D10",
+    modelInk:  "#FFFFFF",
+    accentBg:  "#0D9488",
+    accentInk: "#FFFFFF",
+  },
+};
+
+function useTheme() {
+  const getTheme = () => {
+    if (typeof document === "undefined") return "light";
+    return document.documentElement.getAttribute("data-theme") || "light";
+  };
+  const [mode, setMode] = useState(getTheme);
+  useEffect(() => {
+    const obs = new MutationObserver(() => setMode(getTheme()));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    // Also sync when parent page changes localStorage (same-origin iframe receives storage events)
+    const onStorage = (e) => {
+      if (e.key === "theme") {
+        const next = e.newValue || "light";
+        document.documentElement.setAttribute("data-theme", next);
+        setMode(next);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => { obs.disconnect(); window.removeEventListener("storage", onStorage); };
+  }, []);
+  return mode;
+}
+
+function HeroLogo({ color, mode }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+      <img
+        src="logo_mw_new.png"
+        alt=""
+        style={{
+          height: 30, width: "auto", objectFit: "contain",
+          filter: mode === "dark" ? "brightness(1.1) saturate(1.1)" : "none",
+        }}
+      />
+      <span style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700, fontSize: 20,
+        letterSpacing: "-0.02em", color,
+      }}>MetricWave</span>
+    </div>
+  );
+}
+
+function ServiceHero({
+  eyebrow,
+  headline,
+  lead,
+  ctaPrimary,
+  ctaSecondary,
+  ticker,
+  Schematic,
+}) {
+  const mode = useTheme();
+  const t = HERO_TOKENS[mode];
+
+  return (
+    <div style={{
+      width: 1920, height: 800,
+      position: "relative", overflow: "hidden",
+      fontFamily: "'Inter', system-ui, sans-serif",
+      color: t.text1,
+      isolation: "isolate",
+    }}>
+
+      {mode === "dark" && (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `radial-gradient(900px 600px at 70% 50%, ${t.tealGlow}, transparent 70%)`,
+          zIndex: 1,
+        }} />
+      )}
+
+      {/* LEFT COLUMN — copy */}
+      <div style={{ position: "absolute", left: 80, top: 55, width: 500, zIndex: 3 }}>
+        <div style={{
+          fontFamily: "'Courier New', monospace",
+          fontSize: "0.7rem", letterSpacing: "0.15em",
+          textTransform: "uppercase", color: t.teal, marginBottom: 22,
+        }}>{eyebrow}</div>
+
+        <h1 style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontWeight: 900, fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          lineHeight: 1.1, letterSpacing: "-0.025em",
+          color: t.text1, margin: 0, textWrap: "balance",
+        }}>
+          {headline.pre}
+          {headline.italic && (
+            <>{" "}<span style={{ color: t.teal }}>{headline.italic}</span></>
+          )}
+          {headline.post && <>{" "}{headline.post}</>}
+        </h1>
+
+        <p style={{
+          fontSize: "1.05rem", lineHeight: 1.6,
+          color: t.text2, marginTop: 26, marginBottom: 0,
+          maxWidth: 460, textWrap: "pretty", fontWeight: 400,
+        }}>{lead}</p>
+
+        <div style={{ display: "flex", gap: 14, marginTop: 36 }}>
+          <button style={{
+            fontFamily: "inherit", fontSize: 17, fontWeight: 700,
+            padding: "16px 44px", borderRadius: 9, cursor: "pointer", whiteSpace: "nowrap",
+            border: "none", background: t.teal, color: t.bg,
+            letterSpacing: "-0.01em",
+          }} onClick={() => window.top.location.href = 'contact.html'}>{ctaPrimary} →</button>
+          <button style={{
+            fontFamily: "inherit", fontSize: 17, fontWeight: 700,
+            padding: "16px 44px", borderRadius: 9, cursor: "pointer", whiteSpace: "nowrap",
+            background: "transparent", color: t.teal,
+            border: `2px solid ${t.teal}`,
+            letterSpacing: "-0.01em",
+          }}>{ctaSecondary}</button>
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN — schematic */}
+      <div style={{
+        position: "absolute", left: 620, top: 10, width: 1220, height: 730, zIndex: 2,
+      }}>
+        {Schematic && <Schematic t={t} mode={mode} />}
+      </div>
+
+      {/* TICKER strip */}
+      <div style={{
+        position: "absolute", left: 0, right: 0, bottom: 0, height: 30,
+        zIndex: 5,
+        background: t.surface1, borderTop: `1px solid ${t.border}`,
+        display: "flex", alignItems: "center",
+        padding: "0 80px", justifyContent: "space-between",
+        fontFamily: "'Courier New', monospace",
+        fontSize: "0.65rem", color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
+      }}>
+        <span>{ticker}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: 999,
+            background: t.teal, animation: "mwPulse 1.6s infinite",
+          }} />
+          Live · Always in sync
+        </span>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* === HERO PARTS === */
+const { useState, useEffect } = React;
+
+/* ============================================================
+   Shared schematic primitives — used by every service hero.
+   Right-column canvas: 1220 × 560 (svg viewBox 0 0 1220 560)
+============================================================ */
+
+function NodeCard({
+  x, y, w = 200, h = 56, label, sub,
+  t, accent = false, status = "live",
+}) {
+  const dotColor = status === "warn" ? t.warn : status === "ok" ? t.ok : t.teal;
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={10}
+        fill={t.nodeFill}
+        stroke={accent ? t.teal : t.border}
+        strokeWidth={accent ? 1.4 : 1} />
+      <circle cx={x + 14} cy={y + h/2 - 8} r={3.5} fill={dotColor} opacity="0.95">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <text x={x + 26} y={y + h/2 - 4}
+        fontFamily="'Courier New', monospace" fontSize="11" fontWeight="600"
+        fill={t.text1} letterSpacing="0.06em">{label}</text>
+      {sub && (
+        <text x={x + 26} y={y + h/2 + 11}
+          fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.text2} letterSpacing="0.1em">{sub.toUpperCase()}</text>
+      )}
+    </g>
+  );
+}
+
+function FlowEdge({
+  d, t, mode, gradId, strokeWidth = 1.6,
+  drawDelay = 0, particleDelay = 0, particleColor, particleDur = 3.2,
+  particles = 1,
+}) {
+  const arr = Array.from({ length: particles });
+  return (
+    <g>
+      <path d={d} fill="none" stroke={`url(#${gradId})`} strokeWidth={strokeWidth}
+        style={{
+          strokeDasharray: 1000, strokeDashoffset: 1000,
+          animation: `mwDraw 1.4s ${drawDelay}ms cubic-bezier(.5,0,.2,1) forwards`,
+        }} />
+      {arr.map((_, i) => (
+        <circle key={i} r="3.5" fill={particleColor || t.teal} opacity="0">
+          <animateMotion dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" path={d} />
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1"
+            dur={`${particleDur}s`} begin={`${particleDelay + i * particleDur / particles}s`}
+            repeatCount="indefinite" />
+        </circle>
+      ))}
+    </g>
+  );
+}
+
+function EdgeDefs({ t, mode }) {
+  return (
+    <>
+      <linearGradient id={`edgeIn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.15" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.85" />
+      </linearGradient>
+      <linearGradient id={`edgeOut-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.85" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0.15" />
+      </linearGradient>
+      <linearGradient id={`edgeWarn-${mode}`} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.2" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0.85" />
+      </linearGradient>
+      <radialGradient id={`modelGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.teal} stopOpacity="0.4" />
+        <stop offset="60%" stopColor={t.teal} stopOpacity="0.05" />
+        <stop offset="100%" stopColor={t.teal} stopOpacity="0" />
+      </radialGradient>
+      <radialGradient id={`warnGlow-${mode}`} cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor={t.warn} stopOpacity="0.45" />
+        <stop offset="100%" stopColor={t.warn} stopOpacity="0" />
+      </radialGradient>
+    </>
+  );
+}
+
+function Crosshairs({ t, w = 1220, h = 560, inset = 12 }) {
+  return (
+    <>
+      {[[inset, inset], [w - inset, inset], [inset, h - inset], [w - inset, h - inset]].map(([x, y], i) => (
+        <g key={`c-${i}`} stroke={t.text2} strokeWidth="0.7" opacity="0.35">
+          <line x1={x - 6} y1={y} x2={x + 6} y2={y} />
+          <line x1={x} y1={y - 6} x2={x} y2={y + 6} />
+        </g>
+      ))}
+    </>
+  );
+}
+
+/* count-up text node */
+function CountUp({ to, dur = 1.5, prefix = "", suffix = "", x, y, ...rest }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let raf, start;
+    const animate = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min(1, (ts - start) / (dur * 1000));
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(to * eased);
+      if (p < 1) raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [to, dur]);
+  const display = to >= 1000
+    ? Math.round(v).toLocaleString()
+    : (to % 1 === 0 ? Math.round(v) : v.toFixed(1));
+  return <text x={x} y={y} {...rest}>{prefix}{display}{suffix}</text>;
+}
+
+/* "x s ago" rolling label */
+function AgoTicker({ x, y, ...rest }) {
+  const [s, setS] = useState(2);
+  useEffect(() => {
+    const id = setInterval(() => setS((p) => (p + 1) % 8), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const txt = s === 0 ? "just now" : `${s}s ago`;
+  return <text x={x} y={y} {...rest}>last sync: {txt}</text>;
+}
+
+Object.assign(window, { NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp, AgoTicker });
+
+</script>
+<script type="text/babel" data-presets="env,react">
+/* === INDUSTRY SCHEMATICS === */
+/* Industry hero schematics — 1220 × 560 viewBox.
+   Each schematic uses MetricWave's existing visual language:
+   - teal accents, monospace tags, dotted ticker eyebrows
+   - cards / nodes / flow edges from hero-parts
+   - a custom ICONOGRAPHIC focal element appropriate to the industry
+*/
+
+/* ============================================================
+   Helpers — corner crosshairs (keeps schematic feel consistent)
+============================================================ */
+function CornerXH({ t, W = 1220, H = 560 }) {
+  const pts = [[12,12],[W-12,12],[12,H-12],[W-12,H-12]];
+  return (
+    <g stroke={t.text2} strokeWidth="0.8" opacity="0.45">
+      {pts.map(([x,y], i) => (
+        <g key={i}>
+          <line x1={x-7} y1={y} x2={x+7} y2={y} />
+          <line x1={x} y1={y-7} x2={x} y2={y+7} />
+        </g>
+      ))}
+    </g>
+  );
+}
+
+function MiniGrid({ t, mode, x, y, w, h, cell = 24 }) {
+  const id = `igrid-${mode}-${x}-${y}`;
+  return (
+    <g opacity="0.35">
+      <defs>
+        <pattern id={id} width={cell} height={cell} patternUnits="userSpaceOnUse">
+          <path d={`M0 0H${cell}M0 0V${cell}`} stroke={t.border} strokeWidth="0.4" />
+        </pattern>
+      </defs>
+      <rect x={x} y={y} width={w} height={h} fill={`url(#${id})`} />
+    </g>
+  );
+}
+
+function Tag({ x, y, label, t, accent = false }) {
+  const w = label.length * 6.6 + 18;
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={18} rx="4"
+        fill={accent ? t.teal : t.surface1}
+        stroke={accent ? t.teal : t.border} strokeWidth="1" />
+      <text x={x + w/2} y={y + 12.5} textAnchor="middle"
+        fontFamily="'Courier New', monospace" fontSize="9" fontWeight="700"
+        fill={accent ? t.bg : t.text1} letterSpacing="0.12em">{label.toUpperCase()}</text>
+    </g>
+  );
+}
+
+/* ============================================================
+   1. LOGISTICS & MOBILITY — Route map with hubs + truck icon
+============================================================ */
+function SchemLogistics({ t, mode }) {
+  const W = 1220, H = 560;
+  // Hub positions (city-like nodes connected by routes)
+  const hubs = [
+    { id: "MTL",  x: 220, y: 174, label: "MONTRÉAL",   sub: "ORIGIN HUB",       primary: true },
+    { id: "QC",   x: 460, y: 134, label: "QUÉBEC",     sub: "DROP · 2.4H",      primary: false },
+    { id: "TOR",  x: 380, y: 324, label: "TORONTO",    sub: "TRANSIT · 5.1H",   primary: false },
+    { id: "OTT",  x: 600, y: 264, label: "OTTAWA",     sub: "DROP · 3.8H",      primary: false },
+    { id: "NYC",  x: 820, y: 404, label: "NYC",        sub: "X-BORDER · 7.2H",  primary: false },
+    { id: "BOS",  x: 980, y: 244, label: "BOSTON",     sub: "DEST · 6.8H",      primary: false },
+  ];
+  const routes = [
+    ["MTL","QC"], ["MTL","TOR"], ["MTL","OTT"], ["OTT","NYC"], ["TOR","NYC"], ["NYC","BOS"], ["MTL","BOS"]
+  ];
+  const map = Object.fromEntries(hubs.map(h => [h.id, h]));
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <MiniGrid t={t} mode={mode} x={40} y={40} w={W-80} h={H-80} cell={24} />
+      <CornerXH t={t} />
+
+      {/* eyebrow ticker */}
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· FLEET · ROUTING · DISPATCH ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">7 ACTIVE ROUTES · 31% LESS DEADHEAD</text>
+
+      {/* routes */}
+      {routes.map(([a, b], i) => {
+        const A = map[a], B = map[b];
+        const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2 - 30;
+        const d = `M ${A.x} ${A.y} Q ${mx} ${my}, ${B.x} ${B.y}`;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={t.teal} strokeOpacity="0.35" strokeWidth="1.4"
+              strokeDasharray="4 4" />
+            {/* moving truck particle */}
+            <g opacity="0">
+              <rect x="-7" y="-4" width="14" height="8" rx="1" fill={t.teal} />
+              <animateMotion dur={`${4 + i * 0.4}s`} begin={`${0.4 + i * 0.5}s`} repeatCount="indefinite" path={d} rotate="auto" />
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.95;1"
+                dur={`${4 + i * 0.4}s`} begin={`${0.4 + i * 0.5}s`} repeatCount="indefinite" />
+            </g>
+          </g>
+        );
+      })}
+
+      {/* hubs */}
+      {hubs.map((h, i) => (
+        <g key={h.id} style={{ animation: `mwPop 0.4s ${0.2 + i * 0.08}s backwards` }}>
+          {/* outer ping */}
+          {h.primary && (
+            <circle cx={h.x} cy={h.y} r="22" fill={t.teal} opacity="0.18">
+              <animate attributeName="r" values="22;42;22" dur="2.4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.4;0;0.4" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+          )}
+          <circle cx={h.x} cy={h.y} r={h.primary ? 13 : 9} fill={h.primary ? t.teal : t.bg}
+            stroke={t.teal} strokeWidth="2" />
+          {h.primary && <circle cx={h.x} cy={h.y} r="4" fill={t.bg} />}
+
+          {/* label box */}
+          <g transform={`translate(${h.x + 16}, ${h.y - 24})`}>
+            <rect x={0} y={0} width={140} height={36} rx="5"
+              fill={t.surface1} stroke={t.border} strokeWidth="1" />
+            <text x={9} y={14} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="800"
+              fill={t.text1} letterSpacing="0.1em">{h.label}</text>
+            <text x={9} y={28} fontFamily="'Courier New', monospace" fontSize="8.5"
+              fill={t.teal} letterSpacing="0.12em">{h.sub}</text>
+          </g>
+        </g>
+      ))}
+
+      {/* RIGHT — KPI panel anchored below the route network */}
+      <g style={{ animation: "mwSlideInR 0.5s 0.4s backwards" }}>
+        <rect x={W - 280} y={424} width={240} height={130} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={W - 264} y={449} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+          fill={t.text2} letterSpacing="0.15em">DISPATCH KPIs</text>
+        <line x1={W - 264} y1={461} x2={W - 56} y2={461} stroke={t.border} />
+
+        {[
+          { label: "ROUTES OPTIMIZED",  val: "1,284" },
+          { label: "DEADHEAD KM SAVED", val: "31%"   },
+          { label: "ON-TIME RATE",      val: "97.2%" },
+          { label: "AVG STOP TIME",     val: "8.4M"  },
+        ].map((r, i) => (
+          <g key={i} transform={`translate(${W - 264}, ${472 + i * 20})`}>
+            <text x={0} y={10} fontFamily="'Courier New', monospace" fontSize="9"
+              fill={t.text2} letterSpacing="0.1em">{r.label}</text>
+            <text x={208} y={18} textAnchor="end" fontFamily="'Inter', sans-serif" fontSize="18" fontWeight="900"
+              fill={t.teal} letterSpacing="-0.02em">{r.val}</text>
+          </g>
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* ============================================================
+   2. TECHNOLOGY & SaaS — Stack diagram + cohort chart
+============================================================ */
+function SchemSaaS({ t, mode }) {
+  const W = 1220, H = 560;
+
+  const layers = [
+    { y: 124, label: "PRODUCT",      sub: "FRONTEND · APP · WEB",         color: t.teal },
+    { y: 194, label: "API GATEWAY",  sub: "REST · GRAPHQL · WEBHOOKS",    color: t.teal },
+    { y: 264, label: "SERVICES",     sub: "AUTH · BILLING · ORG",         color: t.teal },
+    { y: 334, label: "DATA LAYER",   sub: "PG · REDIS · S3",              color: t.teal },
+    { y: 404, label: "OBSERVABILITY",sub: "LOGS · METRICS · TRACES",      color: t.tealLt },
+  ];
+
+  // Cohort retention curves on the right
+  const cohorts = [
+    { color: t.teal,   pts: [100, 78, 64, 56, 52, 50, 49, 48] },
+    { color: "#9CA3AF", pts: [100, 62, 44, 32, 26, 22, 20, 19] },
+    { color: t.tealLt, pts: [100, 84, 72, 66, 62, 60, 59, 58] },
+  ];
+  const cx0 = 760, cy0 = 284, cw = 380, ch = 190;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <CornerXH t={t} />
+
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· STACK · COHORTS · GROWTH ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">RETENTION · MRR · NRR · CHURN</text>
+
+      {/* LEFT — Stack diagram */}
+      <g style={{ animation: "mwSlideIn 0.5s 0.2s backwards" }}>
+        <text x={60} y={114} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>PRODUCT STACK</text>
+        {layers.map((l, i) => (
+          <g key={l.label} style={{ animation: `mwSlideUp 0.4s ${0.2 + i * 0.1}s backwards` }}>
+            <rect x={60} y={l.y} width={620} height={50} rx="6"
+              fill={t.surface1} stroke={t.border} strokeWidth="1" />
+            {/* layer accent bar */}
+            <rect x={60} y={l.y} width="4" height="50" fill={l.color} />
+            <text x={84} y={l.y + 22} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+              fill={t.text1} letterSpacing="-0.01em">{l.label}</text>
+            <text x={84} y={l.y + 38} fontFamily="'Courier New', monospace" fontSize="9.5"
+              fill={t.text2} letterSpacing="0.12em">{l.sub}</text>
+            {/* health dots */}
+            {[0,1,2,3,4].map((d) => (
+              <circle key={d} cx={620 + d * 12} cy={l.y + 25} r="3.5"
+                fill={d === 4 && i === 1 ? t.warn : t.teal} opacity={0.4 + d * 0.15} />
+            ))}
+            <text x={672} y={l.y + 28} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9"
+              fill={t.text2} letterSpacing="0.12em">99.9%</text>
+          </g>
+        ))}
+
+        {/* connecting verticals */}
+        {[1,2,3,4].map((i) => (
+          <line key={i} x1={370} y1={layers[i-1].y + 50} x2={370} y2={layers[i].y}
+            stroke={t.teal} strokeWidth="1.5" opacity="0.6" />
+        ))}
+      </g>
+
+      {/* RIGHT — Cohort chart */}
+      <g style={{ animation: "mwFadeIn 0.6s 0.5s backwards" }}>
+        <rect x={cx0 - 20} y={cy0 - 100} width={cw + 40} height={ch + 140} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={cx0} y={cy0 - 76} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>COHORT RETENTION</text>
+        <text x={cx0 + cw} y={cy0 - 76} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.teal} letterSpacing="0.12em">8 WEEKS</text>
+
+        {/* axis */}
+        <line x1={cx0} y1={cy0 + ch} x2={cx0 + cw} y2={cy0 + ch} stroke={t.border} />
+        <line x1={cx0} y1={cy0} x2={cx0} y2={cy0 + ch} stroke={t.border} />
+
+        {/* horizontal grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map((g, i) => (
+          <g key={i}>
+            <line x1={cx0} y1={cy0 + ch * g} x2={cx0 + cw} y2={cy0 + ch * g}
+              stroke={t.border} strokeDasharray="2 4" opacity="0.5" />
+            <text x={cx0 - 8} y={cy0 + ch * g + 3} textAnchor="end"
+              fontFamily="'Courier New', monospace" fontSize="8.5" fill={t.text2}>
+              {Math.round((1 - g) * 100)}
+            </text>
+          </g>
+        ))}
+
+        {/* curves */}
+        {cohorts.map((c, ci) => {
+          const d = c.pts.map((p, i) => {
+            const x = cx0 + (i / (c.pts.length - 1)) * cw;
+            const y = cy0 + ((100 - p) / 100) * ch;
+            return `${i === 0 ? "M" : "L"} ${x} ${y}`;
+          }).join(" ");
+          const totalLen = 600;
+          return (
+            <g key={ci}>
+              <path d={d} fill="none" stroke={c.color} strokeWidth="2.6" strokeLinejoin="round"
+                style={{
+                  strokeDasharray: totalLen, strokeDashoffset: totalLen,
+                  animation: `mwDraw 1.6s ${0.6 + ci * 0.2}s cubic-bezier(.5,0,.2,1) forwards`,
+                }} />
+              {c.pts.map((p, i) => {
+                const x = cx0 + (i / (c.pts.length - 1)) * cw;
+                const y = cy0 + ((100 - p) / 100) * ch;
+                return <circle key={i} cx={x} cy={y} r="3" fill={c.color}
+                  style={{ animation: `mwFadeIn 0.3s ${1.2 + ci * 0.2 + i * 0.06}s backwards` }} />;
+              })}
+            </g>
+          );
+        })}
+
+        {/* legend */}
+        <g transform={`translate(${cx0}, ${cy0 + ch + 22})`}>
+          {[
+            { c: t.teal,    label: "WITH METRICWAVE" },
+            { c: "#9CA3AF", label: "BASELINE" },
+            { c: t.tealLt,  label: "POWER USERS" },
+          ].map((l, i) => (
+            <g key={i} transform={`translate(${i * 130}, 0)`}>
+              <rect x={0} y={0} width={10} height={3} fill={l.c} />
+              <text x={16} y={5} fontFamily="'Courier New', monospace" fontSize="9" fontWeight="700"
+                fill={t.text1} letterSpacing="0.1em">{l.label}</text>
+            </g>
+          ))}
+        </g>
+
+        {/* highlight bubble — week-8 lift */}
+        <g transform={`translate(${cx0 + cw - 50}, ${cy0 + ch - 80})`}>
+          <rect x={0} y={0} width={80} height={28} rx="14"
+            fill={t.teal} />
+          <text x={40} y={18} textAnchor="middle"
+            fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="900"
+            fill={t.bg}>+2.5×</text>
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+/* ============================================================
+   3. AI PRODUCTS & COACHING — Brain/circuit + agent metrics
+============================================================ */
+function SchemAI({ t, mode }) {
+  const W = 1220, H = 560;
+  const cx = 360, cy = 324;
+
+  // Concentric ring with neural nodes
+  const ring1 = 8, ring2 = 12;
+  const r1 = 90, r2 = 150;
+
+  // Coach session timeline on right
+  const sessions = [
+    { y: 164, label: "DISCOVERY",  weeks: "WEEKS 1–2", state: "done"    },
+    { y: 236, label: "PROTOTYPE",  weeks: "WEEKS 3–4", state: "done"    },
+    { y: 308, label: "EVALS",      weeks: "WEEKS 5–6", state: "active"  },
+    { y: 380, label: "DEPLOYMENT", weeks: "WEEKS 7–8", state: "next"    },
+    { y: 452, label: "HANDOFF",    weeks: "WEEK 9",    state: "next"    },
+  ];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <CornerXH t={t} />
+
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· EVALS · AGENTS · COACHING ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">9-WEEK BUILD-IN-PUBLIC PROGRAM</text>
+
+      {/* LEFT — neural core */}
+      <g>
+        <circle cx={cx} cy={cy} r={r2 + 30} fill={`url(#modelGlow-${mode})`} />
+        {/* outer ring */}
+        <circle cx={cx} cy={cy} r={r2} fill="none" stroke={t.teal} strokeOpacity="0.35" strokeWidth="1.2"
+          strokeDasharray="3 5" style={{ animation: "mwSpin 32s linear infinite", transformOrigin: `${cx}px ${cy}px` }} />
+        <circle cx={cx} cy={cy} r={r1} fill="none" stroke={t.teal} strokeOpacity="0.5" strokeWidth="1.2"
+          strokeDasharray="2 4" style={{ animation: "mwSpin 18s linear infinite reverse", transformOrigin: `${cx}px ${cy}px` }} />
+
+        {/* outer ring nodes */}
+        {Array.from({ length: ring2 }).map((_, i) => {
+          const a = (i / ring2) * Math.PI * 2 - Math.PI / 2;
+          const x = cx + Math.cos(a) * r2;
+          const y = cy + Math.sin(a) * r2;
+          return <circle key={`o${i}`} cx={x} cy={y} r="3.5" fill={t.teal} opacity={0.5 + (i % 3) * 0.15}>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur={`${1.5 + (i % 4) * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.1}s`} />
+          </circle>;
+        })}
+
+        {/* inner ring nodes — connected to center */}
+        {Array.from({ length: ring1 }).map((_, i) => {
+          const a = (i / ring1) * Math.PI * 2 - Math.PI / 2;
+          const x = cx + Math.cos(a) * r1;
+          const y = cy + Math.sin(a) * r1;
+          return (
+            <g key={`i${i}`}>
+              <line x1={cx} y1={cy} x2={x} y2={y} stroke={t.teal} strokeWidth="1" opacity="0.45" />
+              <circle cx={x} cy={y} r="4.5" fill={t.bg} stroke={t.teal} strokeWidth="1.5" />
+            </g>
+          );
+        })}
+
+        {/* center — METRIC.AI */}
+        <circle cx={cx} cy={cy} r="46" fill={t.text1} stroke={t.teal} strokeWidth="2" />
+        <text x={cx} y={cy - 12} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="11" fontWeight="800"
+          fill={t.teal} letterSpacing="0.18em">METRIC</text>
+        <text x={cx} y={cy + 6} textAnchor="middle"
+          fontFamily="'Inter', sans-serif" fontSize="22" fontWeight="900"
+          fill={t.bg} letterSpacing="-0.02em">.AI</text>
+        <text x={cx} y={cy + 22} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="8" fontWeight="700"
+          fill={t.teal} letterSpacing="0.18em">EVAL · LOOP</text>
+
+        {/* labels around */}
+        {[
+          { a: -Math.PI/2,         lbl: "RAG" },
+          { a: -Math.PI/2 + Math.PI*2/4, lbl: "AGENTS" },
+          { a: -Math.PI/2 + Math.PI*4/4, lbl: "EVALS" },
+          { a: -Math.PI/2 + Math.PI*6/4, lbl: "PROMPTS" },
+        ].map((l, i) => {
+          const x = cx + Math.cos(l.a) * (r2 + 28);
+          const y = cy + Math.sin(l.a) * (r2 + 28);
+          return (
+            <g key={i}>
+              <rect x={x - 36} y={y - 9} width={72} height={18} rx="4"
+                fill={t.surface1} stroke={t.teal} strokeWidth="1" />
+              <text x={x} y={y + 4} textAnchor="middle"
+                fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="800"
+                fill={t.text1} letterSpacing="0.15em">{l.lbl}</text>
+            </g>
+          );
+        })}
+      </g>
+
+      {/* RIGHT — coaching timeline */}
+      <g style={{ animation: "mwSlideInR 0.5s 0.4s backwards" }}>
+        <text x={680} y={114} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>COACHING JOURNEY</text>
+        <line x1={720} y1={164} x2={720} y2={464} stroke={t.border} strokeWidth="1.5" />
+
+        {sessions.map((s, i) => {
+          const dotColor = s.state === "done" ? t.teal : s.state === "active" ? t.warn : t.text2;
+          return (
+            <g key={i}>
+              <circle cx={720} cy={s.y} r={s.state === "active" ? 9 : 6}
+                fill={s.state === "next" ? t.bg : dotColor}
+                stroke={dotColor} strokeWidth="2" />
+              {s.state === "active" && (
+                <circle cx={720} cy={s.y} r="9" fill="none" stroke={dotColor} strokeWidth="1.5"
+                  style={{ animation: "mwPulseRing 1.6s infinite" }} />
+              )}
+              <rect x={744} y={s.y - 22} width={300} height={44} rx="6"
+                fill={t.surface1} stroke={s.state === "active" ? t.warn : t.border}
+                strokeWidth={s.state === "active" ? 1.5 : 1} />
+              <text x={760} y={s.y - 3} fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="800"
+                fill={t.text1} letterSpacing="-0.01em">{s.label}</text>
+              <text x={760} y={s.y + 14} fontFamily="'Courier New', monospace" fontSize="9.5"
+                fill={t.text2} letterSpacing="0.12em">{s.weeks}</text>
+              <text x={1024} y={s.y + 4} textAnchor="end"
+                fontFamily="'Courier New', monospace" fontSize="9" fontWeight="800"
+                fill={dotColor} letterSpacing="0.15em">{s.state.toUpperCase()}</text>
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+/* ============================================================
+   4. GOVERNMENT & PUBLIC SECTOR — Institutional pillars + audit log
+============================================================ */
+function SchemGov({ t, mode }) {
+  const W = 1220, H = 560;
+
+  const pillars = [
+    { x: 90,  label: "POLICY",     sub: "CONSULTATION · DRAFT" },
+    { x: 240, label: "DATA",       sub: "OPEN · RGPD · GOV2" },
+    { x: 390, label: "DELIVERY",   sub: "PROCURE · MILESTONE" },
+    { x: 540, label: "AUDIT",      sub: "TRACE · OVERSIGHT" },
+  ];
+
+  const audit = [
+    { time: "13:42", who: "EU·DG-CNECT",  evt: "POLICY DRAFT · v3.1 · APPROVED", state: "ok"   },
+    { time: "13:38", who: "QC·MIN-FIN",   evt: "BUDGET ATTESTATION · LOCKED",     state: "ok"   },
+    { time: "13:21", who: "FED·SHARED",   evt: "PROCUREMENT · Q3 · MILESTONE 2",  state: "ok"   },
+    { time: "12:58", who: "MTL·SPVM",     evt: "DATA REQUEST · RGPD-COMPLIANT",   state: "warn" },
+    { time: "12:44", who: "EU·DG-EAC",    evt: "FRAMEWORK · MEMBER STATES SYNC",  state: "ok"   },
+    { time: "12:30", who: "GOV·CA-OPEN",  evt: "TRANSPARENCY REPORT · PUBLISHED", state: "ok"   },
+  ];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <CornerXH t={t} />
+
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· POLICY · DATA · DELIVERY · AUDIT ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">EU · FED · PROVINCIAL · MUNICIPAL</text>
+
+      {/* LEFT — Civic building / pillars */}
+      <g style={{ animation: "mwSlideUp 0.5s 0.2s backwards" }}>
+        {/* Roof / pediment */}
+        <polygon points="60,194 660,194 580,154 140,154"
+          fill={t.surface2} stroke={t.border} strokeWidth="1" />
+        <text x={360} y={182} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="11" fontWeight="800"
+          fill={t.teal} letterSpacing="0.22em">METRICWAVE · CIVIC</text>
+
+        {/* Step base */}
+        <rect x={60} y={460} width={600} height={12} fill={t.surface2} stroke={t.border} strokeWidth="1" />
+        <rect x={40} y={472} width={640} height={12} fill={t.surface2} opacity="0.7" />
+
+        {/* Pillars */}
+        {pillars.map((p, i) => (
+          <g key={p.label} style={{ animation: `mwGrow 0.5s ${0.3 + i * 0.1}s cubic-bezier(.5,0,.2,1) backwards`, transformOrigin: `${p.x + 50}px 460px` }}>
+            {/* capital */}
+            <rect x={p.x - 4} y={200} width={108} height={10} fill={t.surface2} stroke={t.border} strokeWidth="0.5" />
+            {/* shaft */}
+            <rect x={p.x + 4} y={210} width={92} height={250}
+              fill={t.surface1} stroke={t.border} strokeWidth="1" />
+            {/* fluting */}
+            {[0,1,2,3].map((f) => (
+              <line key={f} x1={p.x + 18 + f * 18} y1={214} x2={p.x + 18 + f * 18} y2={456}
+                stroke={t.border} strokeWidth="0.8" opacity="0.5" />
+            ))}
+            {/* label box */}
+            <rect x={p.x + 8} y={290} width={84} height={70} rx="4"
+              fill={t.bg} stroke={t.teal} strokeWidth="1" />
+            <text x={p.x + 50} y={318} textAnchor="middle"
+              fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="900"
+              fill={t.teal} letterSpacing="-0.02em">{p.label}</text>
+            <text x={p.x + 50} y={338} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="7.5" fontWeight="700"
+              fill={t.text2} letterSpacing="0.1em">{p.sub.split(" · ")[0]}</text>
+            <text x={p.x + 50} y={350} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="7.5" fontWeight="700"
+              fill={t.text2} letterSpacing="0.1em">{p.sub.split(" · ")[1]}</text>
+          </g>
+        ))}
+
+        {/* official seal (top right of building) */}
+        <g transform="translate(640, 274)">
+          <circle cx={0} cy={0} r="28" fill={t.bg} stroke={t.teal} strokeWidth="2" />
+          <circle cx={0} cy={0} r="22" fill="none" stroke={t.teal} strokeWidth="0.8" strokeDasharray="2 2" />
+          <text x={0} y={-2} textAnchor="middle"
+            fontFamily="'Courier New', monospace" fontSize="7" fontWeight="800"
+            fill={t.teal} letterSpacing="0.2em">CERTIFIED</text>
+          <text x={0} y={9} textAnchor="middle"
+            fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="900"
+            fill={t.text1}>★</text>
+        </g>
+      </g>
+
+      {/* RIGHT — Audit log */}
+      <g style={{ animation: "mwFadeIn 0.6s 0.5s backwards" }}>
+        <rect x={720} y={114} width={460} height={440} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={744} y={146} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>AUDIT LOG · LIVE</text>
+        <g transform="translate(1156, 136)">
+          <circle cx={0} cy={0} r="4" fill={t.teal}>
+            <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+          <text x={-10} y={4} textAnchor="end"
+            fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="700"
+            fill={t.teal} letterSpacing="0.15em">UTC-04:00</text>
+        </g>
+        <line x1={744} y1={158} x2={1156} y2={158} stroke={t.border} />
+
+        {audit.map((row, i) => {
+          const y = 174 + i * 52;
+          const stateColor = row.state === "warn" ? t.warn : t.teal;
+          return (
+            <g key={i} style={{ animation: `mwSlideInR 0.4s ${0.6 + i * 0.08}s backwards` }}>
+              {/* timestamp */}
+              <text x={744} y={y + 14} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+                fill={t.text2} letterSpacing="0.1em">{row.time}</text>
+              {/* status dot */}
+              <circle cx={798} cy={y + 10} r="4" fill={stateColor} />
+              {/* who */}
+              <text x={812} y={y + 14} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="800"
+                fill={t.text1} letterSpacing="0.12em">{row.who}</text>
+              {/* event */}
+              <text x={744} y={y + 30} fontFamily="'Inter', sans-serif" fontSize="12" fontWeight="600"
+                fill={t.text1} letterSpacing="-0.01em">{row.evt}</text>
+              {/* divider */}
+              {i < audit.length - 1 && (
+                <line x1={744} y1={y + 42} x2={1156} y2={y + 42}
+                  stroke={t.border} opacity="0.6" />
+              )}
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+/* ============================================================
+   5. EDUCATION & RESEARCH — Knowledge graph + research stats
+============================================================ */
+function SchemEdu({ t, mode }) {
+  const W = 1220, H = 560;
+  const cx = 360, cy = 330;
+
+  // Knowledge graph nodes — radial topic clusters
+  const nodes = [
+    { id: "core", x: cx,         y: cy,          label: "RESEARCH",     r: 48, primary: true },
+    { id: "n1",   x: cx - 175,   y: cy - 140,    label: "DATA",          r: 30 },
+    { id: "n2",   x: cx + 175,   y: cy - 140,    label: "METHODS",       r: 30 },
+    { id: "n3",   x: cx - 225,   y: cy + 50,     label: "REVIEW",        r: 30 },
+    { id: "n4",   x: cx + 225,   y: cy + 50,     label: "FINDINGS",      r: 30 },
+    { id: "n5",   x: cx,         y: cy + 160,    label: "PUBLISH",       r: 30 },
+
+    { id: "s1",   x: cx - 268,   y: cy - 200,    label: "DATASETS",      r: 36 },
+    { id: "s2",   x: cx - 72,    y: cy - 200,    label: "CODE",          r: 36 },
+    { id: "s3",   x: cx + 72,    y: cy - 200,    label: "EVALS",         r: 36 },
+    { id: "s4",   x: cx + 268,   y: cy - 200,    label: "EXPERIMENTS",   r: 36 },
+    { id: "s5",   x: cx + 288,   y: cy + 120,    label: "CITATIONS",     r: 36 },
+    { id: "s6",   x: cx - 288,   y: cy + 120,    label: "PEER",          r: 36 },
+  ];
+  const edges = [
+    ["core","n1"], ["core","n2"], ["core","n3"], ["core","n4"], ["core","n5"],
+    ["n1","s1"], ["n1","s2"], ["n2","s3"], ["n2","s4"], ["n4","s5"], ["n3","s6"],
+    ["n1","n2"], ["n3","n5"], ["n4","n5"],
+  ];
+  const map = Object.fromEntries(nodes.map(n => [n.id, n]));
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <CornerXH t={t} />
+
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· RESEARCH · COURSEWARE · OPEN-DATA ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">UNIVERSITIES · LABS · NSERC · FRQ</text>
+
+      {/* glow */}
+      <circle cx={cx} cy={cy} r="260" fill={`url(#modelGlow-${mode})`} opacity="0.7" />
+
+      {/* edges */}
+      {edges.map(([a, b], i) => {
+        const A = map[a], B = map[b];
+        return (
+          <line key={i} x1={A.x} y1={A.y} x2={B.x} y2={B.y}
+            stroke={t.teal} strokeOpacity={0.45} strokeWidth="1.2"
+            style={{
+              strokeDasharray: 200, strokeDashoffset: 200,
+              animation: `mwDraw 1.2s ${0.3 + i * 0.05}s cubic-bezier(.5,0,.2,1) forwards`,
+            }} />
+        );
+      })}
+
+      {/* nodes */}
+      {nodes.map((n, i) => (
+        <g key={n.id} style={{ animation: `mwPop 0.4s ${0.2 + i * 0.04}s backwards` }}>
+          {n.primary && (
+            <circle cx={n.x} cy={n.y} r={n.r + 8} fill="none" stroke={t.teal} strokeWidth="1"
+              opacity="0.4" strokeDasharray="3 4">
+              <animateTransform attributeName="transform" type="rotate"
+                from={`0 ${n.x} ${n.y}`} to={`360 ${n.x} ${n.y}`} dur="22s" repeatCount="indefinite" />
+            </circle>
+          )}
+          <circle cx={n.x} cy={n.y} r={n.r}
+            fill={n.primary ? t.text1 : t.surface1}
+            stroke={t.teal} strokeWidth={n.primary ? 2 : 1.2} />
+          <text x={n.x} y={n.y + 4} textAnchor="middle"
+            fontFamily="'Courier New', monospace"
+            fontSize={n.primary ? 12 : n.r >= 30 ? 9.5 : 9} fontWeight="800"
+            fill={n.primary ? t.teal : t.text1} letterSpacing="0.10em">{n.label}</text>
+        </g>
+      ))}
+
+      {/* RIGHT — Research stats */}
+      <g style={{ animation: "mwFadeIn 0.6s 0.6s backwards" }}>
+        <rect x={780} y={90} width={400} height={140} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={804} y={118} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+          fill={t.text2} letterSpacing="0.15em">RESEARCH OUTPUT · 2024</text>
+        <g transform="translate(804, 134)">
+          {[
+            { val: "47",  lbl: "PAPERS"     },
+            { val: "12",  lbl: "DATASETS"   },
+            { val: "8",   lbl: "WORKSHOPS"  },
+          ].map((s, i) => (
+            <g key={i} transform={`translate(${i * 120}, 0)`}>
+              <text x={0} y={48} fontFamily="'Inter', sans-serif" fontSize="38" fontWeight="900"
+                fill={t.teal} letterSpacing="-0.04em">{s.val}</text>
+              <text x={0} y={64} fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="700"
+                fill={t.text2} letterSpacing="0.12em">{s.lbl}</text>
+            </g>
+          ))}
+        </g>
+
+        {/* citation graph */}
+        <rect x={780} y={244} width={400} height={308} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={804} y={272} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>CITATIONS · 5-YEAR</text>
+        <text x={1156} y={272} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
+          fill={t.teal} letterSpacing="0.12em">↑ 4.2×</text>
+
+        {(() => {
+          const bars = [12, 22, 38, 64, 142];
+          const labels = ["'20","'21","'22","'23","'24"];
+          const max = 142;
+          const BASE = 516;
+          return bars.map((v, i) => {
+            const h = (v / max) * 220;
+            const x = 810 + i * 70;
+            const y = BASE - h;
+            return (
+              <g key={i}>
+                <rect x={x} y={y} width={44} height={h}
+                  fill={i === bars.length - 1 ? t.teal : t.tealDk}
+                  opacity={i === bars.length - 1 ? 1 : 0.55}
+                  style={{ transformOrigin: `${x + 22}px ${BASE}px`, animation: `mwBar 0.8s ${0.8 + i * 0.1}s cubic-bezier(.5,0,.2,1) backwards` }} />
+                <text x={x + 22} y={y - 5} textAnchor="middle"
+                  fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="800"
+                  fill={t.text1}>{v}</text>
+                <text x={x + 22} y={534} textAnchor="middle"
+                  fontFamily="'Courier New', monospace" fontSize="9.5"
+                  fill={t.text2}>{labels[i]}</text>
+              </g>
+            );
+          });
+        })()}
+      </g>
+    </svg>
+  );
+}
+
+/* ============================================================
+   6. NON-PROFIT & NGO — Impact dashboard + global reach map
+============================================================ */
+function SchemNGO({ t, mode }) {
+  const W = 1220, H = 560;
+
+  // Three concentric impact rings (showing funds → programs → beneficiaries)
+  const cx = 320, cy = 280;
+  const RING_R = 185;
+  const layers = [
+    { r: 55,       label: "FUNDS",         val: "$8.4M",   color: t.teal },
+    { r: 100,      label: "PROGRAMS",      val: "47",      color: t.teal },
+    { r: 145,      label: "PARTNERS",      val: "128",     color: t.tealLt },
+    { r: RING_R,   label: "BENEFICIARIES", val: "62K",     color: t.tealLt },
+  ];
+
+  // Region tags around outer ring
+  const regions = [
+    { a: -Math.PI * 0.5,             label: "EMEA" },
+    { a: -Math.PI * 0.5 + Math.PI/4, label: "WEST AFRICA" },
+    { a:  Math.PI * 0.0,             label: "EAST AFRICA" },
+    { a:  Math.PI * 0.25,            label: "S. ASIA" },
+    { a:  Math.PI * 0.5,             label: "L. AMERICA" },
+    { a:  Math.PI * 0.75,            label: "EUROPE" },
+    { a:  Math.PI,                   label: "MENA" },
+    { a: -Math.PI * 0.75,            label: "PACIFIC" },
+  ];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs><EdgeDefs t={t} mode={mode} /></defs>
+      <CornerXH t={t} />
+
+      <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
+        fill={t.teal} letterSpacing="0.18em">· IMPACT · GRANTS · TRANSPARENCY ·</text>
+      <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
+        fill={t.text2} letterSpacing="0.15em">8 REGIONS · 47 PROGRAMS · 62K LIVES</text>
+
+      <circle cx={cx} cy={cy} r={RING_R + 60} fill={`url(#modelGlow-${mode})`} opacity="0.5" />
+
+      {/* Concentric rings */}
+      {[...layers].reverse().map((l, idx) => (
+        <g key={l.label} style={{ animation: `mwPop 0.5s ${0.2 + idx * 0.12}s backwards`, transformOrigin: `${cx}px ${cy}px` }}>
+          <circle cx={cx} cy={cy} r={l.r}
+            fill="none" stroke={l.color} strokeWidth="1.4" opacity="0.85" />
+          <circle cx={cx} cy={cy} r={l.r}
+            fill={l.color} opacity="0.05" />
+        </g>
+      ))}
+
+      {/* Center glyph */}
+      <g style={{ animation: "mwPop 0.4s 0.7s backwards" }}>
+        <circle cx={cx} cy={cy} r="40" fill={t.surface1} stroke={t.teal} strokeWidth="2" />
+        <text x={cx} y={cy - 4} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="9" fontWeight="800"
+          fill={t.teal} letterSpacing="0.18em">METRIC</text>
+        <text x={cx} y={cy + 8} textAnchor="middle"
+          fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="900"
+          fill={t.text1}>GIVES</text>
+        <text x={cx} y={cy + 22} textAnchor="middle"
+          fontFamily="'Courier New', monospace" fontSize="7.5" fontWeight="700"
+          fill={t.teal} letterSpacing="0.18em">PRO BONO</text>
+      </g>
+
+      {/* Bottom stat strip — sits below the ring */}
+      <g style={{ animation: "mwSlideUp 0.4s 0.85s backwards" }}>
+        <rect x={40} y={475} width={620} height={48} rx="6"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        {layers.map((l, i) => (
+          <g key={l.label}>
+            {i > 0 && (
+              <line x1={40 + i * 155} y1={483} x2={40 + i * 155} y2={515}
+                stroke={t.border} strokeWidth="1" />
+            )}
+            <text x={40 + i * 155 + 77} y={491} textAnchor="middle"
+              fontFamily="'Courier New', monospace" fontSize="8.5" fontWeight="700"
+              fill={t.text2} letterSpacing="0.12em">{l.label}</text>
+            <text x={40 + i * 155 + 77} y={513} textAnchor="middle"
+              fontFamily="'Inter', sans-serif" fontSize="16" fontWeight="900"
+              fill={l.color}>{l.val}</text>
+          </g>
+        ))}
+      </g>
+
+      {/* Region pings on outer ring */}
+      {regions.map((r, i) => {
+        const x = cx + Math.cos(r.a) * RING_R;
+        const y = cy + Math.sin(r.a) * RING_R;
+        return (
+          <g key={i}>
+            <circle cx={x} cy={y} r="5" fill={t.teal}>
+              <animate attributeName="opacity" values="1;0.3;1" dur={`${1.6 + i * 0.2}s`} repeatCount="indefinite" />
+            </circle>
+            <text
+              x={x + (Math.cos(r.a) > 0 ? 12 : -12)}
+              y={y + 4}
+              textAnchor={Math.cos(r.a) > 0 ? "start" : "end"}
+              fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="800"
+              fill={t.text1} letterSpacing="0.12em">{r.label}</text>
+          </g>
+        );
+      })}
+
+      {/* RIGHT — Allocation breakdown */}
+      <g style={{ animation: "mwSlideInR 0.5s 0.5s backwards" }}>
+        <rect x={720} y={90} width={460} height={420} rx="10"
+          fill={t.surface1} stroke={t.border} strokeWidth="1" />
+        <text x={744} y={120} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
+          fill={t.text1}>FUND ALLOCATION</text>
+        <text x={1156} y={120} textAnchor="end"
+          fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="700"
+          fill={t.teal} letterSpacing="0.12em">FY 2024</text>
+        <line x1={744} y1={134} x2={1156} y2={134} stroke={t.border} />
+
+        {(() => {
+          const allocs = [
+            { lbl: "DIRECT PROGRAMS",        pct: 78, amount: "$6.55M" },
+            { lbl: "RESEARCH & EVALUATION",  pct: 9,  amount: "$760K"  },
+            { lbl: "ADMINISTRATION",         pct: 7,  amount: "$590K"  },
+            { lbl: "FUNDRAISING",            pct: 4,  amount: "$340K"  },
+            { lbl: "RESERVES",               pct: 2,  amount: "$170K"  },
+          ];
+          return allocs.map((a, i) => {
+            const y = 156 + i * 64;
+            return (
+              <g key={i}>
+                <text x={744} y={y + 14} fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="800"
+                  fill={t.text1}>{a.lbl}</text>
+                <text x={1156} y={y + 14} textAnchor="end"
+                  fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="900"
+                  fill={t.teal} letterSpacing="-0.01em">{a.amount}</text>
+
+                {/* bar */}
+                <rect x={744} y={y + 22} width={412} height={10} rx="5"
+                  fill={t.bg} stroke={t.border} strokeWidth="0.8" />
+                <rect x={744} y={y + 22} width={412 * a.pct / 100} height={10} rx="5"
+                  fill={i === 0 ? t.teal : t.tealDk}
+                  opacity={i === 0 ? 1 : 0.7 - i * 0.1}
+                  style={{ transformOrigin: "744px center", animation: `mwScaleX 0.8s ${0.6 + i * 0.1}s cubic-bezier(.5,0,.2,1) backwards` }} />
+                <text x={744} y={y + 48} fontFamily="'Courier New', monospace" fontSize="9" fontWeight="700"
+                  fill={t.text2} letterSpacing="0.12em">{a.pct}% OF BUDGET</text>
+              </g>
+            );
+          });
+        })()}
+      </g>
+    </svg>
+  );
+}
+
+Object.assign(window, {
+  SchemLogistics, SchemSaaS, SchemAI, SchemGov, SchemEdu, SchemNGO,
+});
+
+</script>
+<script>
+  window.MW_SERVICE = {
+    schematic:   "ngo",
+    eyebrow:     "· IMPACT · GRANTS · TRANSPARENCY · M&E ·",
+    headline:    { pre: "We make your", italic: "impact undeniable.", post: undefined },
+    lead:        "From donor reporting to programme evaluation — we help non-profits and NGOs build the data infrastructure that proves outcomes, wins grants, and earns trust.",
+    ctaPrimary:  "Talk to us",
+    ctaSecondary:"See our work",
+    ticker:      "· IMPACT · GRANTS · TRANSPARENCY · M&E · SDG · DONOR-REPORTING · GIVING ·",
+  };
+</script>
+<script type="text/babel" data-presets="env,react">
+/* === APP BOOTSTRAP === */
+/* global React, ServiceHero,
+   SchemLogistics, SchemSaaS, SchemAI, SchemGov, SchemEdu, SchemNGO */
+const MW_SCHEMATICS = {
+  logistics: typeof SchemLogistics !== "undefined" ? SchemLogistics : null,
+  saas:      typeof SchemSaaS     !== "undefined" ? SchemSaaS     : null,
+  ai:        typeof SchemAI       !== "undefined" ? SchemAI       : null,
+  gov:       typeof SchemGov      !== "undefined" ? SchemGov      : null,
+  edu:       typeof SchemEdu      !== "undefined" ? SchemEdu      : null,
+  ngo:       typeof SchemNGO      !== "undefined" ? SchemNGO      : null,
+};
+function App() {
+  const cfg = window.MW_SERVICE;
+  const Schem = MW_SCHEMATICS[cfg.schematic];
+  return React.createElement(ServiceHero, { ...cfg, Schematic: Schem });
+}
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>

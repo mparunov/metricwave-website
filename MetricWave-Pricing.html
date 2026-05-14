@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetricWave — Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+  #fit-wrap  { position: relative; width: 100vw; min-height: 100vh; overflow: hidden; }
+  #fit-stage { position: absolute; top: 0; left: 0; width: 1920px; transform-origin: top left; }
+
+  @keyframes mwPulse    { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.45; transform: scale(0.92); } }
+  @keyframes mwSlideUp  { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes mwFadeIn   { from { opacity:0; } to { opacity:1; } }
+
+  input[type=range] { cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="fit-wrap"><div id="fit-stage"><div id="root"></div></div></div>
+
+<script>
+  (function() {
+    var saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+  })();
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'mw-theme') {
+      var t = e.data.theme || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+    }
+  });
+
+  function fit() {
+    var stage = document.getElementById('fit-stage');
+    var wrap  = document.getElementById('fit-wrap');
+    if (!stage || !wrap) return;
+    var s = Math.min(1, wrap.clientWidth / 1920);
+    stage.style.transform = 'scale(' + s + ')';
+    var h = stage.scrollHeight * s;
+    wrap.style.minHeight = '0';
+    wrap.style.height = h + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'mw-page-height', height: h }, '*');
+    }
+  }
+  window.addEventListener('load',   function() { fit(); setTimeout(fit, 100); setTimeout(fit, 800); });
+  window.addEventListener('resize', fit);
+  if (window.ResizeObserver) {
+    window.addEventListener('load', function() {
+      var stage = document.getElementById('fit-stage');
+      if (stage) new ResizeObserver(fit).observe(stage);
+    });
+  }
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+/* global React */
+const { useState, useEffect } = React;
+
+// ─── Design tokens ─────────────────────────────────────────────────────────────
+const HERO_TOKENS = {
+  dark: {
+    bg: "#0A0A0A", surface1: "#1A1A1A", surface2: "#2A2A2A", border: "#3A3A3A",
+    text1: "#FFFFFF", text2: "#E5E5E5",
+    teal: "#2DD4BF", tealDk: "#14B8A6", tealLt: "#5EEAD4",
+    tealGlow: "rgba(45,212,191,0.15)",
+    warn: "#F59E0B", ok: "#22C55E",
+    accentBg: "#2DD4BF", accentInk: "#0A0A0A",
+  },
+  light: {
+    bg: "#FFFFFF", surface1: "#F4F4F6", surface2: "#E8E8EC", border: "#C8C8D4",
+    text1: "#0D0D10", text2: "#404050",
+    teal: "#0D9488", tealDk: "#0F766E", tealLt: "#14B8A6",
+    tealGlow: "rgba(13,148,136,0.12)",
+    warn: "#D97706", ok: "#16A34A",
+    accentBg: "#0D9488", accentInk: "#FFFFFF",
+  },
+};
+
+function useTheme() {
+  const initial = (typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light");
+  const [mode, setMode] = useState(initial);
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      const next = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light";
+      setMode(next);
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return mode;
+}
+
+function useLang() {
+  const initial = (typeof localStorage !== "undefined" && localStorage.getItem('language')) || 'en';
+  const [lang, setLang] = useState(initial);
+  useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+  return lang;
+}
+
+// ─── Pricing translations ──────────────────────────────────────────────────────
+const PRICING_T = {
+  en: {
+    eyebrow: "· PRICING · ENGAGEMENT SHAPES · NOT SEATS ·",
+    h1a: "Start with the audit.",
+    h1b: "Build on the loop.",
+    lead: "Our engagements are structured around your operational reality — not a predetermined package. Most clients start with a Stack Audit, then build from there.",
+    strip: ["FIXED-SCOPE FROM $8K", "NO USAGE FEES", "NO SEAT MULTIPLIERS", "30-DAY EXIT ON ANY ENGAGEMENT", "OUTCOME-ALIGNED FEES AVAILABLE"],
+    mostChosen: "· MOST CHOSEN ·",
+    included: "INCLUDED →",
+    bestForLabel: "BEST FOR · ",
+    tiers: [
+      { name: "PILOT", tag: "2–4 WEEK SPRINT", priceSub: "fixed scope",
+        blurb: "A focused diagnostic. We map your data, find the highest-leverage decision, and ship one production-grade artefact you can use Monday morning.",
+        deliverables: ["Discovery + data audit","1 production dashboard or model","30-min weekly stand-ups","Written handoff doc","30-day post-launch support"],
+        bestFor: "Teams who need a quick win or a second opinion before committing.", cta: "Start a pilot" },
+      { name: "ENGAGEMENT", tag: "3–6 MONTHS", priceSub: "/ month",
+        blurb: "A standing partnership. We embed into a single department, ship multiple workstreams, and build the analytics muscle alongside your team.",
+        deliverables: ["Everything in Pilot","2–3 active workstreams","Async-first, weekly syncs","Shared Slack + Linear","Dedicated lead + 2 IC support","Quarterly executive readouts"],
+        bestFor: "Operators ready to make data + AI a real capability inside their company.", cta: "Talk scope" },
+      { name: "PARTNERSHIP", tag: "12+ MONTHS", priceSub: "retainer + equity / outcome",
+        blurb: "Co-built. We act as your fractional data + AI team across the whole org — from infra to executive decisions — under one accountable retainer.",
+        deliverables: ["Everything in Engagement","Org-wide remit","Fractional CDO / Head of AI","Roadmap + hiring support","Board-level reporting","Optional outcome-based fees"],
+        bestFor: "Founders + execs treating data as a strategic moat, not a cost center.", cta: "Design a partnership" },
+    ],
+  },
+  fr: {
+    eyebrow: "· TARIFS · FORMES D'ENGAGEMENT · PAS PAR SIÈGE ·",
+    h1a: "Commencez par l'audit.",
+    h1b: "Construisez sur la boucle.",
+    lead: "Nos engagements sont structurés autour de votre réalité opérationnelle — pas un forfait prédéfini. La plupart des clients commencent par un Audit de Stack, puis construisent à partir de là.",
+    strip: ["FORFAIT FIXE À PARTIR DE 8K$", "AUCUN FRAIS D'UTILISATION", "PAS DE MULTIPLICATEURS PAR SIÈGE", "SORTIE 30 JOURS SUR TOUT ENGAGEMENT", "HONORAIRES ALIGNÉS SUR LES RÉSULTATS"],
+    mostChosen: "· LE PLUS CHOISI ·",
+    included: "INCLUS →",
+    bestForLabel: "IDÉAL POUR · ",
+    tiers: [
+      { name: "PILOTE", tag: "SPRINT DE 2–4 SEMAINES", priceSub: "forfait fixe",
+        blurb: "Un diagnostic ciblé. Nous cartographions vos données, trouvons la décision à plus fort levier et livrons un artefact de production utilisable dès lundi matin.",
+        deliverables: ["Découverte + audit des données","1 tableau de bord ou modèle en production","Points hebdomadaires de 30 min","Document de passation écrit","Support 30 jours post-lancement"],
+        bestFor: "Les équipes qui ont besoin d'une victoire rapide ou d'un second avis avant de s'engager.", cta: "Démarrer un pilote" },
+      { name: "ENGAGEMENT", tag: "3–6 MOIS", priceSub: "/ mois",
+        blurb: "Un partenariat continu. Nous nous intégrons dans un département, livrons plusieurs flux de travail et développons la capacité analytique aux côtés de votre équipe.",
+        deliverables: ["Tout ce qui est dans Pilote","2–3 flux de travail actifs","Async en priorité, syncs hebdomadaires","Slack + Linear partagés","Lead dédié + 2 IC","Bilans exécutifs trimestriels"],
+        bestFor: "Les opérateurs prêts à faire des données + IA une vraie capacité interne.", cta: "Discuter du périmètre" },
+      { name: "PARTENARIAT", tag: "12+ MOIS", priceSub: "retainer + équité / résultat",
+        blurb: "Co-construit. Nous agissons comme votre équipe data + IA fractionnelle dans toute l'organisation — de l'infrastructure aux décisions exécutives — sous un retainer unique.",
+        deliverables: ["Tout ce qui est dans Engagement","Mandat à l'échelle de l'org","CDO / Responsable IA fractionnel","Roadmap + support au recrutement","Reporting au conseil d'administration","Honoraires basés sur les résultats en option"],
+        bestFor: "Fondateurs + dirigeants traitant les données comme un avantage stratégique.", cta: "Concevoir un partenariat" },
+    ],
+  },
+  nl: {
+    eyebrow: "· PRIJZEN · ENGAGEMENTVORMEN · GEEN SEATS ·",
+    h1a: "Begin met de audit.",
+    h1b: "Bouw op de loop.",
+    lead: "Onze engagementen zijn gestructureerd rond uw operationele realiteit — niet een vooraf bepaald pakket. De meeste klanten beginnen met een Stack Audit en bouwen van daaruit.",
+    strip: ["VASTE SCOPE VANAF $8K", "GEEN GEBRUIKSKOSTEN", "GEEN SEAT VERMENIGVULDIGERS", "30-DAAGSE UITSTAP OP ELK ENGAGEMENT", "UITKOMST-AFGESTEMDE FEES BESCHIKBAAR"],
+    mostChosen: "· MEEST GEKOZEN ·",
+    included: "INBEGREPEN →",
+    bestForLabel: "BEST VOOR · ",
+    tiers: [
+      { name: "PILOOT", tag: "2–4 WEEK SPRINT", priceSub: "vaste scope",
+        blurb: "Een gefocuste diagnose. We brengen uw data in kaart, vinden de beslissing met de hoogste hefboom en leveren één productie-artefact dat u maandagochtend kunt gebruiken.",
+        deliverables: ["Ontdekking + data audit","1 productiedashboard of -model","Wekelijkse stand-ups van 30 min","Schriftelijk overdrachtsDocument","30 dagen post-launch support"],
+        bestFor: "Teams die een snelle overwinning of een tweede mening nodig hebben.", cta: "Start een piloot" },
+      { name: "ENGAGEMENT", tag: "3–6 MAANDEN", priceSub: "/ maand",
+        blurb: "Een vast partnerschap. We integreren in één afdeling, leveren meerdere werkstromen en bouwen de analytische capaciteit naast uw team.",
+        deliverables: ["Alles in Piloot","2–3 actieve werkstromen","Async-first, wekelijkse syncs","Gedeeld Slack + Linear","Toegewijde lead + 2 IC","Kwartaalrapportages voor leidinggevenden"],
+        bestFor: "Operators die data + AI een echte capaciteit willen maken.", cta: "Bespreek scope" },
+      { name: "PARTNERSCHAP", tag: "12+ MAANDEN", priceSub: "retainer + equity / uitkomst",
+        blurb: "Samen gebouwd. We fungeren als uw fractionele data + AI-team in de hele organisatie onder één retainer.",
+        deliverables: ["Alles in Engagement","Org-brede opdracht","Fractionele CDO / Head of AI","Roadmap + wervingsondersteuning","Rapportage op bestuursniveau","Optionele uitkomstgebaseerde fees"],
+        bestFor: "Oprichters + leidinggevenden die data als strategisch voordeel behandelen.", cta: "Ontwerp een partnerschap" },
+    ],
+  },
+};
+PRICING_T.ka = PRICING_T.en;
+PRICING_T.ru = PRICING_T.en;
+
+/* ── Extra section translations (ROI, Matrix, AddOns, FAQ, FinalCTA) ─────── */
+const PRICING_SECTIONS_T = {
+  en: {
+    roi: {
+      eyebrow: "· VALUE CHECK · DECISION HOURS ·",
+      h3: "How much is your team's time worth on bad data?",
+      lead: "Most teams we work with spend 15–25 hours/week reconciling spreadsheets and pulling reports. Plug your numbers in — the cost rarely surprises us, but it usually surprises everyone else.",
+      slider1: "HOURS / WEEK ON DATA WRANGLING",
+      slider2: "BLENDED HOURLY RATE",
+      hrUnit: " HRS", hrPrefix: "$", hrUnit2: " / HR",
+      annualLabel: "HIDDEN ANNUAL COST",
+      monthLabel: "PER MONTH",
+    },
+    matrix: {
+      eyebrow: "· COMPARE · ENGAGEMENT MATRIX ·",
+      h2: "Pick the shape that fits your moment.",
+      feature: "FEATURE",
+      rows: [
+        { row: "ENGAGEMENT SHAPE",    pilot: "Fixed scope",   engagement: "Standing team",   partner: "Embedded org-wide" },
+        { row: "TYPICAL DURATION",    pilot: "2–4 weeks",     engagement: "3–6 months",      partner: "12+ months" },
+        { row: "TEAM SIZE",           pilot: "1 lead",        engagement: "Lead + 2 IC",     partner: "Lead + 2-4 IC + fractional exec" },
+        { row: "SLA",                 pilot: "Async, weekly", engagement: "Async + 24h",     partner: "Same-day, shared on-call" },
+        { row: "EXECUTIVE READOUT",   pilot: false,           engagement: "Quarterly",       partner: "Monthly + board pack" },
+        { row: "FRACTIONAL CDO",      pilot: false,           engagement: false,             partner: true },
+        { row: "OUTCOME-BASED FEES",  pilot: false,           engagement: "Optional",        partner: "Standard" },
+        { row: "ROADMAP + HIRING",    pilot: false,           engagement: "Advisory",        partner: "Co-owned" },
+        { row: "DATA INFRA OWNERSHIP",pilot: "Read-only",     engagement: "Co-managed",      partner: "Full ownership" },
+      ],
+    },
+    addons: {
+      eyebrow: "· A LA CARTE · ONE-OFF ENGAGEMENTS ·",
+      h2: "Or stack what you need, one block at a time.",
+      lead: "For teams who already have data + AI capabilities and just need a specific surgical engagement. Fixed scope, fixed fee.",
+      addBtn: "ADD →",
+      items: [
+        { code: "A-01", label: "Data Audit",         desc: "1-week deep dive into your warehouse, sources, and pipelines.",    price: "$4K"       },
+        { code: "A-02", label: "Executive Workshop", desc: "Half-day strategy session for leadership teams.",                  price: "$3K"       },
+        { code: "A-03", label: "AI Eval Pack",       desc: "Custom eval harness + 8-week monitoring for one AI feature.",      price: "$6K"       },
+        { code: "A-04", label: "Hiring Support",     desc: "Job spec, screening loops, and final-round panel for 1 hire.",     price: "$5K"       },
+        { code: "A-05", label: "Team Training",      desc: "On-site or remote analytics + AI literacy program.",               price: "$8K"       },
+        { code: "A-06", label: "Migration Sprint",   desc: "Move off legacy BI, ETL, or model infra in 2 weeks.",              price: "From $12K" },
+      ],
+    },
+    faq: {
+      eyebrow: "· FAQ · WHAT EVERYONE ASKS ·",
+      h2: ["The fine print,", "without the fine print."],
+      items: [
+        { q: "How quickly can we start?", a: "If a Pilot is the right fit, we can usually kick off within 2 weeks. Engagements and Partnerships go through a short scoping call first to make sure we're the right team." },
+        { q: "Do you work on a fixed fee or hourly?", a: "Pilots are always fixed-scope fixed-fee. Engagements are monthly retainers. Partnerships can include outcome-based fees tied to clearly-defined business KPIs." },
+        { q: "What about NDAs and data security?", a: "Standard. We sign mutual NDAs before any data leaves your environment. For regulated clients (gov, fintech, healthcare) we work entirely inside your tenancy and never exfiltrate data." },
+        { q: "Can we pause an engagement?", a: "Engagements can pause on 30 days' notice. Partnerships have quarterly off-ramps with no penalty. We'd rather you stay because it's working, not because of a contract." },
+        { q: "Do you do equity-only work?", a: "Occasionally — for mission-aligned founders, early-stage AI products, and non-profits. The bar is high and we say no more than we say yes. Reach out and tell us the story." },
+        { q: "Where do you work from?", a: "Montréal HQ, with active operators in NYC, London, Brussels, Tbilisi, and Malta. Async-first, with on-site visits for strategic moments." },
+      ],
+    },
+    cta: {
+      eyebrow: "· READY · 30-MIN INTRO · NO PITCH ·",
+      h2pre: "Pricing is the easy part.",
+      h2teal: "Fit is what matters.",
+      lead: "Book a 30-minute intro call. We'll walk through what you're trying to do, tell you honestly whether we're the right team, and either propose a shape — or point you at someone better.",
+      btn1: "Book a 30-min call →",
+      btn2: "Email mikheil@metricwave.net",
+      footer: "· REPLY WITHIN 1 BUSINESS DAY ·",
+    },
+  },
+  fr: {
+    roi: {
+      eyebrow: "· VÉRIFICATION DE VALEUR · HEURES DE DÉCISION ·",
+      h3: "Combien vaut le temps de votre équipe sur de mauvaises données ?",
+      lead: "La plupart des équipes avec lesquelles nous travaillons passent 15–25 heures par semaine à réconcilier des feuilles de calcul. Entrez vos chiffres — le coût nous surprend rarement, mais il surprend généralement tout le monde.",
+      slider1: "HEURES / SEMAINE DE NETTOYAGE DE DONNÉES",
+      slider2: "TAUX HORAIRE MOYEN",
+      hrUnit: " HRS", hrPrefix: "$", hrUnit2: " / H",
+      annualLabel: "COÛT ANNUEL CACHÉ",
+      monthLabel: "PAR MOIS",
+    },
+    matrix: {
+      eyebrow: "· COMPARER · MATRICE D'ENGAGEMENT ·",
+      h2: "Choisissez la forme qui correspond à votre moment.",
+      feature: "FONCTIONNALITÉ",
+      rows: [
+        { row: "FORME D'ENGAGEMENT",    pilot: "Forfait fixe",   engagement: "Équipe permanente",   partner: "Intégré org-wide" },
+        { row: "DURÉE TYPIQUE",         pilot: "2–4 semaines",   engagement: "3–6 mois",            partner: "12+ mois" },
+        { row: "TAILLE D'ÉQUIPE",       pilot: "1 lead",         engagement: "Lead + 2 IC",         partner: "Lead + 2-4 IC + exec fractionnel" },
+        { row: "SLA",                   pilot: "Async, hebdo",   engagement: "Async + 24h",         partner: "Même jour, on-call partagé" },
+        { row: "BILAN EXÉCUTIF",        pilot: false,            engagement: "Trimestriel",         partner: "Mensuel + pack conseil" },
+        { row: "CDO FRACTIONNEL",       pilot: false,            engagement: false,                 partner: true },
+        { row: "HONORAIRES AUX RÉSULTATS", pilot: false,         engagement: "Optionnel",           partner: "Standard" },
+        { row: "ROADMAP + RECRUTEMENT", pilot: false,            engagement: "Consultatif",         partner: "Co-piloté" },
+        { row: "PROPRIÉTÉ INFRA DATA",  pilot: "Lecture seule",  engagement: "Co-géré",             partner: "Propriété complète" },
+      ],
+    },
+    addons: {
+      eyebrow: "· À LA CARTE · ENGAGEMENTS PONCTUELS ·",
+      h2: "Ou composez ce dont vous avez besoin, un bloc à la fois.",
+      lead: "Pour les équipes qui ont déjà des capacités data + IA et ont besoin d'un engagement ciblé. Forfait fixe.",
+      addBtn: "AJOUTER →",
+      items: [
+        { code: "A-01", label: "Audit de Données",      desc: "Analyse approfondie d'une semaine de votre entrepôt, sources et pipelines.",        price: "$4K"      },
+        { code: "A-02", label: "Atelier Exécutif",      desc: "Session stratégique d'une demi-journée pour les équipes dirigeantes.",              price: "$3K"      },
+        { code: "A-03", label: "Pack Évaluation IA",    desc: "Harnais d'évaluation personnalisé + 8 semaines de surveillance pour une feature IA.", price: "$6K"     },
+        { code: "A-04", label: "Support Recrutement",   desc: "Description de poste, boucles de sélection et panel final pour 1 recrutement.",     price: "$5K"      },
+        { code: "A-05", label: "Formation d'Équipe",    desc: "Programme de formation analytics + IA en présentiel ou à distance.",                 price: "$8K"      },
+        { code: "A-06", label: "Sprint Migration",      desc: "Migration hors de l'infra BI, ETL ou modèle legacy en 2 semaines.",                 price: "Dès $12K" },
+      ],
+    },
+    faq: {
+      eyebrow: "· FAQ · CE QUE TOUT LE MONDE DEMANDE ·",
+      h2: ["Les petits caractères,", "sans les petits caractères."],
+      items: [
+        { q: "À quelle vitesse pouvons-nous commencer ?", a: "Si un Pilote est la bonne option, nous pouvons généralement démarrer dans les 2 semaines. Les Engagements et Partenariats passent d'abord par un appel de cadrage rapide." },
+        { q: "Travaillez-vous à forfait fixe ou à l'heure ?", a: "Les Pilotes sont toujours à forfait fixe. Les Engagements sont des retainers mensuels. Les Partenariats peuvent inclure des honoraires aux résultats liés à des KPI clairement définis." },
+        { q: "Qu'en est-il des NDAs et de la sécurité des données ?", a: "Standard. Nous signons des NDAs mutuels avant que des données ne quittent votre environnement. Pour les clients réglementés (gov, fintech, santé) nous travaillons entièrement dans votre tenancy." },
+        { q: "Pouvons-nous suspendre un engagement ?", a: "Les Engagements peuvent être suspendus avec 30 jours de préavis. Les Partenariats ont des points de sortie trimestriels sans pénalité. Nous préférons que vous restiez parce que ça fonctionne." },
+        { q: "Faites-vous du travail equity uniquement ?", a: "Occasionnellement — pour des fondateurs alignés sur la mission, des produits IA en phase précoce, et des ONG. Le seuil est élevé et nous disons non plus souvent que oui." },
+        { q: "D'où travaillez-vous ?", a: "Siège à Montréal, avec des opérateurs actifs à NYC, Londres, Bruxelles, Tbilissi et Malte. Async en priorité, avec des visites sur site pour les moments stratégiques." },
+      ],
+    },
+    cta: {
+      eyebrow: "· PRÊT · INTRO 30 MIN · SANS PITCH ·",
+      h2pre: "Le tarif est la partie facile.",
+      h2teal: "L'adéquation est ce qui compte.",
+      lead: "Réservez un appel d'introduction de 30 minutes. Nous examinerons ce que vous essayez de faire, vous dirons honnêtement si nous sommes la bonne équipe, et proposerons une forme — ou vous orienterons vers quelqu'un de mieux.",
+      btn1: "Réserver un appel de 30 min →",
+      btn2: "Email mikheil@metricwave.net",
+      footer: "· RÉPONSE SOUS 1 JOUR OUVRABLE ·",
+    },
+  },
+  nl: {
+    roi: {
+      eyebrow: "· WAARDE CHECK · BESLISSINGSUREN ·",
+      h3: "Hoeveel is de tijd van uw team waard op slechte data?",
+      lead: "De meeste teams waarmee we werken besteden 15–25 uur per week aan het reconciliëren van spreadsheets. Voer uw cijfers in — de kosten verrassen ons zelden, maar verrassen iedereen anders wel.",
+      slider1: "UREN / WEEK AAN DATAVERZAMELING",
+      slider2: "GEMENGD UURTARIEF",
+      hrUnit: " UUR", hrPrefix: "$", hrUnit2: " / UUR",
+      annualLabel: "VERBORGEN JAARLIJKSE KOSTEN",
+      monthLabel: "PER MAAND",
+    },
+    matrix: {
+      eyebrow: "· VERGELIJKEN · ENGAGEMENT MATRIX ·",
+      h2: "Kies de vorm die past bij uw moment.",
+      feature: "FUNCTIE",
+      rows: [
+        { row: "ENGAGEMENTVORM",        pilot: "Vaste scope",    engagement: "Vast team",           partner: "Ingebed org-breed" },
+        { row: "TYPISCHE DUUR",         pilot: "2–4 weken",      engagement: "3–6 maanden",         partner: "12+ maanden" },
+        { row: "TEAMGROOTTE",           pilot: "1 lead",         engagement: "Lead + 2 IC",         partner: "Lead + 2-4 IC + fractionele exec" },
+        { row: "SLA",                   pilot: "Async, wekelijks",engagement: "Async + 24u",        partner: "Zelfde dag, gedeelde on-call" },
+        { row: "EXECUTIVE RAPPORTAGE",  pilot: false,            engagement: "Kwartaal",            partner: "Maandelijks + bestuurspakket" },
+        { row: "FRACTIONELE CDO",       pilot: false,            engagement: false,                 partner: true },
+        { row: "UITKOMSTGEBASEERDE FEES",pilot: false,           engagement: "Optioneel",           partner: "Standaard" },
+        { row: "ROADMAP + WERVING",     pilot: false,            engagement: "Adviserend",          partner: "Mede-eigendom" },
+        { row: "DATA INFRA EIGENDOM",   pilot: "Alleen-lezen",   engagement: "Mede-beheerd",        partner: "Volledig eigendom" },
+      ],
+    },
+    addons: {
+      eyebrow: "· À LA CARTE · EENMALIGE ENGAGEMENTEN ·",
+      h2: "Of stapel wat u nodig heeft, één blok tegelijk.",
+      lead: "Voor teams die al data + AI-capaciteiten hebben en alleen een specifieke gerichte betrokkenheid nodig hebben. Vaste scope, vaste prijs.",
+      addBtn: "TOEVOEGEN →",
+      items: [
+        { code: "A-01", label: "Data Audit",            desc: "1-week diepgaande analyse van uw datawarehouse, bronnen en pipelines.",         price: "$4K"      },
+        { code: "A-02", label: "Executive Workshop",    desc: "Halfdaagse strategiesessie voor leiderschapsteams.",                            price: "$3K"      },
+        { code: "A-03", label: "AI Eval Pack",          desc: "Aangepast evaluatieraamwerk + 8 weken monitoring voor één AI-feature.",         price: "$6K"      },
+        { code: "A-04", label: "Wervingsondersteuning", desc: "Functieprofiel, selectierondes en eindpanel voor 1 aanwerving.",                price: "$5K"      },
+        { code: "A-05", label: "Teamtraining",          desc: "On-site of remote analytics + AI-geletterdheid programma.",                     price: "$8K"      },
+        { code: "A-06", label: "Migratiesprint",        desc: "Migreer van legacy BI, ETL of modelinfrastructuur in 2 weken.",                 price: "Vanaf $12K" },
+      ],
+    },
+    faq: {
+      eyebrow: "· FAQ · WAT IEDEREEN VRAAGT ·",
+      h2: ["De kleine lettertjes,", "zonder de kleine lettertjes."],
+      items: [
+        { q: "Hoe snel kunnen we starten?", a: "Als een Piloot de juiste keuze is, kunnen we gewoonlijk binnen 2 weken starten. Engagementen en Partnerschappen doorlopen eerst een korte scoping-call." },
+        { q: "Werkt u met een vaste prijs of per uur?", a: "Piloten zijn altijd vaste scope, vaste prijs. Engagementen zijn maandelijkse retainers. Partnerschappen kunnen uitkomstgebaseerde fees bevatten." },
+        { q: "Wat met NDA's en databeveiliging?", a: "Standaard. We tekenen wederzijdse NDA's voordat data uw omgeving verlaat. Voor gereguleerde klanten werken we volledig binnen uw tenancy." },
+        { q: "Kunnen we een engagement pauzeren?", a: "Engagementen kunnen worden gepauzeerd met 30 dagen opzegtermijn. Partnerschappen hebben kwartaaluitstapmogelijkheden zonder boete." },
+        { q: "Doen jullie equity-only werk?", a: "Af en toe — voor missie-gedreven oprichters, vroege AI-producten en non-profits. De lat ligt hoog en we zeggen vaker nee dan ja." },
+        { q: "Waar werken jullie?", a: "Hoofdkantoor in Montréal, met actieve operators in NYC, Londen, Brussel, Tbilisi en Malta. Async-first, met bezoeken op locatie voor strategische momenten." },
+      ],
+    },
+    cta: {
+      eyebrow: "· KLAAR · 30 MIN INTRO · GEEN PITCH ·",
+      h2pre: "Prijsstelling is het makkelijke deel.",
+      h2teal: "Fit is wat telt.",
+      lead: "Boek een 30-minuten introductiegesprek. We bespreken wat u probeert te bereiken, vertellen u eerlijk of wij het juiste team zijn, en stellen een vorm voor — of wijzen u naar iemand beter.",
+      btn1: "Boek een 30-min gesprek →",
+      btn2: "Email mikheil@metricwave.net",
+      footer: "· ANTWOORD BINNEN 1 WERKDAG ·",
+    },
+  },
+};
+PRICING_SECTIONS_T.ka = PRICING_SECTIONS_T.en;
+PRICING_SECTIONS_T.ru = PRICING_SECTIONS_T.en;
+
+// ─── Page chrome ───────────────────────────────────────────────────────────────
+function PageEyebrow({ color, children }) {
+  return (
+    <div style={{
+      fontFamily: "'Courier New', monospace", fontSize: "0.7rem",
+      letterSpacing: "0.15em", textTransform: "uppercase",
+      color, marginBottom: 22,
+    }}>{children}</div>
+  );
+}
+
+function PageTicker({ t, mode, label }) {
+  return (
+    <div style={{
+      position: "relative", left: 0, right: 0, height: 36, zIndex: 10,
+      background: t.surface1, borderTop: `1px solid ${t.border}`,
+      display: "flex", alignItems: "center", padding: "0 80px",
+      justifyContent: "space-between",
+      fontFamily: "'Courier New', monospace", fontSize: "0.65rem",
+      color: t.teal, letterSpacing: "0.12em", textTransform: "uppercase",
+      marginTop: 80,
+    }}>
+      <span>{label}</span>
+      <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
+        LIVE · ALWAYS IN SYNC
+      </span>
+    </div>
+  );
+}
+
+// ─── Mini schematics ───────────────────────────────────────────────────────────
+function SchemPilot({ t }) {
+  return (
+    <svg viewBox="0 0 200 60" width="100%" height="60" style={{ overflow: "visible" }}>
+      <line x1="20" y1="30" x2="180" y2="30" stroke={t.border} strokeWidth="1" strokeDasharray="3 4" />
+      <circle cx="20"  cy="30" r="6" fill={t.bg} stroke={t.teal} strokeWidth="2" />
+      <circle cx="100" cy="30" r="6" fill={t.bg} stroke={t.teal} strokeWidth="2" />
+      <circle cx="180" cy="30" r="7" fill={t.teal} />
+      <text x="20"  y="14" textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="7" fontWeight="700" fill={t.text2} letterSpacing="0.1em">SCOPE</text>
+      <text x="100" y="14" textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="7" fontWeight="700" fill={t.text2} letterSpacing="0.1em">BUILD</text>
+      <text x="180" y="14" textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="7" fontWeight="700" fill={t.teal}  letterSpacing="0.1em">SHIP</text>
+    </svg>
+  );
+}
+
+function SchemEngagement({ t }) {
+  return (
+    <svg viewBox="0 0 200 60" width="100%" height="60" style={{ overflow: "visible" }}>
+      {[14, 30, 46].map((y, i) => (
+        <g key={i}>
+          <line x1="20" y1={y} x2="120" y2={y} stroke={t.teal} strokeOpacity={0.45 + i * 0.15} strokeWidth="1.4" />
+          <circle cx="20" cy={y} r="3.5" fill={t.teal} opacity={0.6 + i * 0.15} />
+        </g>
+      ))}
+      {[14, 30, 46].map((y, i) => (
+        <path key={i} d={`M 120 ${y} Q 150 ${y}, 165 30`} fill="none" stroke={t.teal} strokeOpacity="0.55" strokeWidth="1.4" />
+      ))}
+      <circle cx="170" cy="30" r="9" fill={t.surface1} stroke={t.teal} strokeWidth="2" />
+      <text x="170" y="33" textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="7" fontWeight="800" fill={t.teal} letterSpacing="0.1em">MW</text>
+    </svg>
+  );
+}
+
+function SchemPartner({ t }) {
+  return (
+    <svg viewBox="0 0 200 60" width="100%" height="60" style={{ overflow: "visible" }}>
+      <circle cx="100" cy="30" r="22" fill="none" stroke={t.teal} strokeOpacity="0.4" strokeDasharray="2 4" />
+      <circle cx="100" cy="30" r="14" fill={t.surface1} stroke={t.teal} strokeWidth="2" />
+      <text x="100" y="33" textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="7.5" fontWeight="800" fill={t.teal} letterSpacing="0.12em">CORE</text>
+      {[
+        [40, 14, "ENG"], [40, 46, "OPS"],
+        [160, 14, "EXE"], [160, 46, "PRD"],
+        [100, 8, "FIN"],
+      ].map(([x, y, lbl], i) => (
+        <g key={i}>
+          <line x1="100" y1="30" x2={x} y2={y} stroke={t.teal} strokeOpacity="0.4" strokeWidth="1.1" />
+          <rect x={x - 14} y={y - 6} width="28" height="12" rx="2" fill={t.surface1} stroke={t.teal} strokeWidth="1" />
+          <text x={x} y={y + 3} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="6.5" fontWeight="800" fill={t.text1} letterSpacing="0.1em">{lbl}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+const SCHEMS = { pilot: SchemPilot, engagement: SchemEngagement, partner: SchemPartner };
+
+// ─── Corner crosshairs ─────────────────────────────────────────────────────────
+function Crosshairs({ t, w, h, color }) {
+  const c = color || t.text2;
+  const pts = [[10, 10], [w - 10, 10], [10, h - 10], [w - 10, h - 10]];
+  return (
+    <svg width={w} height={h} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      {pts.map(([x, y], i) => (
+        <g key={i} stroke={c} strokeWidth="0.9" opacity="0.55">
+          <line x1={x - 7} y1={y} x2={x + 7} y2={y} />
+          <line x1={x} y1={y - 7} x2={x} y2={y + 7} />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+// ─── Tier data ─────────────────────────────────────────────────────────────────
+const TIERS = [
+  {
+    id: "pilot", code: "T-01", name: "PILOT", tag: "2–4 WEEK SPRINT",
+    price: "$8K", priceSub: "fixed scope",
+    blurb: "A focused diagnostic. We map your data, find the highest-leverage decision, and ship one production-grade artefact you can use Monday morning.",
+    schematic: "pilot",
+    deliverables: [
+      "Discovery + data audit",
+      "1 production dashboard or model",
+      "30-min weekly stand-ups",
+      "Written handoff doc",
+      "30-day post-launch support",
+    ],
+    bestFor: "Teams who need a quick win or a second opinion before committing.",
+    cta: "Start a pilot",
+  },
+  {
+    id: "engagement", code: "T-02", name: "ENGAGEMENT", tag: "3–6 MONTHS",
+    price: "$12K", priceSub: "/ month", featured: true,
+    blurb: "A standing partnership. We embed into a single department, ship multiple workstreams, and build the analytics muscle alongside your team.",
+    schematic: "engagement",
+    deliverables: [
+      "Everything in Pilot",
+      "2–3 active workstreams",
+      "Async-first, weekly syncs",
+      "Shared Slack + Linear",
+      "Dedicated lead + 2 IC support",
+      "Quarterly executive readouts",
+    ],
+    bestFor: "Operators ready to make data + AI a real capability inside their company.",
+    cta: "Talk scope",
+  },
+  {
+    id: "partner", code: "T-03", name: "PARTNERSHIP", tag: "12+ MONTHS",
+    price: "Custom", priceSub: "retainer + equity / outcome",
+    blurb: "Co-built. We act as your fractional data + AI team across the whole org — from infra to executive decisions — under one accountable retainer.",
+    schematic: "partner",
+    deliverables: [
+      "Everything in Engagement",
+      "Org-wide remit",
+      "Fractional CDO / Head of AI",
+      "Roadmap + hiring support",
+      "Board-level reporting",
+      "Optional outcome-based fees",
+    ],
+    bestFor: "Founders + execs treating data as a strategic moat, not a cost center.",
+    cta: "Design a partnership",
+  },
+];
+
+function TierCard({ tier, t, mode }) {
+  const Schem = SCHEMS[tier.schematic];
+  const featured = !!tier.featured;
+  return (
+    <div style={{
+      position: "relative", width: 510,
+      height: "100%", display: "flex", flexDirection: "column",
+      background: "transparent",
+      border: `1.5px solid ${featured ? t.teal : t.border}`,
+      borderRadius: 14, padding: "44px 40px 36px",
+      boxSizing: "border-box",
+      boxShadow: featured ? `0 30px 60px -30px ${t.tealGlow}` : "none",
+    }}>
+      {featured && (
+        <div style={{
+          position: "absolute", top: -14, left: 40,
+          padding: "5px 12px", borderRadius: 999,
+          background: t.teal, color: t.bg,
+          fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 800,
+          letterSpacing: "0.18em",
+        }}>{tier.mostChosen || "· MOST CHOSEN ·"}</div>
+      )}
+
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 700,
+        color: t.text2, letterSpacing: "0.15em", marginBottom: 14,
+      }}>
+        <span>{tier.code}</span>
+        <span style={{ color: t.teal }}>{tier.tag}</span>
+      </div>
+
+      <div style={{
+        fontFamily: "'Inter', sans-serif", fontWeight: 900,
+        fontSize: 42, lineHeight: 1, letterSpacing: "-0.03em",
+        color: t.text1, marginBottom: 14,
+      }}>{tier.name}</div>
+
+      <div style={{ height: 60, marginBottom: 18, opacity: 0.95 }}>
+        <Schem t={t} />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+        <span style={{
+          fontFamily: "'Inter', sans-serif", fontWeight: 900,
+          fontSize: 60, lineHeight: 1, letterSpacing: "-0.04em", color: t.teal,
+        }}>{tier.price}</span>
+        <span style={{
+          fontFamily: "'Courier New', monospace", fontSize: 12, fontWeight: 700,
+          color: t.text2, letterSpacing: "0.1em",
+        }}>{tier.priceSub}</span>
+      </div>
+
+      <div style={{
+        fontSize: 15, lineHeight: 1.55, color: t.text2,
+        marginTop: 14, marginBottom: 22, minHeight: 90, textWrap: "pretty",
+      }}>{tier.blurb}</div>
+
+      <div style={{ height: 1, background: t.border, marginBottom: 18 }} />
+
+      <div style={{
+        fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 700,
+        color: t.text2, letterSpacing: "0.18em", marginBottom: 12,
+      }}>{tier.includedLabel || "INCLUDED →"}</div>
+      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 8, flex: 1, alignContent: "start" }}>
+        {tier.deliverables.map((d) => (
+          <li key={d} style={{ display: "flex", alignItems: "flex-start", gap: 12, fontSize: 14, color: t.text1, lineHeight: 1.4 }}>
+            <span style={{ flex: "0 0 6px", width: 6, height: 6, marginTop: 7, background: t.teal, borderRadius: 999 }} />
+            <span>{d}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div style={{
+        marginTop: 22, padding: "12px 14px",
+        background: "transparent",
+        border: `1px solid ${t.border}`, borderRadius: 8,
+        fontFamily: "'Courier New', monospace", fontSize: 10.5, fontWeight: 600,
+        color: t.text2, letterSpacing: "0.06em", lineHeight: 1.5,
+      }}>
+        <span style={{ color: t.teal, fontWeight: 800, letterSpacing: "0.18em" }}>{tier.bestForLabel || "BEST FOR · "}</span>
+        {tier.bestFor}
+      </div>
+
+      <button style={{
+        marginTop: 22, width: "100%",
+        fontFamily: "inherit", fontSize: 14, fontWeight: 700,
+        padding: "14px 0", borderRadius: 9, cursor: "pointer",
+        border: featured ? "none" : `2px solid ${t.teal}`,
+        background: featured ? t.teal : "transparent",
+        color: featured ? t.bg : t.teal, letterSpacing: "-0.01em",
+      }}>{tier.cta} →</button>
+    </div>
+  );
+}
+
+// ─── Comparison matrix ─────────────────────────────────────────────────────────
+const MATRIX = [
+  { row: "ENGAGEMENT SHAPE",    pilot: "Fixed scope",   engagement: "Standing team",   partner: "Embedded org-wide" },
+  { row: "TYPICAL DURATION",    pilot: "2–4 weeks",     engagement: "3–6 months",      partner: "12+ months" },
+  { row: "TEAM SIZE",           pilot: "1 lead",        engagement: "Lead + 2 IC",     partner: "Lead + 2-4 IC + fractional exec" },
+  { row: "SLA",                 pilot: "Async, weekly", engagement: "Async + 24h",     partner: "Same-day, shared on-call" },
+  { row: "EXECUTIVE READOUT",   pilot: false,           engagement: "Quarterly",       partner: "Monthly + board pack" },
+  { row: "FRACTIONAL CDO",      pilot: false,           engagement: false,             partner: true },
+  { row: "OUTCOME-BASED FEES",  pilot: false,           engagement: "Optional",        partner: "Standard" },
+  { row: "ROADMAP + HIRING",    pilot: false,           engagement: "Advisory",        partner: "Co-owned" },
+  { row: "DATA INFRA OWNERSHIP",pilot: "Read-only",     engagement: "Co-managed",      partner: "Full ownership" },
+];
+
+function MatrixCell({ v, t, accent }) {
+  if (v === true)  return <span style={{ color: accent ? t.teal : t.text1, fontWeight: 800, fontSize: 18 }}>✓</span>;
+  if (v === false) return <span style={{ color: t.text2, opacity: 0.4 }}>—</span>;
+  return <span style={{ fontSize: 13, color: t.text1, lineHeight: 1.4 }}>{v}</span>;
+}
+
+function ComparisonMatrix({ t, T }) {
+  const M = T ? T.matrix : null;
+  const rows = M ? M.rows : MATRIX;
+  const colHeaders = T
+    ? [PRICING_T[T._lang] || PRICING_T.en, null, null].map((_, i) => {
+        const tierNames = ["PILOT","ENGAGEMENT","PARTNERSHIP"];
+        return tierNames[i];
+      })
+    : ["PILOT","ENGAGEMENT","PARTNERSHIP"];
+  return (
+    <div style={{ position: "relative", padding: "0 80px", marginTop: 100 }}>
+      <PageEyebrow color={t.teal}>{M ? M.eyebrow : "· COMPARE · ENGAGEMENT MATRIX ·"}</PageEyebrow>
+      <h2 style={{
+        margin: 0, marginBottom: 36, fontWeight: 900, fontSize: 56,
+        letterSpacing: "-0.025em", color: t.text1, lineHeight: 1.05,
+      }}>{M ? M.h2 : "Pick the shape that fits your moment."}</h2>
+      <div style={{ border: `1.5px solid ${t.border}`, borderRadius: 14, overflow: "hidden" }}>
+        <div style={{
+          display: "grid", gridTemplateColumns: "1.4fr 1fr 1.05fr 1fr",
+          background: t.surface1, borderBottom: `1.5px solid ${t.border}`,
+          fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 800,
+          color: t.text1, letterSpacing: "0.15em",
+        }}>
+          <div style={{ padding: "20px 28px" }}>{M ? M.feature : "FEATURE"}</div>
+          {colHeaders.map((h, i) => (
+            <div key={h} style={{
+              padding: "20px 24px", color: i === 1 ? t.teal : t.text1,
+              borderLeft: `1px solid ${t.border}`,
+            }}>
+              <span>{h}</span>
+              {i === 1 && <span style={{
+                marginLeft: 8, fontSize: 9, padding: "2px 7px", borderRadius: 999,
+                background: t.teal, color: t.bg, letterSpacing: "0.12em",
+              }}>POP</span>}
+            </div>
+          ))}
+        </div>
+        {rows.map((r, i) => (
+          <div key={r.row} style={{
+            display: "grid", gridTemplateColumns: "1.4fr 1fr 1.05fr 1fr",
+            borderBottom: i === rows.length - 1 ? "none" : `1px solid ${t.border}`,
+          }}>
+            <div style={{
+              padding: "18px 28px",
+              fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700,
+              color: t.text2, letterSpacing: "0.13em", display: "flex", alignItems: "center",
+            }}>{r.row}</div>
+            <div style={{ padding: "18px 24px", borderLeft: `1px solid ${t.border}`, display: "flex", alignItems: "center" }}>
+              <MatrixCell v={r.pilot} t={t} />
+            </div>
+            <div style={{
+              padding: "18px 24px", borderLeft: `1px solid ${t.border}`,
+              background: `linear-gradient(${t.tealGlow}, ${t.tealGlow})`,
+              display: "flex", alignItems: "center",
+            }}>
+              <MatrixCell v={r.engagement} t={t} accent />
+            </div>
+            <div style={{ padding: "18px 24px", borderLeft: `1px solid ${t.border}`, display: "flex", alignItems: "center" }}>
+              <MatrixCell v={r.partner} t={t} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Add-ons ───────────────────────────────────────────────────────────────────
+const ADDONS = [
+  { code: "A-01", label: "Data Audit",         desc: "1-week deep dive into your warehouse, sources, and pipelines.",      price: "$4K"       },
+  { code: "A-02", label: "Executive Workshop", desc: "Half-day strategy session for leadership teams.",                    price: "$3K"       },
+  { code: "A-03", label: "AI Eval Pack",       desc: "Custom eval harness + 8-week monitoring for one AI feature.",        price: "$6K"       },
+  { code: "A-04", label: "Hiring Support",     desc: "Job spec, screening loops, and final-round panel for 1 hire.",       price: "$5K"       },
+  { code: "A-05", label: "Team Training",      desc: "On-site or remote analytics + AI literacy program.",                 price: "$8K"       },
+  { code: "A-06", label: "Migration Sprint",   desc: "Move off legacy BI, ETL, or model infra in 2 weeks.",                price: "From $12K" },
+];
+
+function AddOns({ t, T }) {
+  const A = T ? T.addons : null;
+  const items = A ? A.items : ADDONS;
+  return (
+    <div style={{ position: "relative", padding: "0 80px", marginTop: 100 }}>
+      <PageEyebrow color={t.teal}>{A ? A.eyebrow : "· A LA CARTE · ONE-OFF ENGAGEMENTS ·"}</PageEyebrow>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 36, gap: 32 }}>
+        <h2 style={{
+          margin: 0, fontWeight: 900, fontSize: 56, letterSpacing: "-0.025em",
+          color: t.text1, lineHeight: 1.05, maxWidth: 900,
+        }}>{A ? A.h2 : "Or stack what you need, one block at a time."}</h2>
+        <div style={{ fontSize: 15, color: t.text2, lineHeight: 1.5, maxWidth: 420 }}>
+          {A ? A.lead : "For teams who already have data + AI capabilities and just need a specific surgical engagement. Fixed scope, fixed fee."}
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+        {items.map((a) => (
+          <div key={a.code} style={{
+            position: "relative", background: "transparent",
+            border: `1px solid ${t.border}`, borderRadius: 10, padding: "22px 24px",
+          }}>
+            <div style={{
+              display: "flex", justifyContent: "space-between",
+              fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 700,
+              color: t.text2, letterSpacing: "0.15em", marginBottom: 12,
+            }}>
+              <span>{a.code}</span>
+              <span style={{ color: t.teal }}>{a.price}</span>
+            </div>
+            <div style={{
+              fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22,
+              letterSpacing: "-0.02em", color: t.text1, marginBottom: 10,
+            }}>{a.label}</div>
+            <div style={{ fontSize: 14, lineHeight: 1.55, color: t.text2, textWrap: "pretty" }}>{a.desc}</div>
+            <div style={{
+              position: "absolute", right: 18, bottom: 18,
+              fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700,
+              color: t.teal, letterSpacing: "0.12em",
+            }}>{A ? A.addBtn : "ADD →"}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── ROI sketch (interactive) ──────────────────────────────────────────────────
+function ROISketch({ t, T }) {
+  const R = T ? T.roi : null;
+  const [hours, setHours] = useState(20);
+  const [rate,  setRate]  = useState(85);
+  const monthly = Math.round(hours * 4.33 * rate);
+  const annual  = monthly * 12;
+
+  return (
+    <div style={{ position: "relative", padding: "0 80px", marginTop: 100 }}>
+      <div style={{
+        position: "relative", background: "transparent",
+        border: `1.5px solid ${t.border}`, borderRadius: 16, padding: "44px 56px",
+        display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 56, alignItems: "center",
+      }}>
+        <div>
+          <PageEyebrow color={t.teal}>{R ? R.eyebrow : "· VALUE CHECK · DECISION HOURS ·"}</PageEyebrow>
+          <h3 style={{
+            margin: 0, marginBottom: 18, fontWeight: 900, fontSize: 40,
+            letterSpacing: "-0.025em", color: t.text1, lineHeight: 1.05,
+          }}>{R ? R.h3 : "How much is your team's time worth on bad data?"}</h3>
+          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: t.text2, maxWidth: 540 }}>
+            {R ? R.lead : "Most teams we work with spend 15–25 hours/week reconciling spreadsheets and pulling reports. Plug your numbers in — the cost rarely surprises us, but it usually surprises everyone else."}
+          </p>
+        </div>
+        <div style={{ display: "grid", gap: 20 }}>
+          {[
+            { label: R ? R.slider1 : "HOURS / WEEK ON DATA WRANGLING", val: hours, setVal: setHours, min: 0,  max: 60,  unit: R ? R.hrUnit : " HRS" },
+            { label: R ? R.slider2 : "BLENDED HOURLY RATE",            val: rate,  setVal: setRate,  min: 30, max: 200, unit: R ? R.hrUnit2 : " / HR", prefix: R ? R.hrPrefix : "$" },
+          ].map(({ label, val, setVal, min, max, unit, prefix = "" }) => (
+            <div key={label}>
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700,
+                color: t.text2, letterSpacing: "0.12em", marginBottom: 8,
+              }}>
+                <span>{label}</span>
+                <span style={{ color: t.teal }}>{prefix}{val}{unit}</span>
+              </div>
+              <input type="range" min={min} max={max} value={val}
+                onChange={(e) => setVal(+e.target.value)}
+                style={{ width: "100%", accentColor: t.teal }} />
+            </div>
+          ))}
+          <div style={{
+            marginTop: 8, padding: "20px 22px",
+            background: "transparent", border: `1.5px solid ${t.teal}`, borderRadius: 10,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <div>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 700, color: t.text2, letterSpacing: "0.15em", marginBottom: 4 }}>{R ? R.annualLabel : "HIDDEN ANNUAL COST"}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 36, letterSpacing: "-0.03em", color: t.teal, lineHeight: 1 }}>${annual.toLocaleString()}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, fontWeight: 700, color: t.text2, letterSpacing: "0.15em", marginBottom: 4 }}>{R ? R.monthLabel : "PER MONTH"}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22, color: t.text1, letterSpacing: "-0.02em" }}>${monthly.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── FAQ ───────────────────────────────────────────────────────────────────────
+const FAQ = [
+  { q: "How quickly can we start?",
+    a: "If a Pilot is the right fit, we can usually kick off within 2 weeks. Engagements and Partnerships go through a short scoping call first to make sure we're the right team." },
+  { q: "Do you work on a fixed fee or hourly?",
+    a: "Pilots are always fixed-scope fixed-fee. Engagements are monthly retainers. Partnerships can include outcome-based fees tied to clearly-defined business KPIs." },
+  { q: "What about NDAs and data security?",
+    a: "Standard. We sign mutual NDAs before any data leaves your environment. For regulated clients (gov, fintech, healthcare) we work entirely inside your tenancy and never exfiltrate data." },
+  { q: "Can we pause an engagement?",
+    a: "Engagements can pause on 30 days' notice. Partnerships have quarterly off-ramps with no penalty. We'd rather you stay because it's working, not because of a contract." },
+  { q: "Do you do equity-only work?",
+    a: "Occasionally — for mission-aligned founders, early-stage AI products, and non-profits. The bar is high and we say no more than we say yes. Reach out and tell us the story." },
+  { q: "Where do you work from?",
+    a: "Montréal HQ, with active operators in NYC, London, Brussels, Tbilisi, and Malta. Async-first, with on-site visits for strategic moments." },
+];
+
+function FaqSection({ t, T }) {
+  const F = T ? T.faq : null;
+  const items = F ? F.items : FAQ;
+  const [open, setOpen] = useState(0);
+  return (
+    <div style={{ padding: "0 80px", marginTop: 100 }}>
+      <PageEyebrow color={t.teal}>{F ? F.eyebrow : "· FAQ · WHAT EVERYONE ASKS ·"}</PageEyebrow>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 80, alignItems: "start" }}>
+        <h2 style={{
+          margin: 0, fontWeight: 900, fontSize: 56, letterSpacing: "-0.025em",
+          color: t.text1, lineHeight: 1.05,
+        }}>{F ? F.h2[0] : "The fine print,"}<br/>{F ? F.h2[1] : "without the fine print."}</h2>
+        <div style={{ borderTop: `1px solid ${t.border}` }}>
+          {items.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i} style={{ borderBottom: `1px solid ${t.border}` }}>
+                <button onClick={() => setOpen(isOpen ? -1 : i)} style={{
+                  width: "100%", textAlign: "left", cursor: "pointer",
+                  padding: "22px 0", background: "transparent", border: "none",
+                  fontFamily: "inherit", fontSize: 19, fontWeight: 700,
+                  color: t.text1, letterSpacing: "-0.015em",
+                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24,
+                }}>
+                  <span>{f.q}</span>
+                  <span style={{
+                    flex: "0 0 28px", width: 28, height: 28, borderRadius: 999,
+                    border: `1.5px solid ${isOpen ? t.teal : t.border}`,
+                    color: isOpen ? t.teal : t.text2,
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 16, fontWeight: 700, transition: "all 0.2s",
+                  }}>{isOpen ? "−" : "+"}</span>
+                </button>
+                {isOpen && (
+                  <div style={{ paddingBottom: 22, paddingRight: 50, fontSize: 15, lineHeight: 1.65, color: t.text2 }}>{f.a}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Final CTA ─────────────────────────────────────────────────────────────────
+function FinalCTA({ t, T }) {
+  const C = T ? T.cta : null;
+  return (
+    <div style={{ padding: "0 80px", marginTop: 120, marginBottom: 80 }}>
+      <div style={{
+        position: "relative", background: t.bg,
+        border: `1.5px solid ${t.teal}`,
+        borderRadius: 18, padding: "44px 80px",
+        display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 60, alignItems: "center",
+        overflow: "hidden",
+      }}>
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 6, background: t.teal }} />
+        <div>
+          <div style={{
+            fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700,
+            color: t.teal, letterSpacing: "0.18em", marginBottom: 18,
+          }}>{C ? C.eyebrow : "· READY · 30-MIN INTRO · NO PITCH ·"}</div>
+          <h2 style={{
+            margin: 0, fontWeight: 900, fontSize: 56, letterSpacing: "-0.025em",
+            color: t.text1, lineHeight: 1.05, textWrap: "balance",
+          }}>{C ? C.h2pre : "Pricing is the easy part."} <span style={{ color: t.teal }}>{C ? C.h2teal : "Fit is what matters."}</span></h2>
+          <p style={{ margin: "20px 0 0", fontSize: 17, lineHeight: 1.55, color: t.text2, maxWidth: 620 }}>
+            {C ? C.lead : "Book a 30-minute intro call. We'll walk through what you're trying to do, tell you honestly whether we're the right team, and either propose a shape — or point you at someone better."}
+          </p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <a href="contact.html" onClick={(e) => { e.preventDefault(); window.parent.location.href = 'contact.html'; }} style={{
+            fontFamily: "inherit", fontSize: 16, fontWeight: 700,
+            padding: "18px 28px", borderRadius: 10, cursor: "pointer", border: "none",
+            background: t.teal, color: t.text1, letterSpacing: "-0.01em",
+            textDecoration: "none", display: "block", textAlign: "center",
+          }}>{C ? C.btn1 : "Book a 30-min call →"}</a>
+          <a href="mailto:mikheil@metricwave.net" style={{
+            fontFamily: "inherit", fontSize: 16, fontWeight: 700,
+            padding: "18px 28px", borderRadius: 10, cursor: "pointer",
+            background: "transparent", color: t.teal,
+            border: `2px solid ${t.teal}`, letterSpacing: "-0.01em",
+            textDecoration: "none", display: "block", textAlign: "center",
+          }}>{C ? C.btn2 : "Email mikheil@metricwave.net"}</a>
+          <div style={{
+            marginTop: 8, fontFamily: "'Courier New', monospace", fontSize: 11,
+            color: t.text2, letterSpacing: "0.15em",
+          }}>{C ? C.footer : "· REPLY WITHIN 1 BUSINESS DAY ·"}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Page assembly ─────────────────────────────────────────────────────────────
+function PricingPage() {
+  const mode     = useTheme();
+  const lang     = useLang();
+  const t        = HERO_TOKENS[mode];
+  const T        = PRICING_T[lang] || PRICING_T.en;
+  const ST       = PRICING_SECTIONS_T[lang] || PRICING_SECTIONS_T.en;
+  const embedded = window.parent !== window;
+
+  const mergedTiers = TIERS.map((tier, i) => ({
+    ...tier,
+    ...T.tiers[i],
+    mostChosen: T.mostChosen,
+    includedLabel: T.included,
+    bestForLabel: T.bestForLabel,
+  }));
+
+  return (
+    <div style={{
+      width: 1920, minHeight: 800, color: t.text1,
+      position: "relative", overflow: "hidden",
+      fontFamily: "'Inter', system-ui, sans-serif",
+    }}>
+      {/* Teal glow — dark mode only */}
+      {mode === "dark" && (
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
+          background: "radial-gradient(900px 600px at 70% 25%, rgba(45,212,191,0.10), transparent 70%)",
+        }} />
+      )}
+
+      {/* HERO */}
+      <div style={{
+        position: "relative", zIndex: 3,
+        padding: embedded ? "100px 80px 60px" : "180px 80px 60px",
+        display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 80, alignItems: "end",
+      }}>
+        <div>
+          <PageEyebrow color={t.teal}>{T.eyebrow}</PageEyebrow>
+          <h1 style={{
+            margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 900,
+            fontSize: 96, lineHeight: 0.98, letterSpacing: "-0.035em",
+            color: t.text1, textWrap: "balance",
+          }}>{T.h1a}<br/>
+            <span style={{ color: t.teal }}>{T.h1b}</span>
+          </h1>
+        </div>
+        <p style={{
+          margin: 0, fontSize: 18, lineHeight: 1.6, color: t.text2,
+          maxWidth: 540, textWrap: "pretty",
+        }}>
+          {T.lead}
+        </p>
+      </div>
+
+      {/* Meta strip */}
+      <div style={{
+        position: "relative", zIndex: 3,
+        padding: "0 80px", marginBottom: 60,
+        display: "flex", gap: 36, alignItems: "center",
+        fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700,
+        color: t.text2, letterSpacing: "0.14em",
+      }}>
+        <span style={{ color: t.teal }}>·</span>
+        <span>{T.strip[0]}</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>{T.strip[1]}</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>{T.strip[2]}</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>{T.strip[3]}</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span style={{ color: t.teal }}>{T.strip[4]}</span>
+      </div>
+
+      {/* Tier cards */}
+      <div style={{
+        position: "relative", zIndex: 3,
+        padding: "0 80px",
+        display: "flex", gap: 30, justifyContent: "center", alignItems: "stretch",
+      }}>
+        {mergedTiers.map((tier, i) => (
+          <div key={tier.id} style={{ animationDelay: `${i * 0.12}s`, animation: "mwSlideUp 0.6s backwards", display: "flex" }}>
+            <TierCard tier={tier} t={t} mode={mode} />
+          </div>
+        ))}
+      </div>
+
+      <div style={{ position: "relative", zIndex: 3 }}>
+        <ROISketch t={t} T={ST} />
+        <ComparisonMatrix t={t} T={ST} />
+        <AddOns t={t} T={ST} />
+        <FaqSection t={t} T={ST} />
+        <FinalCTA t={t} T={ST} />
+      </div>
+
+      <PageTicker t={t} mode={mode}
+        label="· PRICING · ENGAGEMENT SHAPES · OUTCOME-ALIGNED · NO SEATS · NO USAGE FEES · FIXED SCOPE FROM $8K ·" />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<PricingPage />);
+</script>
+</body>
+</html>

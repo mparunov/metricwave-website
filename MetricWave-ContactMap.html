@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetricWave — Client Footprint Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --surface1: #1A1A1A;
+    --surface2: #2A2A2A;
+    --border: #3A3A3A;
+    --text1: #FFFFFF;
+    --text2: #E5E5E5;
+    --text3: #9CA3AF;
+    --teal: #2DD4BF;
+    --teal-dk: #14B8A6;
+    --teal-lt: #5EEAD4;
+    --teal-glow: rgba(45, 212, 191, 0.15);
+    --teal-line: rgba(45, 212, 191, 0.55);
+    --teal-fill: rgba(45, 212, 191, 0.04);
+    --warn: #F59E0B;
+  }
+  html[data-theme="light"] {
+    --bg: #FFFFFF;
+    --surface1: #F4F4F6;
+    --surface2: #E8E8EC;
+    --border: #C8C8D4;
+    --text1: #0D0D10;
+    --text2: #404050;
+    --text3: #6B6B7A;
+    --teal: #0D9488;
+    --teal-dk: #0F766E;
+    --teal-lt: #14B8A6;
+    --teal-glow: rgba(13,148,136,0.10);
+    --teal-line: rgba(13,148,136,0.65);
+    --teal-fill: rgba(13,148,136,0.05);
+  }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text1);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #fit-stage { position: relative; width: 1920px; height: 900px; transform-origin: top left; background: var(--bg); }
+  #fit-wrap  { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+  /* ─────────── grid backdrop ─────────── */
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .grid-bg.big {
+    background-size: 200px 200px;
+    opacity: 0.55;
+  }
+
+  .section-rule {
+    position: absolute; left: 0; right: 0;
+    height: 2px; background: var(--teal);
+  }
+
+  /* ─────────── ticker ─────────── */
+  .ticker {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 30px;
+    background: var(--surface1);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 80px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .ticker .live {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ticker .live::before {
+    content: ""; width: 6px; height: 6px; border-radius: 999px;
+    background: var(--teal);
+    animation: pulseDot 1.6s infinite;
+  }
+  @keyframes pulseDot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+  /* ─────────── eyebrow ─────────── */
+  .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ─────────── layout ─────────── */
+  .panel {
+    position: absolute;
+    top: 80px;
+    left: 80px;
+    right: 80px;
+    bottom: 60px;
+    display: grid;
+    grid-template-columns: 1fr 460px;
+    gap: 32px;
+  }
+
+  /* MAP container */
+  .map-wrap {
+    position: relative;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background:
+      radial-gradient(900px 600px at 30% 50%, var(--teal-glow), transparent 70%),
+      var(--surface1);
+    overflow: hidden;
+  }
+  .map-wrap.light { background: radial-gradient(900px 600px at 30% 50%, var(--teal-glow), transparent 70%), var(--bg); }
+  html[data-theme="light"] .map-wrap { background: radial-gradient(900px 600px at 30% 50%, var(--teal-glow), transparent 70%), var(--bg); }
+
+  .map-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .map-meta {
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    color: var(--text3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .map-meta .dot {
+    color: var(--teal);
+  }
+
+  /* corner crosshairs */
+  .xhair {
+    position: absolute; width: 14px; height: 14px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .xhair::before, .xhair::after {
+    content: ""; position: absolute; background: var(--text3); opacity: 0.5;
+  }
+  .xhair::before { left: 0; right: 0; top: 50%; height: 1px; }
+  .xhair::after  { top: 0; bottom: 0; left: 50%; width: 1px; }
+  .xhair.tl { top: 14px; left: 14px; }
+  .xhair.tr { top: 14px; right: 14px; }
+  .xhair.bl { bottom: 14px; left: 14px; }
+  .xhair.br { bottom: 14px; right: 14px; }
+
+  /* zoom controls */
+  .zoom-ctl {
+    position: absolute; right: 18px; bottom: 18px;
+    display: flex; flex-direction: column;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 6;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+  .zoom-ctl button {
+    width: 38px; height: 38px;
+    background: transparent;
+    color: var(--text1);
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .zoom-ctl button + button { border-top: 1px solid var(--border); }
+  .zoom-ctl button:hover { background: var(--teal); color: var(--bg); }
+
+  .zoom-readout {
+    position: absolute; left: 18px; bottom: 18px;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    z-index: 6;
+  }
+
+  .legend {
+    position: absolute; left: 18px; top: 18px;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+    z-index: 6;
+    font-family: 'Courier New', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--text2);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .legend .row { display: flex; align-items: center; gap: 8px; }
+  .legend .swatch-line {
+    width: 16px; height: 0; border-top: 1.5px solid var(--teal);
+  }
+  .legend .swatch-dot {
+    width: 8px; height: 8px; border-radius: 999px; background: var(--teal);
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.18);
+  }
+
+  svg.world {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  svg.world .country {
+    fill: var(--teal-fill);
+    stroke: var(--teal-line);
+    stroke-width: 0.6;
+    stroke-linejoin: round;
+    transition: fill 0.18s ease;
+    vector-effect: non-scaling-stroke;
+  }
+  svg.world .country:hover { fill: rgba(45,212,191,0.12); }
+  svg.world .sphere {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  svg.world .graticule {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 0.4;
+    opacity: 0.45;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* dots */
+  .city-group { cursor: pointer; }
+  .city-ring {
+    fill: var(--teal);
+    opacity: 0.35;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  .city-dot {
+    fill: var(--teal);
+    stroke: var(--bg);
+    stroke-width: 1.5;
+    transform-box: fill-box;
+  }
+  html[data-theme="light"] .city-dot { stroke: var(--bg); }
+  .city-ping {
+    fill: var(--teal);
+    opacity: 0.45;
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: ping 2.2s ease-out infinite;
+  }
+  .city-group.active .city-dot {
+    fill: var(--warn);
+  }
+  @keyframes ping {
+    0%   { transform: scale(1); opacity: 0.7; }
+    80%  { transform: scale(4); opacity: 0; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+
+  .city-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9.5px;
+    font-weight: 800;
+    fill: var(--text1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+  .city-label-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 8.5px;
+    font-weight: 700;
+    fill: var(--teal);
+    letter-spacing: 0.12em;
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+
+  /* connection arcs */
+  .arc-path {
+    fill: none;
+    stroke: var(--teal);
+    stroke-width: 0.8;
+    opacity: 0.35;
+    stroke-dasharray: 3 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ─────────── right column ─────────── */
+  .sidebar {
+    display: flex; flex-direction: column; gap: 12px;
+    overflow: hidden;
+  }
+  .sidebar-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0 2px;
+  }
+  .sidebar-head h2 {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--text1);
+  }
+  .sidebar-list {
+    display: flex; flex-direction: column; gap: 10px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .loc-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--surface1);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    align-items: center;
+  }
+  .loc-card:hover {
+    border-color: var(--teal);
+    background: var(--surface2);
+  }
+  .loc-card.active {
+    border-color: var(--teal);
+    background: var(--surface2);
+    box-shadow: 0 0 0 1px var(--teal) inset;
+  }
+  .loc-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text1);
+    letter-spacing: -0.01em;
+  }
+  .loc-meta {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    grid-column: 1 / 2;
+  }
+  .loc-status {
+    display: flex; align-items: center; gap: 8px;
+    grid-row: 1 / 3;
+    grid-column: 2;
+    align-self: center;
+  }
+  .loc-status .ind {
+    width: 8px; height: 8px; border-radius: 999px; background: var(--teal);
+    box-shadow: 0 0 0 4px rgba(45,212,191,0.18);
+  }
+
+  /* ─────────── theme toggle ─────────── */
+  .mw-theme-toggle {
+    position: fixed; right: 18px; bottom: 18px; z-index: 999;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px; cursor: pointer;
+    font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--surface1); color: var(--teal); border: 1px solid var(--teal);
+    user-select: none;
+  }
+  .mw-theme-toggle::before {
+    content: ""; width: 8px; height: 8px; border-radius: 999px;
+    background: currentColor;
+  }
+</style>
+</head>
+<body>
+<div id="fit-wrap"><div id="fit-stage">
+  <div class="grid-bg"></div>
+  <div class="grid-bg big"></div>
+  <div class="section-rule" style="top: 0;"></div>
+
+  <div class="panel">
+    <!-- LEFT: Map -->
+    <div class="map-wrap">
+      <div class="xhair tl"></div>
+      <div class="xhair tr"></div>
+      <div class="xhair bl"></div>
+      <div class="xhair br"></div>
+
+      <div class="map-header">
+        <div class="map-meta"><span class="dot">·</span> CLIENT FOOTPRINT <span class="dot">·</span> LIVE <span class="dot">·</span></div>
+        <div class="map-meta"><span style="color: var(--teal);">●</span> 8 CLIENT LOCATIONS · 7 COUNTRIES</div>
+      </div>
+
+      <div class="legend">
+        <div class="row"><span class="swatch-line"></span><span>COUNTRY BORDERS</span></div>
+        <div class="row"><span class="swatch-dot"></span><span>CLIENT LOCATION</span></div>
+      </div>
+
+      <svg class="world" id="worldSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+
+      <div class="zoom-readout" id="zoomReadout">ZOOM · 1.00×</div>
+
+      <div class="zoom-ctl">
+        <button id="zoomIn" title="Zoom in">+</button>
+        <button id="zoomOut" title="Zoom out">−</button>
+        <button id="zoomReset" title="Reset" style="font-size: 13px;">⤢</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Client list -->
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>Client Locations</h2>
+        <span class="eyebrow">· 8 SITES ·</span>
+      </div>
+      <div class="sidebar-list" id="locList"></div>
+    </aside>
+  </div>
+
+  <div class="ticker">
+    <span>· MONTRÉAL · NEW YORK · INDIANA · LONDON · BRUSSELS · TBILISI · VALLETTA · CHIȘINĂU · FOLLOW THE SUN ·</span>
+    <span class="live">LIVE · ALWAYS IN SYNC</span>
+  </div>
+</div></div>
+
+<button class="mw-theme-toggle" id="themeToggle"><span id="themeLabel">DARK</span></button>
+
+<!-- d3 + topojson + world-atlas (countries-110m) -->
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js" crossorigin="anonymous"></script>
+
+<script>
+  // ── theme handling ──
+  const saved = localStorage.getItem('mw-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  function syncLabel() {
+    const m = document.documentElement.getAttribute('data-theme') || 'dark';
+    document.getElementById('themeLabel').textContent = m.toUpperCase();
+  }
+  syncLabel();
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('mw-theme', next);
+    syncLabel();
+  });
+
+  // ── responsive fit ──
+  function fit() {
+    const stage = document.getElementById('fit-stage');
+    const wrap  = document.getElementById('fit-wrap');
+    if (!stage || !wrap) return;
+    const sx = wrap.clientWidth / 1920;
+    const sy = wrap.clientHeight / 900;
+    const s = Math.min(sx, sy);
+    stage.style.transform = 'scale(' + s + ')';
+    stage.style.left = ((wrap.clientWidth  - 1920 * s) / 2) + 'px';
+    stage.style.top  = ((wrap.clientHeight - 900 * s) / 2) + 'px';
+  }
+  window.addEventListener('load',  fit);
+  window.addEventListener('resize', fit);
+
+  // ── cities ──
+  const CITIES = [
+    { id: "mtl", name: "Montréal",       country: "Canada",   region: "QC, CA",     clients: 12, lon: -73.5673, lat: 45.5017 },
+    { id: "nyc", name: "New York",       country: "USA",      region: "NY, US",     clients: 9,  lon: -74.0060, lat: 40.7128 },
+    { id: "ind", name: "Indianapolis",   country: "USA",      region: "IN, US",     clients: 4,  lon: -86.1581, lat: 39.7684 },
+    { id: "lon", name: "London",         country: "UK",       region: "ENG, GB",    clients: 7,  lon:  -0.1276, lat: 51.5072 },
+    { id: "bru", name: "Brussels",       country: "Belgium",  region: "BR, BE",     clients: 18, lon:   4.3517, lat: 50.8503 },
+    { id: "tbi", name: "Tbilisi",        country: "Georgia",  region: "TB, GE",     clients: 14, lon:  44.7833, lat: 41.7151 },
+    { id: "vlt", name: "Valletta",       country: "Malta",    region: "MT",          clients: 6,  lon:  14.5147, lat: 35.8989 },
+    { id: "chi", name: "Chișinău",       country: "Moldova",  region: "MD",          clients: 5,  lon:  28.8638, lat: 47.0105 },
+  ];
+
+  // ── populate sidebar list ──
+  const listEl = document.getElementById('locList');
+  CITIES.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'loc-card';
+    div.dataset.id = c.id;
+    div.innerHTML = `
+      <div class="loc-name">${c.name}, ${c.country}</div>
+      <div class="loc-meta">· ${c.clients} CLIENTS · ${c.region} ·</div>
+      <div class="loc-status"><span class="ind"></span></div>
+    `;
+    listEl.appendChild(div);
+  });
+
+  // ── d3 map ──
+  const W = 1000, H = 560;
+  const svg = d3.select("#worldSvg");
+  const projection = d3.geoNaturalEarth1()
+    .scale(170)
+    .translate([W / 2, H / 2 + 10]);
+  const path = d3.geoPath(projection);
+
+  const g = svg.append("g");
+
+  // sphere outline
+  g.append("path")
+    .datum({ type: "Sphere" })
+    .attr("class", "sphere")
+    .attr("d", path);
+
+  // graticule
+  const graticule = d3.geoGraticule10();
+  g.append("path")
+    .datum(graticule)
+    .attr("class", "graticule")
+    .attr("d", path);
+
+  // load world topojson
+  d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
+    const outline = topojson.mesh(world, world.objects.countries, (a, b) => a === b);
+
+    g.append("g")
+      .selectAll("path")
+      .data(countries.features)
+      .join("path")
+      .attr("class", "country")
+      .attr("d", path);
+
+    // emphasized internal borders
+    g.append("path")
+      .datum(borders)
+      .attr("d", path)
+      .attr("fill", "none")
+      .attr("stroke", "var(--teal)")
+      .attr("stroke-width", 0.7)
+      .attr("vector-effect", "non-scaling-stroke")
+      .style("opacity", 0.7);
+
+    // coastlines
+    g.append("path")
+      .datum(outline)
+      .attr("d", path)
+      .attr("fill", "none")
+      .attr("stroke", "var(--teal)")
+      .attr("stroke-width", 0.9)
+      .attr("vector-effect", "non-scaling-stroke")
+      .style("opacity", 0.85);
+
+    // draw great-circle arcs from Montréal hub
+    const hub = CITIES.find(c => c.id === "mtl");
+    const arcs = g.append("g");
+    CITIES.filter(c => c.id !== "mtl").forEach(c => {
+      const arc = { type: "LineString", coordinates: [[hub.lon, hub.lat], [c.lon, c.lat]] };
+      arcs.append("path")
+        .datum(arc)
+        .attr("class", "arc-path")
+        .attr("d", path);
+    });
+
+    // city markers
+    const cityG = g.append("g").attr("class", "cities");
+    const groups = cityG.selectAll("g")
+      .data(CITIES)
+      .join("g")
+      .attr("class", "city-group")
+      .attr("data-id", d => d.id)
+      .attr("transform", d => {
+        const p = projection([d.lon, d.lat]);
+        return `translate(${p[0]}, ${p[1]})`;
+      });
+
+    groups.append("circle")
+      .attr("class", "city-ping")
+      .attr("r", 4);
+    groups.append("circle")
+      .attr("class", "city-ring")
+      .attr("r", 8);
+    groups.append("circle")
+      .attr("class", "city-dot")
+      .attr("r", 4);
+
+    // labels
+    groups.append("text")
+      .attr("class", "city-label")
+      .attr("x", 8)
+      .attr("y", -6)
+      .text(d => d.name);
+    groups.append("text")
+      .attr("class", "city-label-sub")
+      .attr("x", 8)
+      .attr("y", 4)
+      .text(d => `· ${d.clients} CLIENTS`);
+
+    // ── interactions ──
+    groups.on("click", function(event, d) { activateCity(d.id); });
+    document.querySelectorAll('.loc-card').forEach(card => {
+      card.addEventListener('click', () => activateCity(card.dataset.id));
+    });
+
+    function activateCity(id) {
+      document.querySelectorAll('.loc-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.id === id);
+      });
+      groups.classed('active', d => d.id === id);
+      // pan/zoom to city
+      const city = CITIES.find(c => c.id === id);
+      if (!city) return;
+      const p = projection([city.lon, city.lat]);
+      const k = 3;
+      const t = d3.zoomIdentity
+        .translate(W / 2 - p[0] * k, H / 2 - p[1] * k)
+        .scale(k);
+      svg.transition().duration(700).call(zoom.transform, t);
+    }
+  }).catch(err => {
+    console.error("Map load failed", err);
+    g.append("text")
+      .attr("x", W / 2).attr("y", H / 2)
+      .attr("text-anchor", "middle")
+      .attr("fill", "var(--text2)")
+      .attr("font-family", "'Courier New', monospace")
+      .text("MAP DATA UNAVAILABLE");
+  });
+
+  // ── zoom & pan ──
+  const zoom = d3.zoom()
+    .scaleExtent([1, 14])
+    .translateExtent([[-100, -100], [W + 100, H + 100]])
+    .on("zoom", (event) => {
+      g.attr("transform", event.transform);
+      const k = event.transform.k;
+      document.getElementById('zoomReadout').textContent =
+        `ZOOM · ${k.toFixed(2)}×`;
+      // scale dots inversely so they stay readable
+      g.selectAll('.city-dot').attr("r", 4 / Math.sqrt(k));
+      g.selectAll('.city-ring').attr("r", 8 / Math.sqrt(k));
+      g.selectAll('.city-ping').attr("r", 4 / Math.sqrt(k));
+      g.selectAll('.city-label, .city-label-sub')
+        .style("font-size", (k > 3 ? 9.5 / Math.sqrt(k) * 1.4 : 9.5) + "px");
+    });
+  svg.call(zoom);
+
+  document.getElementById('zoomIn').addEventListener('click', () => svg.transition().duration(280).call(zoom.scaleBy, 1.6));
+  document.getElementById('zoomOut').addEventListener('click', () => svg.transition().duration(280).call(zoom.scaleBy, 1 / 1.6));
+  document.getElementById('zoomReset').addEventListener('click', () => {
+    document.querySelectorAll('.loc-card').forEach(c => c.classList.remove('active'));
+    svg.selectAll('.city-group').classed('active', false);
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  });
+</script>
+</body>
+</html>

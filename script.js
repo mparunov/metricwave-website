@@ -1,575 +1,420 @@
-/* ===================================
-   MetricWave - JavaScript
-   =================================== */
+/* ===================================================
+   MetricWave — script.js
+   Single DOMContentLoaded, CSS-class-based animations,
+   proper interval cleanup, consolidated event handling.
+=================================================== */
 
-// Theme Toggle
-(function() {
+/* ─── Theme: apply saved preference immediately (runs before DOMContentLoaded) ─ */
+(function () {
     var saved = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
 })();
 
-// Applies theme to all hero iframes on the page (both landing-page and service-page iframes)
+/* ─── iframe theme sync ─────────────────────────────────────────────────────── */
 function syncIframeThemes(theme) {
-    document.querySelectorAll('iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, iframe.service-hero-iframe, iframe.page-iframe, iframe.schematic-iframe').forEach(function(iframe) {
-        // Direct contentDocument access (same-origin, most reliable — triggers MutationObserver in useTheme())
+    var selector = 'iframe.hero-iframe, iframe.hero-iframe--light, iframe.hero-iframe--dark, ' +
+                   'iframe.service-hero-iframe, iframe.page-iframe, iframe.schematic-iframe';
+    document.querySelectorAll(selector).forEach(function (iframe) {
         try {
             if (iframe.contentDocument && iframe.contentDocument.documentElement) {
                 iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
             }
-        } catch(e) {}
-        // postMessage fallback
-        try { iframe.contentWindow.postMessage({ type: 'mw-theme', theme: theme }, '*'); } catch(e) {}
+        } catch (e) {}
+        try { iframe.contentWindow.postMessage({ type: 'mw-theme', theme: theme }, '*'); } catch (e) {}
     });
 }
 
-// Auto-resize page iframes when inner content reports its height
-window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'mw-page-height') {
-        document.querySelectorAll('iframe.page-iframe').forEach(function(iframe) {
+/* ─── postMessage: auto-resize page iframes + Tally integration ─────────────── */
+window.addEventListener('message', function (e) {
+    if (!e.data) return;
+
+    /* iframe height reporting */
+    if (e.data.type === 'mw-page-height') {
+        document.querySelectorAll('iframe.page-iframe').forEach(function (iframe) {
             try {
                 if (iframe.contentWindow === e.source) {
                     iframe.style.minHeight = '0';
                     iframe.style.height = e.data.height + 'px';
                 }
-            } catch(ex) {}
-        });
-    }
-});
-
-// On DOMContentLoaded: apply current theme to any already-loaded iframes, and wire up load handlers
-document.addEventListener('DOMContentLoaded', function() {
-    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-
-    // Apply theme to iframes that load after DOMContentLoaded
-    document.querySelectorAll('iframe.service-hero-iframe, iframe.page-iframe').forEach(function(iframe) {
-        iframe.addEventListener('load', function() {
-            syncIframeThemes(currentTheme);
-        });
-    });
-
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (!toggleBtn) return;
-
-    toggleBtn.addEventListener('click', function() {
-        const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'light' ? 'dark' : 'light';
-
-        document.documentElement.classList.add('theme-transitioning');
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-        currentTheme = next;
-
-        syncIframeThemes(next);
-
-        setTimeout(function() {
-            document.documentElement.classList.remove('theme-transitioning');
-        }, 350);
-    });
-});
-
-// Mobile Navigation Toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileToggle = document.querySelector('.mobile-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-            mobileToggle.classList.toggle('active');
-
-            // Animate hamburger to X
-            const spans = mobileToggle.querySelectorAll('span');
-            if (mobileToggle.classList.contains('active')) {
-                spans[0].style.transform = 'rotate(45deg) translate(7px, 7px)';
-                spans[1].style.opacity = '0';
-                spans[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
-            } else {
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
-            }
+            } catch (ex) {}
         });
     }
 
-    // Close mobile menu when clicking on a link
-    const navLinkItems = document.querySelectorAll('.nav-links a');
-    navLinkItems.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                navLinks.classList.remove('active');
-                mobileToggle.classList.remove('active');
-
-                const spans = mobileToggle.querySelectorAll('span');
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
-            }
-        });
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-        const isClickInsideNav = navLinks.contains(event.target);
-        const isClickOnToggle = mobileToggle.contains(event.target);
-
-        if (!isClickInsideNav && !isClickOnToggle && navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            mobileToggle.classList.remove('active');
-
-            const spans = mobileToggle.querySelectorAll('span');
-            spans[0].style.transform = 'none';
-            spans[1].style.opacity = '1';
-            spans[2].style.transform = 'none';
-        }
-    });
-});
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-
-        // Only prevent default for same-page anchors
-        if (href.startsWith('#') && href.length > 1) {
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                const headerOffset = 80;
-                const elementPosition = target.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }
-    });
-});
-
-// Header scroll effect
-let lastScroll = 0;
-const header = document.querySelector('.header');
-
-window.addEventListener('scroll', function() {
-    const currentScroll = window.pageYOffset;
-
-    if (currentScroll <= 0) {
-        header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.5)';
-    } else {
-        header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.8)';
-    }
-
-    lastScroll = currentScroll;
-});
-
-// Animation on scroll (fade in elements)
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe elements for animation
-document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.service-card, .story-card, .expertise-card, .process-step, .expect-card, .faq-item, .philosophy-point');
-
-    animatedElements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(30px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(element);
-    });
-});
-
-// Tally form responsiveness
-window.addEventListener('message', function(e) {
+    /* Tally form loaded */
     if (typeof e.data === 'string') {
         try {
-            const data = JSON.parse(e.data);
-            if (data.event === 'Tally.FormLoaded') {
-                console.log('Tally form loaded successfully');
-            }
-        } catch (error) {
-            // Not a Tally message, ignore
-        }
+            var d = JSON.parse(e.data);
+            if (d.event === 'Tally.FormLoaded') { /* form is ready */ }
+        } catch (_) {}
     }
 });
 
-// Logo Carousel Drag Control
-document.addEventListener('DOMContentLoaded', function() {
-    const carousel = document.querySelector('.logos-carousel');
-    if (!carousel) return;
+/* ─── All DOM-dependent code in a single DOMContentLoaded ───────────────────── */
+document.addEventListener('DOMContentLoaded', function () {
 
-    let isDragging = false;
-    let startX;
-    let scrollSpeed = 1; // Default speed multiplier
-    let animationId;
-    let currentTranslate = 0;
-    let previousTranslate = 0;
-    let lastDragX = 0;
-    let velocity = 0;
+    /* ── Theme toggle ─────────────────────────────────────────────────────────── */
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 
-    // Disable default CSS animation
-    carousel.style.animation = 'none';
-
-    // Custom animation loop
-    function animate() {
-        // Apply velocity to translation
-        currentTranslate += velocity;
-
-        // Get the width of half the carousel (since we duplicated logos)
-        const halfWidth = carousel.scrollWidth / 2;
-
-        // Loop seamlessly
-        if (Math.abs(currentTranslate) >= halfWidth) {
-            currentTranslate = 0;
-            previousTranslate = 0;
-        } else if (currentTranslate > 0) {
-            currentTranslate = -halfWidth + currentTranslate;
-            previousTranslate = currentTranslate;
-        }
-
-        carousel.style.transform = `translateX(${currentTranslate}px)`;
-        animationId = requestAnimationFrame(animate);
-    }
-
-    // Start with default scroll speed (negative for left-to-right)
-    velocity = -0.5;
-    animate();
-
-    // Mouse events
-    carousel.addEventListener('mousedown', startDrag);
-    carousel.addEventListener('mousemove', drag);
-    carousel.addEventListener('mouseup', endDrag);
-    carousel.addEventListener('mouseleave', endDrag);
-
-    // Touch events for mobile
-    carousel.addEventListener('touchstart', startDrag);
-    carousel.addEventListener('touchmove', drag);
-    carousel.addEventListener('touchend', endDrag);
-
-    function startDrag(e) {
-        isDragging = true;
-        lastDragX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-        carousel.style.cursor = 'grabbing';
-        velocity = 0;
-    }
-
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-
-        const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-        const diff = currentX - lastDragX;
-
-        // Move only by the incremental diff to avoid compounding
-        currentTranslate += diff * 0.5;
-        velocity = diff * 0.015;
-        lastDragX = currentX;
-    }
-
-    function endDrag() {
-        if (!isDragging) return;
-        isDragging = false;
-        carousel.style.cursor = 'grab';
-
-        // Clamp post-drag momentum to a gentle range
-        velocity = Math.max(-1.5, Math.min(1.5, velocity));
-
-        // Gradually return to default scroll speed if velocity is low
-        let returnToDefault = setInterval(() => {
-            if (Math.abs(velocity - (-0.5)) < 0.05) {
-                velocity = -0.5; // Return to default left-scroll
-                clearInterval(returnToDefault);
-            } else {
-                // Gradually decay velocity toward -0.5
-                velocity = velocity * 0.95 + (-0.5) * 0.05;
-            }
-        }, 50);
-    }
-
-    // Prevent image dragging
-    const logoImages = carousel.querySelectorAll('img');
-    logoImages.forEach(img => {
-        img.addEventListener('dragstart', (e) => e.preventDefault());
+    document.querySelectorAll('iframe.service-hero-iframe, iframe.page-iframe').forEach(function (iframe) {
+        iframe.addEventListener('load', function () { syncIframeThemes(currentTheme); });
     });
 
-    // Add cursor style
-    carousel.style.cursor = 'grab';
-});
+    var toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            var next = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.classList.add('theme-transitioning');
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            currentTheme = next;
+            syncIframeThemes(next);
+            setTimeout(function () {
+                document.documentElement.classList.remove('theme-transitioning');
+            }, 350);
+        });
+    }
 
-// Language Switching
-document.addEventListener('DOMContentLoaded', function() {
-    const langBtn = document.querySelector('.lang-btn');
-    const langDropdown = document.querySelector('.lang-dropdown');
-    const currentLangSpan = document.querySelector('.current-lang');
-    const langButtons = document.querySelectorAll('[data-lang]');
+    /* ── Mobile Navigation ────────────────────────────────────────────────────── */
+    var mobileToggle = document.querySelector('.mobile-toggle');
+    var navLinks     = document.querySelector('.nav-links');
 
-    // Get saved language or default to 'en'
-    let currentLang = localStorage.getItem('language') || 'en';
+    function resetHamburger() {
+        if (!mobileToggle) return;
+        var spans = mobileToggle.querySelectorAll('span');
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity   = '1';
+        spans[2].style.transform = 'none';
+    }
+    function closeMenu() {
+        if (!navLinks || !mobileToggle) return;
+        navLinks.classList.remove('active');
+        mobileToggle.classList.remove('active');
+        resetHamburger();
+    }
 
-    // Apply language on page load
-    setLanguage(currentLang);
+    if (mobileToggle && navLinks) {
+        mobileToggle.addEventListener('click', function () {
+            var open = mobileToggle.classList.toggle('active');
+            navLinks.classList.toggle('active', open);
+            var spans = mobileToggle.querySelectorAll('span');
+            if (open) {
+                spans[0].style.transform = 'rotate(45deg) translate(7px, 7px)';
+                spans[1].style.opacity   = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
+            } else {
+                resetHamburger();
+            }
+        });
 
-    // Toggle dropdown
-    if (langBtn) {
-        langBtn.addEventListener('click', function(e) {
+        /* Close on nav link click (mobile) */
+        navLinks.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A' && window.innerWidth <= 768) closeMenu();
+        });
+
+        /* Close on outside click */
+        document.addEventListener('click', function (e) {
+            if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
+                closeMenu();
+            }
+        });
+    }
+
+    /* ── Smooth scroll ────────────────────────────────────────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+            var href = this.getAttribute('href');
+            if (href.length > 1) {
+                var target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    var offset = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({ top: offset, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+
+    /* ── Header scroll shadow (CSS-class-based) ───────────────────────────────── */
+    var header = document.querySelector('.header');
+    if (header) {
+        window.addEventListener('scroll', function () {
+            header.classList.toggle('scrolled', window.pageYOffset > 0);
+        }, { passive: true });
+    }
+
+    /* ── Scroll-reveal animations (CSS-class-based) ───────────────────────────── */
+    var revealSelector = '.service-card, .story-card, .expertise-card, .process-step, ' +
+                         '.expect-card, .faq-item, .philosophy-point';
+    var revealEls = document.querySelectorAll(revealSelector);
+    if (revealEls.length) {
+        revealEls.forEach(function (el) { el.classList.add('js-reveal'); });
+        var revealObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target); /* fire once */
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        revealEls.forEach(function (el) { revealObserver.observe(el); });
+    }
+
+    /* ── Logo Carousel ────────────────────────────────────────────────────────── */
+    var carousel = document.querySelector('.logos-carousel');
+    if (carousel) {
+        var isDragging        = false;
+        var currentTranslate  = 0;
+        var previousTranslate = 0;
+        var lastDragX         = 0;
+        var velocity          = -0.5;
+        var animId            = null;
+        var returnInterval    = null;
+
+        carousel.style.animation = 'none';
+        carousel.style.cursor    = 'grab';
+
+        function animate() {
+            currentTranslate += velocity;
+            var half = carousel.scrollWidth / 2;
+            if (Math.abs(currentTranslate) >= half) {
+                currentTranslate = 0;
+                previousTranslate = 0;
+            } else if (currentTranslate > 0) {
+                currentTranslate  = -half + currentTranslate;
+                previousTranslate = currentTranslate;
+            }
+            carousel.style.transform = 'translateX(' + currentTranslate + 'px)';
+            animId = requestAnimationFrame(animate);
+        }
+        animate();
+
+        function startDrag(e) {
+            isDragging = true;
+            lastDragX  = e.touches ? e.touches[0].pageX : e.pageX;
+            carousel.style.cursor = 'grabbing';
+            velocity = 0;
+            if (returnInterval) { clearInterval(returnInterval); returnInterval = null; }
+        }
+        function onDrag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            var x    = e.touches ? e.touches[0].pageX : e.pageX;
+            var diff = x - lastDragX;
+            currentTranslate += diff * 0.5;
+            velocity  = diff * 0.015;
+            lastDragX = x;
+        }
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            carousel.style.cursor = 'grab';
+            velocity = Math.max(-1.5, Math.min(1.5, velocity));
+            returnInterval = setInterval(function () {
+                if (Math.abs(velocity - (-0.5)) < 0.05) {
+                    velocity = -0.5;
+                    clearInterval(returnInterval);
+                    returnInterval = null;
+                } else {
+                    velocity = velocity * 0.95 + (-0.5) * 0.05;
+                }
+            }, 50);
+        }
+
+        carousel.addEventListener('mousedown',  startDrag);
+        carousel.addEventListener('mousemove',  onDrag,   { passive: false });
+        carousel.addEventListener('mouseup',    endDrag);
+        carousel.addEventListener('mouseleave', endDrag);
+        carousel.addEventListener('touchstart', startDrag, { passive: true });
+        carousel.addEventListener('touchmove',  onDrag,   { passive: false });
+        carousel.addEventListener('touchend',   endDrag);
+        carousel.querySelectorAll('img').forEach(function (img) {
+            img.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        });
+
+        /* Cleanup on unload */
+        window.addEventListener('beforeunload', function () {
+            if (animId)          cancelAnimationFrame(animId);
+            if (returnInterval)  clearInterval(returnInterval);
+        });
+    }
+
+    /* ── Language Switching ───────────────────────────────────────────────────── */
+    var langBtn      = document.querySelector('.lang-btn');
+    var langDropdown = document.querySelector('.lang-dropdown');
+    var currentLangSpan = document.querySelector('.current-lang');
+    var langButtons  = document.querySelectorAll('[data-lang]');
+
+    var LANG_NAMES = { en: 'EN', fr: 'FR', nl: 'NL', ka: 'KA', ru: 'RU' };
+    var _flagEl = document.getElementById('current-flag');
+    var _prefix = '';
+    if (_flagEl) {
+        var _m = (_flagEl.getAttribute('src') || '').match(/^((?:\.\.\/)+)/);
+        if (_m) _prefix = _m[1];
+    }
+    var LANG_FLAGS = {
+        en: _prefix + 'Logos_Languages/en_logo.png',
+        fr: _prefix + 'Logos_Languages/fr_logo.png',
+        nl: _prefix + 'Logos_Languages/nd_logo.png',
+        ka: _prefix + 'Logos_Languages/ge_logo.png',
+        ru: _prefix + 'Logos_Languages/ru_logo.png',
+    };
+
+    function getNestedTranslation(obj, path) {
+        return path.split('.').reduce(function (cur, key) { return cur && cur[key]; }, obj);
+    }
+
+    function setLanguage(lang) {
+        localStorage.setItem('language', lang);
+        document.documentElement.lang = lang;
+
+        if (currentLangSpan) currentLangSpan.textContent = LANG_NAMES[lang];
+        var flag = document.getElementById('current-flag');
+        if (flag) { flag.src = LANG_FLAGS[lang]; flag.alt = LANG_NAMES[lang]; }
+
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n');
+            var tr  = typeof translations !== 'undefined'
+                      ? getNestedTranslation(translations[lang], key) : null;
+            if (tr) el.textContent = tr;
+        });
+
+        langButtons.forEach(function (btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+
+        document.querySelectorAll('iframe').forEach(function (fr) {
+            try { fr.contentWindow.postMessage({ type: 'mw-lang', lang: lang }, '*'); } catch (_) {}
+        });
+    }
+
+    var savedLang = localStorage.getItem('language') || 'en';
+    setLanguage(savedLang);
+
+    if (langBtn && langDropdown) {
+        langBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             langDropdown.classList.toggle('active');
         });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.language-switcher')) langDropdown.classList.remove('active');
+        });
     }
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (langDropdown && !e.target.closest('.language-switcher')) {
+    /* Use event delegation instead of per-button listeners */
+    if (langDropdown) {
+        langDropdown.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-lang]');
+            if (!btn) return;
+            setLanguage(btn.getAttribute('data-lang'));
             langDropdown.classList.remove('active');
-        }
-    });
-
-    // Language selection
-    langButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const lang = this.getAttribute('data-lang');
-            setLanguage(lang);
-            langDropdown.classList.remove('active');
-
-            // Update active state
-            langButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
-    function setLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('language', lang);
-
-        // Update current language display
-        const langNames = {
-            'en': 'EN',
-            'fr': 'FR',
-            'nl': 'NL',
-            'ka': 'KA',
-            'ru': 'RU'
-        };
-
-        const langFlags = {
-            'en': 'Logos_Languages/en_logo.png',
-            'fr': 'Logos_Languages/fr_logo.png',
-            'nl': 'Logos_Languages/nd_logo.png',
-            'ka': 'Logos_Languages/ge_logo.png',
-            'ru': 'Logos_Languages/ru_logo.png'
-        };
-
-        if (currentLangSpan) {
-            currentLangSpan.textContent = langNames[lang];
-        }
-
-        // Update flag image
-        const currentFlag = document.getElementById('current-flag');
-        if (currentFlag) {
-            currentFlag.src = langFlags[lang];
-            currentFlag.alt = langNames[lang];
-        }
-
-        // Update HTML lang attribute
-        document.documentElement.lang = lang;
-
-        // Translate all elements with data-i18n attribute
-        const elements = document.querySelectorAll('[data-i18n]');
-        elements.forEach(element => {
-            const key = element.getAttribute('data-i18n');
-            const translation = getNestedTranslation(translations[lang], key);
-            if (translation) {
-                element.textContent = translation;
-            }
-        });
-
-        // Update active language button
-        langButtons.forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
         });
     }
 
-    function getNestedTranslation(obj, path) {
-        return path.split('.').reduce((current, key) => current?.[key], obj);
-    }
-});
+    /* ── Contact Form ─────────────────────────────────────────────────────────── */
+    var contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            contactForm.classList.add('submitted');
 
-// Contact Form Handler
-document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contactForm');
-    if (!contactForm) return;
+            var submitBtn   = contactForm.querySelector('.form-submit');
+            var btnText     = submitBtn.querySelector('.button-text');
+            var btnLoader   = submitBtn.querySelector('.button-loader');
+            var formStatus  = document.getElementById('formStatus');
 
-    contactForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+            submitBtn.disabled        = true;
+            btnText.style.display     = 'none';
+            btnLoader.style.display   = 'inline-flex';
+            formStatus.textContent    = '';
+            formStatus.className      = 'form-status';
 
-        // Add submitted class to trigger validation styles
-        contactForm.classList.add('submitted');
-
-        const submitButton = contactForm.querySelector('.form-submit');
-        const buttonText = submitButton.querySelector('.button-text');
-        const buttonLoader = submitButton.querySelector('.button-loader');
-        const formStatus = document.getElementById('formStatus');
-
-        // Disable button and show loader
-        submitButton.disabled = true;
-        buttonText.style.display = 'none';
-        buttonLoader.style.display = 'inline-flex';
-        formStatus.textContent = '';
-        formStatus.className = 'form-status';
-
-        // Collect form data
-        const formData = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            company: document.getElementById('company').value,
-            companySize: document.getElementById('companySize').value,
-            service: document.getElementById('service').value,
-            budget: document.getElementById('budget').value,
-            timeline: document.getElementById('timeline').value,
-            message: document.getElementById('message').value,
-            newsletter: document.getElementById('newsletter').checked
-        };
-
-        try {
-            // Netlify Forms uses FormData, not JSON
-            const form = e.target;
-            const netlifyFormData = new FormData(form);
-
-            const response = await fetch('/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(netlifyFormData).toString()
-            });
-
-            const result = { success: response.ok };
-
-            if (result.success) {
-                // Success
-                formStatus.textContent = 'Thank you for your message! We\'ll get back to you within 24 hours.';
-                formStatus.className = 'form-status success';
-                contactForm.reset();
-                contactForm.classList.remove('submitted');
-
-                // Scroll to success message
+            try {
+                var res = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(new FormData(contactForm)).toString(),
+                });
+                if (res.ok) {
+                    formStatus.textContent = "Thank you! We'll get back to you within 24 hours.";
+                    formStatus.className   = 'form-status success';
+                    contactForm.reset();
+                    contactForm.classList.remove('submitted');
+                } else {
+                    throw new Error('server');
+                }
+            } catch (_) {
+                formStatus.textContent = 'Failed to send. Please email mikheil@metricwave.net directly.';
+                formStatus.className   = 'form-status error';
+            } finally {
+                submitBtn.disabled      = false;
+                btnText.style.display   = 'inline';
+                btnLoader.style.display = 'none';
                 formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Error
-                formStatus.textContent = 'Failed to send message. Please try again or email us directly at mikheil@metricwave.net';
-                formStatus.className = 'form-status error';
-            }
-        } catch (error) {
-            // Network error
-            formStatus.textContent = 'Connection error. Please try again or email us directly at mikheil@metricwave.net';
-            formStatus.className = 'form-status error';
-        } finally {
-            // Re-enable button and hide loader
-            submitButton.disabled = false;
-            buttonText.style.display = 'inline';
-            buttonLoader.style.display = 'none';
-        }
-    });
-
-    // Real-time validation
-    const emailInput = document.getElementById('email');
-    if (emailInput) {
-        emailInput.addEventListener('blur', function() {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (this.value && !emailRegex.test(this.value)) {
-                this.setCustomValidity('Please enter a valid email address');
-                this.reportValidity();
-            } else {
-                this.setCustomValidity('');
             }
         });
-    }
 
-    // Character counter for message
-    const messageInput = document.getElementById('message');
-    if (messageInput) {
-        const charCounter = document.createElement('div');
-        charCounter.className = 'char-counter';
-        charCounter.textContent = '0 characters';
-        messageInput.parentNode.appendChild(charCounter);
-
-        messageInput.addEventListener('input', function() {
-            const length = this.value.length;
-            charCounter.textContent = `${length} character${length !== 1 ? 's' : ''}`;
-
-            if (length > 1000) {
-                charCounter.style.color = 'var(--teal-light)';
-            } else {
-                charCounter.style.color = 'var(--light-gray)';
-            }
-        });
-    }
-});
-
-// Newsletter Form Handler
-document.addEventListener('DOMContentLoaded', function() {
-    const newsletterForm = document.getElementById('newsletterForm');
-    if (!newsletterForm) return;
-
-    newsletterForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const submitButton = newsletterForm.querySelector('button[type="submit"]');
-        const subscribeText = submitButton.querySelector('.subscribe-text');
-        const subscribeLoader = submitButton.querySelector('.subscribe-loader');
-        const statusDiv = document.getElementById('newsletterStatus');
-        const emailInput = document.getElementById('newsletterEmail');
-
-        // Disable button and show loader
-        submitButton.disabled = true;
-        subscribeText.style.display = 'none';
-        subscribeLoader.style.display = 'inline-flex';
-        statusDiv.textContent = '';
-        statusDiv.className = 'newsletter-status';
-
-        try {
-            // Netlify Forms uses FormData
-            const form = e.target;
-            const netlifyFormData = new FormData(form);
-
-            const response = await fetch('/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(netlifyFormData).toString()
+        var emailInput = document.getElementById('email');
+        if (emailInput) {
+            emailInput.addEventListener('blur', function () {
+                var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
+                this.setCustomValidity(this.value && !ok ? 'Please enter a valid email address' : '');
             });
-
-            if (response.ok) {
-                // Success
-                statusDiv.textContent = 'Thanks for subscribing! Check your inbox for confirmation.';
-                statusDiv.className = 'newsletter-status success';
-                newsletterForm.reset();
-
-                // Scroll to success message
-                statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Error
-                statusDiv.textContent = 'Failed to subscribe. Please try again or email us directly.';
-                statusDiv.className = 'newsletter-status error';
-            }
-        } catch (error) {
-            // Network error
-            statusDiv.textContent = 'Connection error. Please try again later.';
-            statusDiv.className = 'newsletter-status error';
-        } finally {
-            // Re-enable button and hide loader
-            submitButton.disabled = false;
-            subscribeText.style.display = 'inline';
-            subscribeLoader.style.display = 'none';
         }
-    });
-});
+
+        var msgInput = document.getElementById('message');
+        if (msgInput) {
+            var counter = document.createElement('div');
+            counter.className = 'char-counter';
+            counter.textContent = '0 characters';
+            msgInput.parentNode.appendChild(counter);
+            msgInput.addEventListener('input', function () {
+                var n = this.value.length;
+                counter.textContent = n + ' character' + (n !== 1 ? 's' : '');
+                counter.style.color = n > 1000 ? 'var(--teal-light)' : 'var(--light-gray)';
+            });
+        }
+    }
+
+    /* ── Newsletter Form ──────────────────────────────────────────────────────── */
+    var newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            var submitBtn   = newsletterForm.querySelector('button[type="submit"]');
+            var subText     = submitBtn.querySelector('.subscribe-text');
+            var subLoader   = submitBtn.querySelector('.subscribe-loader');
+            var statusDiv   = document.getElementById('newsletterStatus');
+
+            submitBtn.disabled      = true;
+            subText.style.display   = 'none';
+            subLoader.style.display = 'inline-flex';
+            statusDiv.textContent   = '';
+            statusDiv.className     = 'newsletter-status';
+
+            try {
+                var res = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(new FormData(newsletterForm)).toString(),
+                });
+                if (res.ok) {
+                    statusDiv.textContent = 'Thanks for subscribing! Check your inbox for confirmation.';
+                    statusDiv.className   = 'newsletter-status success';
+                    newsletterForm.reset();
+                } else {
+                    throw new Error('server');
+                }
+            } catch (_) {
+                statusDiv.textContent = 'Failed to subscribe. Please try again later.';
+                statusDiv.className   = 'newsletter-status error';
+            } finally {
+                submitBtn.disabled      = false;
+                subText.style.display   = 'inline';
+                subLoader.style.display = 'none';
+                statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+
+}); /* end DOMContentLoaded */

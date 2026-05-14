@@ -32,6 +32,57 @@
 /* global React */
 const { useState, useEffect } = React;
 
+/* ---------- Language hook ---------- */
+function useLang() {
+  const [lang, setLang] = React.useState(() => localStorage.getItem('language') || 'en');
+  React.useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+  return lang;
+}
+
+/* ---------- Hero translations ---------- */
+const HEADER_T = {
+  en: {
+    badge:    "Analytics · BI · Strategy · Automation",
+    h1pre:    "Turn your data into your",
+    h1italic: "greatest",
+    h1post:   "competitive advantage.",
+    h1Size:   82,
+    lead:     "We connect your sources, model what matters, and deliver dashboards, insights, and automations — built for SMBs and startups who want every decision backed by evidence.",
+    cta1:     "Book a free consultation →",
+    cta2:     "See our work",
+    rail:     "[ INGEST → ANALYSE → VISUALISE → DECIDE ]",
+    live:     "Live · Always in sync",
+  },
+  fr: {
+    badge:    "Analytics · BI · Stratégie · Automatisation",
+    h1pre:    "Transformez vos données en votre",
+    h1italic: "meilleur",
+    h1post:   "avantage concurrentiel.",
+    h1Size:   68,
+    lead:     "Nous connectons vos sources, modélisons ce qui compte et livrons des tableaux de bord, des insights et des automatisations — conçus pour les PME et startups qui veulent chaque décision appuyée par des données.",
+    cta1:     "Réserver une consultation gratuite →",
+    cta2:     "Voir nos travaux",
+    rail:     "[ INGÉRER → ANALYSER → VISUALISER → DÉCIDER ]",
+    live:     "En direct · Toujours synchronisé",
+  },
+  nl: {
+    badge:    "Analytics · BI · Strategie · Automatisering",
+    h1pre:    "Verander uw data in uw",
+    h1italic: "grootste",
+    h1post:   "concurrentievoordeel.",
+    h1Size:   68,
+    lead:     "Wij verbinden uw bronnen, modelleren wat telt en leveren dashboards, inzichten en automatiseringen — gebouwd voor het MKB en startups die elke beslissing willen baseren op feiten.",
+    cta1:     "Boek een gratis consultatie →",
+    cta2:     "Bekijk ons werk",
+    rail:     "[ INLEZEN → ANALYSEREN → VISUALISEREN → BESLISSEN ]",
+    live:     "Live · Altijd gesynchroniseerd",
+  },
+};
+
 /* ============================================================
    MetricWave — Schematic header (refined V4)
    Two modes: light + dark. Data flows in from sources → model
@@ -369,6 +420,8 @@ function Schematic({ t, mode }) {
 /* ---------- The full header ---------- */
 function MetricWaveHeader({ mode = "light" }) {
   const t = TOKENS[mode];
+  const lang = useLang();
+  const T = HEADER_T[lang] || HEADER_T.en;
 
   return (
     <div
@@ -423,24 +476,24 @@ function MetricWaveHeader({ mode = "light" }) {
               animation: "mwPulse 1.8s infinite",
             }}
           />
-          Analytics · BI · Strategy · Automation
+          {T.badge}
         </div>
         <h1
           style={{
             fontFamily: "'Inter Tight', system-ui, sans-serif",
             fontWeight: 500,
-            fontSize: 82, lineHeight: 1.04,
+            fontSize: T.h1Size || 82, lineHeight: 1.04,
             letterSpacing: "-0.035em",
             color: t.ink, margin: 0,
           }}
         >
-          Turn your data into your{" "}
+          {T.h1pre}{" "}
           <span style={{
             fontFamily: "'Instrument Serif', serif",
             fontStyle: "italic", fontWeight: 400,
             color: t.teal, letterSpacing: "-0.01em",
-          }}>greatest</span>{" "}
-          competitive advantage.
+          }}>{T.h1italic}</span>{" "}
+          {T.h1post}
         </h1>
         <p
           style={{
@@ -449,9 +502,7 @@ function MetricWaveHeader({ mode = "light" }) {
             textWrap: "pretty",
           }}
         >
-          We connect your sources, model what matters, and deliver dashboards,
-          insights, and automations — built for SMBs and startups who want every
-          decision backed by evidence.
+          {T.lead}
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
           <button style={{
@@ -459,14 +510,14 @@ function MetricWaveHeader({ mode = "light" }) {
             padding: "18px 32px", borderRadius: 8, cursor: "pointer",
             border: "none", background: t.teal, color: "#fff",
             letterSpacing: "-0.01em",
-          }} onClick={() => { window.parent.location.href = 'contact.html'; }}>Book a free consultation →</button>
+          }} onClick={() => { window.parent.location.href = 'contact.html'; }}>{T.cta1}</button>
           <button style={{
             fontFamily: "inherit", fontSize: 18, fontWeight: 500,
             padding: "18px 32px", borderRadius: 8, cursor: "pointer",
             background: "transparent", color: t.ink,
             border: `1px solid ${t.rule}`,
             letterSpacing: "-0.01em",
-          }} onClick={() => { window.parent.location.href = 'services.html'; }}>See our work</button>
+          }} onClick={() => { window.parent.location.href = 'services.html'; }}>{T.cta2}</button>
         </div>
       </div>
 
@@ -492,14 +543,14 @@ function MetricWaveHeader({ mode = "light" }) {
           borderTop: `1px solid ${t.rule}`, paddingTop: 16,
         }}
       >
-        <span>[ INGEST → ANALYSE → VISUALISE → DECIDE ]</span>
+        <span>{T.rail}</span>
         <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{
             width: 6, height: 6, borderRadius: 999,
             background: mode === "dark" ? t.mint : "#3aa86b",
             animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {T.live}
         </span>
       </div>
     </div>

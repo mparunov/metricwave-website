@@ -1,20 +1,27 @@
 # Netlify Configuration for MetricWave
-# Static site configuration
+# Static site — no build step, all files served from root
 
 [build]
   publish = "."
 
-# Headers for security and performance
+# ─── Security headers (all routes) ─────────────────────────────────────────────
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options  = "nosniff"
+    X-XSS-Protection        = "1; mode=block"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
+    Permissions-Policy      = "camera=(), microphone=(), geolocation=()"
 
+# ─── HTML pages — always revalidate ────────────────────────────────────────────
 [[headers]]
-  for = "/*.css"
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ─── Versioned JS/CSS — long-lived immutable cache ─────────────────────────────
+[[headers]]
+  for = "/styles.css"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
@@ -23,88 +30,106 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# ─── Images — 30-day cache ─────────────────────────────────────────────────────
 [[headers]]
-  for = "/*.html"
+  for = "/*.png"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"
 
-# Redirects for old flat blog URLs → new blog/ subfolder
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"
+
+# ─── Fonts via Google — already cached by Google CDN ───────────────────────────
+
+# ─── Blog URL redirects (old flat → clean slug) ─────────────────────────────────
 [[redirects]]
   from = "/blog-ai-2026-what-it-is-why-it-matters-how-to-prepare"
-  to = "/blog/ai-2026-what-it-is-why-it-matters-how-to-prepare"
+  to   = "/blog/ai-2026-what-it-is-why-it-matters-how-to-prepare"
   status = 301
 
 [[redirects]]
   from = "/blog-ai-2026-what-it-is-why-it-matters-how-to-prepare.html"
-  to = "/blog/ai-2026-what-it-is-why-it-matters-how-to-prepare"
+  to   = "/blog/ai-2026-what-it-is-why-it-matters-how-to-prepare"
   status = 301
 
 [[redirects]]
   from = "/blog-automation-ai-agents-2026-work-reshaping"
-  to = "/blog/automation-ai-agents-2026-work-reshaping"
+  to   = "/blog/automation-ai-agents-2026-work-reshaping"
   status = 301
 
 [[redirects]]
   from = "/blog-automation-ai-agents-2026-work-reshaping.html"
-  to = "/blog/automation-ai-agents-2026-work-reshaping"
+  to   = "/blog/automation-ai-agents-2026-work-reshaping"
   status = 301
 
 [[redirects]]
   from = "/blog-10-frontier-ai-companies-to-watch-2026"
-  to = "/blog/10-frontier-ai-companies-to-watch-2026"
+  to   = "/blog/10-frontier-ai-companies-to-watch-2026"
   status = 301
 
 [[redirects]]
   from = "/blog-10-frontier-ai-companies-to-watch-2026.html"
-  to = "/blog/10-frontier-ai-companies-to-watch-2026"
+  to   = "/blog/10-frontier-ai-companies-to-watch-2026"
   status = 301
 
 [[redirects]]
   from = "/blog-business-2026-growth-competition-opportunity"
-  to = "/blog/business-2026-growth-competition-opportunity"
+  to   = "/blog/business-2026-growth-competition-opportunity"
   status = 301
 
 [[redirects]]
   from = "/blog-business-2026-growth-competition-opportunity.html"
-  to = "/blog/business-2026-growth-competition-opportunity"
+  to   = "/blog/business-2026-growth-competition-opportunity"
   status = 301
 
 [[redirects]]
   from = "/blog-nvidia-2026-ai-infrastructure"
-  to = "/blog/nvidia-2026-ai-infrastructure"
+  to   = "/blog/nvidia-2026-ai-infrastructure"
   status = 301
 
 [[redirects]]
   from = "/blog-nvidia-2026-ai-infrastructure.html"
-  to = "/blog/nvidia-2026-ai-infrastructure"
+  to   = "/blog/nvidia-2026-ai-infrastructure"
   status = 301
 
 [[redirects]]
   from = "/blog-apple-2026-ceo-products-ai-business"
-  to = "/blog/apple-2026-ceo-products-ai-business"
+  to   = "/blog/apple-2026-ceo-products-ai-business"
   status = 301
 
 [[redirects]]
   from = "/blog-apple-2026-ceo-products-ai-business.html"
-  to = "/blog/apple-2026-ceo-products-ai-business"
+  to   = "/blog/apple-2026-ceo-products-ai-business"
   status = 301
 
 [[redirects]]
   from = "/blog-data-storytelling-2026-strategy-guide"
-  to = "/blog/data-storytelling-2026-strategy-guide"
+  to   = "/blog/data-storytelling-2026-strategy-guide"
   status = 301
 
 [[redirects]]
   from = "/blog-data-storytelling-2026-strategy-guide.html"
-  to = "/blog/data-storytelling-2026-strategy-guide"
+  to   = "/blog/data-storytelling-2026-strategy-guide"
   status = 301
 
 [[redirects]]
   from = "/blog-data-storytelling-2026-tools-technologies"
-  to = "/blog/data-storytelling-2026-tools-technologies"
+  to   = "/blog/data-storytelling-2026-tools-technologies"
   status = 301
 
 [[redirects]]
   from = "/blog-data-storytelling-2026-tools-technologies.html"
-  to = "/blog/data-storytelling-2026-tools-technologies"
+  to   = "/blog/data-storytelling-2026-tools-technologies"
   status = 301

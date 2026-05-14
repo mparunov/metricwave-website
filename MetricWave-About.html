@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
-  html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; background: transparent; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
   body { min-height: 100vh; }
   #fit-wrap  { position: relative; width: 100vw; min-height: 100vh; overflow: hidden; }
@@ -34,12 +34,12 @@
 
 <script>
   (function() {
-    var saved = localStorage.getItem('theme') || 'dark';
+    var saved = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
   })();
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'mw-theme') {
-      var t = e.data.theme || 'dark';
+      var t = e.data.theme || 'light';
       document.documentElement.setAttribute('data-theme', t);
       localStorage.setItem('theme', t);
     }
@@ -118,8 +118,8 @@ const HERO_TOKENS = {
     warnGlow:  "rgba(217,119,6,0.18)",
     ok:        "#16A34A",
     nodeFill:  "#FFFFFF",
-    modelFill: "#0D0D10",
-    modelInk:  "#FFFFFF",
+    modelFill: "#E2E8F0",
+    modelInk:  "#1A202C",
     accentBg:  "#0D9488",
     accentInk: "#FFFFFF",
   },
@@ -127,11 +127,11 @@ const HERO_TOKENS = {
 
 function useTheme() {
   const initial = (typeof document !== "undefined" &&
-    document.documentElement.getAttribute("data-theme")) || "dark";
+    document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light");
   const [mode, setMode] = useState(initial);
   useEffect(() => {
     const obs = new MutationObserver(() => {
-      const next = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light";
       setMode(next);
     });
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
@@ -337,7 +337,18 @@ function BlinkCursor({ color }) {
   );
 }
 
-Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme });
+function useLang() {
+  const initial = (typeof localStorage !== "undefined" && localStorage.getItem('language')) || 'en';
+  const [lang, setLang] = useState(initial);
+  useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+  return lang;
+}
+
+Object.assign(window, { ServiceHero, HERO_TOKENS, useTheme, useLang });
 
 </script>
 <script type="text/babel" data-presets="env,react">
@@ -596,8 +607,88 @@ Object.assign(window, { PageLogo, GridBg, PageNav, PageTicker, PageEyebrow });
 </script>
 <script type="text/babel" data-presets="env,react">
 /* global React, NodeCard, FlowEdge, EdgeDefs, Crosshairs, CountUp,
-   PageNav, PageTicker, GridBg, PageEyebrow, useTheme, HERO_TOKENS */
+   PageNav, PageTicker, GridBg, PageEyebrow, useTheme, useLang, HERO_TOKENS */
 const { useState: aboutUseState, useEffect: aboutUseEffect } = React;
+
+const ABOUT_T = {
+  en: {
+    eyebrow: "· ABOUT · 2024 → NOW ·",
+    h1pre: "Two operators who got tired of",
+    h1teal: "broken stacks.",
+    leadSize: 18,
+    lead: "MetricWave was founded after years of watching organisations buy more software while becoming less aligned. Dashboards nobody trusted. Reports nobody opened. Systems nobody connected. So we built the partner that owns the entire loop — and stays until it works.",
+    timelineEyebrow: "· TIMELINE · MILESTONES ·",
+    milestones: [
+      { yr: "2024", title: "MetricWave founded",       sub: "Brussels + Tbilisi" },
+      { yr: "2024", title: "First 10 clients shipped",  sub: "Logistics · SaaS · Gov" },
+      { yr: "2025", title: "EU programme delivered",    sub: "€3.3M policy stack" },
+      { yr: "2025", title: "AI agents in production",   sub: "31h saved / week / client" },
+      { yr: "2026", title: "150+ projects",             sub: "across 6 industries" },
+    ],
+    timelineH2pre: "From kitchen-table whiteboard to a partner trusted across",
+    timelineH2teal: "six industries.",
+    valuesH2: "What we won't compromise on.",
+    valuesEyebrow: "· PRINCIPLES · HOW WE WORK ·",
+    values: [
+      { num: "01", title: "Evidence over instinct.",   body: "Every recommendation traces to operational data we've validated. Decisions are expensive — ours are always backed." },
+      { num: "02", title: "Build for the operator.",   body: "We judge our work at 9am Monday — not in the Friday presentation." },
+      { num: "03", title: "One stack, not ten tools.", body: "Complexity compounds faster than value. We fight fragmentation by design." },
+      { num: "04", title: "Show our work.",            body: "Every model, automation, and recommendation is documented and audit-ready. You own the logic." },
+    ],
+  },
+  fr: {
+    eyebrow: "· À PROPOS · 2024 → MAINTENANT ·",
+    h1pre: "Deux opérateurs fatigués des",
+    h1teal: "stacks défaillants.",
+    leadSize: 15,
+    lead: "MetricWave a été fondée après des années à observer des organisations acheter plus de logiciels tout en devenant moins alignées. Des tableaux de bord auxquels personne ne faisait confiance. Des rapports que personne n'ouvrait. Des systèmes que personne ne connectait. Nous avons donc créé le partenaire qui prend en charge l'ensemble de la boucle — et reste jusqu'à ce que ça fonctionne.",
+    timelineH2pre: "D'un tableau blanc de cuisine à un partenaire de confiance dans",
+    timelineH2teal: "six secteurs.",
+    timelineEyebrow: "· CHRONOLOGIE · JALONS ·",
+    milestones: [
+      { yr: "2024", title: "MetricWave fondée",           sub: "Bruxelles + Tbilisi" },
+      { yr: "2024", title: "10 premiers clients livrés",  sub: "Logistique · SaaS · Gov" },
+      { yr: "2025", title: "Programme UE livré",          sub: "Infrastructure politique 3,3M€" },
+      { yr: "2025", title: "Agents IA en production",     sub: "31h économisées / semaine / client" },
+      { yr: "2026", title: "150+ projets",                sub: "dans 6 secteurs" },
+    ],
+    valuesH2: "Sur quoi nous ne transigeons pas.",
+    valuesEyebrow: "· PRINCIPES · NOTRE FAÇON DE TRAVAILLER ·",
+    values: [
+      { num: "01", title: "La preuve plutôt que l'instinct.", body: "Chaque recommandation est traçable aux données opérationnelles que nous avons validées. Les décisions coûtent cher — les nôtres sont toujours étayées." },
+      { num: "02", title: "Construire pour l'opérateur.",     body: "Nous jugeons notre travail à 9h le lundi — pas dans la présentation du vendredi." },
+      { num: "03", title: "Un stack, pas dix outils.",        body: "La complexité se compound plus vite que la valeur. Nous combattons la fragmentation par design." },
+      { num: "04", title: "Montrer notre travail.",           body: "Chaque modèle, automatisation et recommandation est documenté et prêt pour l'audit. Vous possédez la logique." },
+    ],
+  },
+  nl: {
+    eyebrow: "· OVER ONS · 2024 → NU ·",
+    h1pre: "Twee operators die genoeg hadden van",
+    h1teal: "kapotte stacks.",
+    leadSize: 15,
+    lead: "MetricWave werd opgericht na jaren van het zien hoe organisaties meer software kochten terwijl ze minder op één lijn lagen. Dashboards waar niemand op vertrouwde. Rapporten die niemand opende. Systemen die niemand verbond. Dus bouwden we de partner die de hele loop bezit — en blijft totdat het werkt.",
+    timelineH2pre: "Van keukentafel-whiteboard naar een partner vertrouwd in",
+    timelineH2teal: "zes industrieën.",
+    timelineEyebrow: "· TIJDLIJN · MIJLPALEN ·",
+    milestones: [
+      { yr: "2024", title: "MetricWave opgericht",         sub: "Brussel + Tbilisi" },
+      { yr: "2024", title: "Eerste 10 klanten geleverd",   sub: "Logistiek · SaaS · Gov" },
+      { yr: "2025", title: "EU-programma geleverd",        sub: "€3,3M beleidsstack" },
+      { yr: "2025", title: "AI-agents in productie",       sub: "31u bespaard / week / klant" },
+      { yr: "2026", title: "150+ projecten",               sub: "in 6 industrieën" },
+    ],
+    valuesH2: "Waarop wij niet compromitteren.",
+    valuesEyebrow: "· PRINCIPES · HOE WIJ WERKEN ·",
+    values: [
+      { num: "01", title: "Bewijs boven instinct.",       body: "Elke aanbeveling is herleidbaar tot operationele data die we hebben gevalideerd." },
+      { num: "02", title: "Bouwen voor de operator.",     body: "We beoordelen ons werk om 9u maandag — niet in de vrijdagpresentatie." },
+      { num: "03", title: "Één stack, niet tien tools.",  body: "Complexiteit groeit sneller dan waarde. We bestrijden fragmentatie by design." },
+      { num: "04", title: "Ons werk tonen.",              body: "Elk model, automatisering en aanbeveling is gedocumenteerd en auditklaar. U bezit de logica." },
+    ],
+  },
+};
+ABOUT_T.ka = ABOUT_T.en;
+ABOUT_T.ru = ABOUT_T.en;
 
 /* ============================================================
    ABOUT — narrative + the people behind MetricWave
@@ -699,27 +790,17 @@ function AboutSchematic({ t, mode }) {
 
 function AboutPage() {
   const mode = useTheme();
+  const lang = useLang();
   const t = HERO_TOKENS[mode];
+  const T = ABOUT_T[lang] || ABOUT_T.en;
   const embedded = window.parent !== window;
 
-  const milestones = [
-    { yr: "2024", title: "MetricWave founded",      sub: "Brussels + Tbilisi" },
-    { yr: "2024", title: "First 10 clients shipped", sub: "Logistics · SaaS · Gov" },
-    { yr: "2025", title: "EU programme delivered",   sub: "€3.3M policy stack" },
-    { yr: "2025", title: "AI agents in production",  sub: "31h saved / week / client" },
-    { yr: "2026", title: "150+ projects",            sub: "across 6 industries" },
-  ];
-
-  const values = [
-    { num: "01", title: "Evidence over instinct.",  body: "We never ship a recommendation we can't trace back to data we trust." },
-    { num: "02", title: "Build for the operator.",  body: "Dashboards, agents, processes — built for the person who actually has to use them at 9am Monday." },
-    { num: "03", title: "One stack, not ten tools.", body: "Every service we run plugs into the same architecture. Less drift, more compounding." },
-    { num: "04", title: "Show our work.",            body: "Every decision is logged. Every model is documented. Audit us anytime." },
-  ];
+  const milestones = T.milestones;
+  const values = T.values;
 
   return (
     <div style={{
-      width: 1920, minHeight: 2200,
+      width: 1920,
       background: t.bg, color: t.text1,
       fontFamily: "'Inter', system-ui, sans-serif",
       position: "relative", overflow: "hidden", isolation: "isolate",
@@ -728,33 +809,30 @@ function AboutPage() {
       {!embedded && <PageNav t={t} mode={mode} active="About" />}
 
       {/* HERO with schematic */}
-      <div style={{ position: "relative", padding: embedded ? "80px 80px 80px" : "180px 80px 80px", zIndex: 3, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60 }}>
-        <div style={{ paddingTop: 50 }}>
-          <PageEyebrow color={t.teal}>· ABOUT · 2024 → NOW ·</PageEyebrow>
+      <div style={{ position: "relative", padding: embedded ? "36px 80px 20px" : "180px 80px 40px", zIndex: 3, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60 }}>
+        <div style={{ paddingTop: 10 }}>
+          <PageEyebrow color={t.teal}>{T.eyebrow}</PageEyebrow>
           <h1 style={{
             fontFamily: "'Inter', sans-serif", fontWeight: 900,
             fontSize: "clamp(3rem, 4.5vw, 4.8rem)", lineHeight: 1.05,
             letterSpacing: "-0.03em", margin: 0, textWrap: "balance",
           }}>
-            Two operators who got tired of <span style={{ color: t.teal }}>broken stacks.</span>
+            {T.h1pre} <span style={{ color: t.teal }}>{T.h1teal}</span>
           </h1>
-          <p style={{ fontSize: 18, lineHeight: 1.55, color: t.text2, marginTop: 26, maxWidth: 540, textWrap: "pretty" }}>
-            MetricWave was started by a strategist and a data engineer who'd spent a decade watching companies pay for tools they couldn't connect, dashboards no one opened, and reports that arrived too late.
-          </p>
-          <p style={{ fontSize: 18, lineHeight: 1.55, color: t.text2, marginTop: 18, maxWidth: 540, textWrap: "pretty" }}>
-            We built MetricWave to be the opposite of that — a single, accountable partner that owns the whole loop from raw event to executive call.
+          <p style={{ fontSize: T.leadSize || 18, lineHeight: 1.55, color: t.text2, marginTop: 26, maxWidth: 540, textWrap: "pretty" }}>
+            {T.lead}
           </p>
         </div>
-        <div style={{ height: 560 }}>
+        <div style={{ height: 480 }}>
           <AboutSchematic t={t} mode={mode} />
         </div>
       </div>
 
       {/* TIMELINE */}
-      <div style={{ position: "relative", padding: "60px 80px 100px", zIndex: 3 }}>
-        <PageEyebrow color={t.teal}>· TIMELINE · MILESTONES ·</PageEyebrow>
-        <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 48, letterSpacing: "-0.025em", margin: "0 0 60px", maxWidth: 900, textWrap: "balance" }}>
-          From kitchen-table whiteboard to a partner trusted across <span style={{ color: t.teal }}>six industries.</span>
+      <div style={{ position: "relative", padding: "4px 80px 80px", zIndex: 3 }}>
+        <PageEyebrow color={t.teal}>{T.timelineEyebrow}</PageEyebrow>
+        <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 48, letterSpacing: "-0.025em", margin: "0 0 14px", maxWidth: 900, textWrap: "balance" }}>
+          {T.timelineH2pre} <span style={{ color: t.teal }}>{T.timelineH2teal}</span>
         </h2>
         <div style={{ position: "relative" }}>
           <div style={{ position: "absolute", left: 0, right: 0, top: 22, height: 2, background: t.border }} />
@@ -778,9 +856,9 @@ function AboutPage() {
 
       {/* VALUES */}
       <div style={{ position: "relative", padding: "80px 80px 100px", zIndex: 3, borderTop: `1px solid ${t.border}` }}>
-        <PageEyebrow color={t.teal}>· OPERATING PRINCIPLES ·</PageEyebrow>
+        <PageEyebrow color={t.teal}>{T.valuesEyebrow}</PageEyebrow>
         <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 48, letterSpacing: "-0.025em", margin: "0 0 50px", maxWidth: 1100, textWrap: "balance" }}>
-          What we won't compromise on.
+          {T.valuesH2 || "What we won't compromise on."}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>
           {values.map((v, i) => (
@@ -802,17 +880,17 @@ function AboutPage() {
       </div>
 
       {/* STATS STRIP */}
-      <div style={{ position: "relative", padding: "60px 80px", zIndex: 3, background: "transparent", borderTop: `1px solid ${t.border}`, borderBottom: `1px solid ${t.border}` }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 60 }}>
+      <div style={{ position: "relative", padding: "32px 80px 60px", zIndex: 3, background: "transparent", borderTop: `1px solid ${t.border}` }}>
+        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
           {[
-            { v: "5", l: "COUNTRIES" },
-            { v: "150+", l: "PROJECTS DELIVERED" },
+            { v: "6",   l: "SERVICES" },
+            { v: "70+", l: "PROJECTS DELIVERED" },
             { v: "31h", l: "SAVED / WEEK / CLIENT" },
             { v: "98%", l: "RETENTION RATE" },
           ].map((s, i) => (
             <div key={i}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 56, letterSpacing: "-0.03em", color: t.teal }}>{s.v}</div>
-              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: t.text2, letterSpacing: "0.15em", marginTop: 6 }}>{s.l}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 48, letterSpacing: "-0.03em", color: t.teal, lineHeight: 1 }}>{s.v}</div>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.15em", marginTop: 8 }}>{s.l}</div>
             </div>
           ))}
         </div>

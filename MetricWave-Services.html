@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
-  html, body { margin: 0; padding: 0; background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; background: transparent; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   html[data-theme="light"], html[data-theme="light"] body { background: #FFFFFF; }
   body { min-height: 100vh; }
   #fit-wrap  { position: relative; width: 100vw; min-height: 100vh; overflow: hidden; }
@@ -37,12 +37,12 @@
 
 <script>
   (function() {
-    var saved = localStorage.getItem('theme') || 'dark';
+    var saved = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
   })();
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'mw-theme') {
-      var t = e.data.theme || 'dark';
+      var t = e.data.theme || 'light';
       document.documentElement.setAttribute('data-theme', t);
       localStorage.setItem('theme', t);
     }
@@ -121,8 +121,8 @@ const HERO_TOKENS = {
     warnGlow:  "rgba(217,119,6,0.18)",
     ok:        "#16A34A",
     nodeFill:  "#FFFFFF",
-    modelFill: "#0D0D10",
-    modelInk:  "#FFFFFF",
+    modelFill: "#E2E8F0",
+    modelInk:  "#1A202C",
     accentBg:  "#0D9488",
     accentInk: "#FFFFFF",
   },
@@ -130,11 +130,11 @@ const HERO_TOKENS = {
 
 function useTheme() {
   const initial = (typeof document !== "undefined" &&
-    document.documentElement.getAttribute("data-theme")) || "dark";
+    document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light");
   const [mode, setMode] = useState(initial);
   useEffect(() => {
     const obs = new MutationObserver(() => {
-      const next = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "light";
       setMode(next);
     });
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
@@ -1741,12 +1741,12 @@ const { useState, useEffect, useRef } = React;
 ============================================================ */
 
 const SERVICES = [
-  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs · REPORTING", lead: "Connect every source into one trusted analytics layer.", file: "service-analytics-bi.html" },
-  { key: "web",        Schem: () => SchemWeb,        title: "Web Development",     tag: "DESIGN · BUILD · MAINTAIN", lead: "Fast, wired sites built into your analytics stack.", file: "service-web-development.html" },
-  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · ANALYSE · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service-process-mining.html" },
-  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "WORKFLOWS · AI AGENTS · LLMs", lead: "AI agents handling repetitive work, end to end.", file: "service-automation-ai.html" },
-  { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service-business-strategy.html" },
-  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES · APIs", lead: "Pipelines and warehouses you can actually trust.", file: "service-data-engineering.html" },
+  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs · REPORTING", lead: "Connect every source into one trusted analytics layer.", file: "service/analytics-bi.html" },
+  { key: "web",        Schem: () => SchemWeb,        title: "Web Development",     tag: "DESIGN · BUILD · MAINTAIN", lead: "Fast, wired sites built into your analytics stack.", file: "service/web-development.html" },
+  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · ANALYSE · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service/process-mining.html" },
+  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "WORKFLOWS · AI AGENTS · LLMs", lead: "AI agents handling repetitive work, end to end.", file: "service/automation-ai.html" },
+  { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service/business-strategy.html" },
+  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES · APIs", lead: "Pipelines and warehouses you can actually trust.", file: "service/data-engineering.html" },
 ];
 
 function ServiceTile({ s, t, mode }) {
@@ -1862,12 +1862,12 @@ function ServicesPage() {
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <button style={{
+            <button onClick={() => { window.top.location.href = 'contact.html'; }} style={{
               fontFamily: "inherit", fontSize: 15, fontWeight: 700,
               padding: "16px 32px", borderRadius: 8, cursor: "pointer",
               border: "none", background: t.teal, color: t.bg, whiteSpace: "nowrap",
             }}>Book a free consultation →</button>
-            <button style={{
+            <button onClick={() => { window.top.location.href = 'pricing.html'; }} style={{
               fontFamily: "inherit", fontSize: 15, fontWeight: 700,
               padding: "16px 32px", borderRadius: 8, cursor: "pointer",
               background: "transparent", color: t.teal, whiteSpace: "nowrap",
