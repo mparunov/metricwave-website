@@ -81,7 +81,7 @@ const translations = {
 
         // Footer
         footer: {
-            description: "Built for operators who want their data to work as hard as they do.",
+            description: "Empowering businesses and organizations with data-driven insights and analytics expertise.",
             quickLinks: "Quick Links",
             services: "Services",
             contact: "Contact",
