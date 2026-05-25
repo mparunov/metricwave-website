@@ -76,7 +76,7 @@ const translations = {
             // CTA Section
             ctaTitle: "Ready to Transform Your Data Into Growth?",
             ctaSubtitle: "Let's discuss how MetricWave can help you make smarter, faster business decisions.",
-            ctaButton: "Schedule a Consultation"
+            ctaButton: "Schedule Free Consultation"
         },
 
         // Footer
