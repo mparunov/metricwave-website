@@ -1,0 +1,6 @@
+.DS_Store
+.claude/
+.netlify/
+Blog/Blog.zip
+Blog/extracted/
+node_modules/
