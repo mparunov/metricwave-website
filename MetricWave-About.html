@@ -173,6 +173,7 @@ function ServiceHero({
   Schematic,
   navActive = "Services",
   showNav = true,
+  lang = "en",
 }) {
   const mode = useTheme();
   const t = HERO_TOKENS[mode];
@@ -320,7 +321,7 @@ function ServiceHero({
             width: 6, height: 6, borderRadius: 999,
             background: t.teal, animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
         </span>
       </div>
     </div>
@@ -572,7 +573,7 @@ function PageNav({ t, mode, active }) {
   );
 }
 
-function PageTicker({ t, mode, label }) {
+function PageTicker({ t, mode, label, lang }) {
   return (
     <div style={{
       position: "absolute", left: 0, right: 0, bottom: 0, height: 30, zIndex: 10,
@@ -586,7 +587,7 @@ function PageTicker({ t, mode, label }) {
       <span>{label}</span>
       <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
-        Live · Always in sync
+        {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
       </span>
     </div>
   );
@@ -941,10 +942,10 @@ function AboutPage() {
       <div style={{ position: "relative", padding: "32px 80px 60px", zIndex: 3, background: "transparent", borderTop: `1px solid ${t.border}` }}>
         <div style={{ display: "flex", justifyContent: "space-evenly" }}>
           {[
-            { v: "6",   l: "SERVICES" },
-            { v: "70+", l: "PROJECTS DELIVERED" },
-            { v: "31h", l: "SAVED / WEEK / CLIENT" },
-            { v: "98%", l: "RETENTION RATE" },
+            { v: "6",   l: lang==="ru"?"УСЛУГИ":lang==="ka"?"ᲡᲔᲠᲕᲘᲡᲔᲑᲘ":"SERVICES" },
+            { v: "70+", l: lang==="ru"?"ПРОЕКТОВ ВЫПОЛНЕНО":lang==="ka"?"ᲨᲔᲡᲠ. ᲞᲠᲝᲔᲥᲢᲘ":"PROJECTS DELIVERED" },
+            { v: "31h", l: lang==="ru"?"ЭКОНОМ. / НЕДЕЛЯ / КЛИЕНТ":lang==="ka"?"ᲓᲐᲖᲝᲒ. / ᲙᲕᲘᲠᲐ / ᲙᲚᲘᲔᲜᲢᲘ":"SAVED / WEEK / CLIENT" },
+            { v: "98%", l: lang==="ru"?"УДЕРЖАНИЕ КЛИЕНТОВ":lang==="ka"?"ᲙᲚᲘᲔᲜᲢᲘᲡ ᲨᲔᲜᲐᲠᲩ.":"RETENTION RATE" },
           ].map((s, i) => (
             <div key={i}>
               <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 48, letterSpacing: "-0.03em", color: t.teal, lineHeight: 1 }}>{s.v}</div>
@@ -954,7 +955,7 @@ function AboutPage() {
         </div>
       </div>
 
-      <PageTicker t={t} mode={mode} label="· FOUNDED 2024 · BRUSSELS · TBILISI · MONTREAL · MALTA · OPERATIONAL ·" />
+      <PageTicker t={t} mode={mode} lang={lang} label={lang==="ru"?"· ОСНОВАНО 2024 · БРЮССЕЛЬ · ТБИЛИСИ · МОНРЕАЛЬ · МАЛЬТА · РАБОТАЕТ ·":lang==="ka"?"· ᲓᲐᲐᲠᲡᲓᲐ 2024 · ᲑᲠᲘᲣᲡᲔᲚᲘ · ᲗᲑᲘᲚᲘᲡᲘ · ᲛᲝᲜᲠᲔᲐᲚᲘ · ᲛᲐᲚᲢᲐ · ᲝᲞᲔᲠᲐᲪᲘᲣᲚᲘ ·":"· FOUNDED 2024 · BRUSSELS · TBILISI · MONTREAL · MALTA · OPERATIONAL ·"} />
     </div>
   );
 }

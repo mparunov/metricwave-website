@@ -275,7 +275,10 @@ document.addEventListener('DOMContentLoaded', function () {
             var key = el.getAttribute('data-i18n');
             var tr  = typeof translations !== 'undefined'
                       ? getNestedTranslation(translations[lang], key) : null;
-            if (tr) el.textContent = tr;
+            if (tr) {
+                if (tr.indexOf('<') !== -1) el.innerHTML = tr;
+                else el.textContent = tr;
+            }
         });
 
         langButtons.forEach(function (btn) {

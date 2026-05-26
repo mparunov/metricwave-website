@@ -202,13 +202,7 @@ function ServiceHero({
             border: "none", background: t.teal, color: t.bg,
             letterSpacing: "-0.01em",
           }} onClick={() => window.top.location.href = 'contact.html'}>{ctaPrimary} →</button>
-          <button style={{
-            fontFamily: "inherit", fontSize: 17, fontWeight: 700,
-            padding: "16px 44px", borderRadius: 9, cursor: "pointer", whiteSpace: "nowrap",
-            background: "transparent", color: t.teal,
-            border: `2px solid ${t.teal}`,
-            letterSpacing: "-0.01em",
-          }}>{ctaSecondary}</button>
+
         </div>
       </div>
 
@@ -235,7 +229,7 @@ function ServiceHero({
             width: 6, height: 6, borderRadius: 999,
             background: t.teal, animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
         </span>
       </div>
     </div>
@@ -442,13 +436,18 @@ function Tag({ x, y, label, t, accent = false }) {
 function SchemLogistics({ t, mode }) {
   const W = 1220, H = 560;
   // Hub positions (city-like nodes connected by routes)
+  const _hsub = t.lang === "ru"
+    ? ["ХАБ ОТПРАВКИ","ДОСТАВКА · 2.4Ч","ТРАНЗИТ · 5.1Ч","ДОСТАВКА · 3.8Ч","ГРАНИЦА · 7.2Ч","НАЗНАЧ. · 6.8Ч"]
+    : t.lang === "ka"
+    ? ["ᲡᲐᲬᲧᲘᲡᲘ ᲰᲐᲑᲘ","ᲛᲘᲢᲐᲜᲐ · 2.4Ს","ᲢᲠᲐᲜᲖᲘᲢᲘ · 5.1Ს","ᲛᲘᲢᲐᲜᲐ · 3.8Ს","ᲡᲐᲖᲦᲕ. · 7.2Ს","ᲓᲐᲜᲘᲨᲜ. · 6.8Ს"]
+    : ["ORIGIN HUB","DROP · 2.4H","TRANSIT · 5.1H","DROP · 3.8H","X-BORDER · 7.2H","DEST · 6.8H"];
   const hubs = [
-    { id: "MTL",  x: 220, y: 174, label: "MONTRÉAL",   sub: "ORIGIN HUB",       primary: true },
-    { id: "QC",   x: 460, y: 134, label: "QUÉBEC",     sub: "DROP · 2.4H",      primary: false },
-    { id: "TOR",  x: 380, y: 324, label: "TORONTO",    sub: "TRANSIT · 5.1H",   primary: false },
-    { id: "OTT",  x: 600, y: 264, label: "OTTAWA",     sub: "DROP · 3.8H",      primary: false },
-    { id: "NYC",  x: 820, y: 404, label: "NYC",        sub: "X-BORDER · 7.2H",  primary: false },
-    { id: "BOS",  x: 980, y: 244, label: "BOSTON",     sub: "DEST · 6.8H",      primary: false },
+    { id: "MTL",  x: 220, y: 174, label: "MONTRÉAL",   sub: _hsub[0],  primary: true },
+    { id: "QC",   x: 460, y: 134, label: "QUÉBEC",     sub: _hsub[1],  primary: false },
+    { id: "TOR",  x: 380, y: 324, label: "TORONTO",    sub: _hsub[2],  primary: false },
+    { id: "OTT",  x: 600, y: 264, label: "OTTAWA",     sub: _hsub[3],  primary: false },
+    { id: "NYC",  x: 820, y: 404, label: "NYC",        sub: _hsub[4],  primary: false },
+    { id: "BOS",  x: 980, y: 244, label: "BOSTON",     sub: _hsub[5],  primary: false },
   ];
   const routes = [
     ["MTL","QC"], ["MTL","TOR"], ["MTL","OTT"], ["OTT","NYC"], ["TOR","NYC"], ["NYC","BOS"], ["MTL","BOS"]
@@ -463,9 +462,9 @@ function SchemLogistics({ t, mode }) {
 
       {/* eyebrow ticker */}
       <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-        fill={t.teal} letterSpacing="0.18em">· FLEET · ROUTING · DISPATCH ·</text>
+        fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"· АВТОПАРК · МАРШРУТЫ · ДИСПЕТЧ. ·":t.lang==="ka"?"· ᲐᲕᲢᲝᲞᲐᲠᲙᲘ · ᲛᲐᲠᲨᲠᲣᲢᲘ · ᲓᲘᲡᲞᲔᲢᲩ. ·":"· FLEET · ROUTING · DISPATCH ·"}</text>
       <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-        fill={t.text2} letterSpacing="0.15em">7 ACTIVE ROUTES · 31% LESS DEADHEAD</text>
+        fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"7 АКТИВНЫХ МАРШРУТОВ · –31% ПОРОЖНИЙ ПРОБЕГ":t.lang==="ka"?"7 ᲐᲥᲢᲘᲣᲠᲘ ᲛᲐᲠᲨᲠᲣᲢᲘ · –31% ᲪᲐᲠᲘᲔᲚᲘ ᲠᲔᲘᲡᲘ":"7 ACTIVE ROUTES · 31% LESS DEADHEAD"}</text>
 
       {/* routes */}
       {routes.map(([a, b], i) => {
@@ -518,14 +517,14 @@ function SchemLogistics({ t, mode }) {
         <rect x={W - 330} y={450} width={295} height={175} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={W - 314} y={478} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-          fill={t.text2} letterSpacing="0.15em">DISPATCH KPIs</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"KPI ДИСПЕТЧЕРИЗАЦИИ":t.lang==="ka"?"ᲓᲘᲡᲞᲔᲢᲩ. KPI":"DISPATCH KPIs"}</text>
         <line x1={W - 314} y1={490} x2={W - 51} y2={490} stroke={t.border} />
 
         {[
-          { label: "ROUTES OPTIMIZED",  val: "1,284" },
-          { label: "DEADHEAD KM SAVED", val: "31%"   },
-          { label: "ON-TIME RATE",      val: "97.2%" },
-          { label: "AVG STOP TIME",     val: "8.4M"  },
+          { label: t.lang==="ru"?"МАРШР. ОПТИМИЗИРОВАНО":t.lang==="ka"?"ᲛᲐᲠᲨᲠ. ᲝᲞᲢᲘᲛᲘᲖ.":"ROUTES OPTIMIZED",  val: "1,284" },
+          { label: t.lang==="ru"?"ПОРОЖНИЙ КМ СЭКОНОМ.":t.lang==="ka"?"ᲪᲐᲠᲘᲔᲚᲘ КМ ᲓᲐᲖᲝᲒ.":"DEADHEAD KM SAVED", val: "31%"   },
+          { label: t.lang==="ru"?"ВОВРЕМЯ":t.lang==="ka"?"ᲓᲠᲝᲣᲚᲐᲓ":"ON-TIME RATE",      val: "97.2%" },
+          { label: t.lang==="ru"?"СРЕД. ОСТАНОВКА":t.lang==="ka"?"ᲡᲐᲨ. ᲒᲐᲩᲔᲠᲔᲑᲐ":"AVG STOP TIME",     val: "8.4M"  },
         ].map((r, i) => (
           <g key={i} transform={`translate(${W - 314}, ${502 + i * 30})`}>
             <text x={0} y={12} fontFamily="'Courier New', monospace" fontSize="10"
@@ -545,12 +544,17 @@ function SchemLogistics({ t, mode }) {
 function SchemSaaS({ t, mode }) {
   const W = 1220, H = 560;
 
+  const _sl = t.lang === "ru"
+    ? ["ПРОДУКТ","API ШЛЮЗ","СЕРВИСЫ","СЛОЙ ДАННЫХ","НАБЛЮДАЕМОСТЬ"]
+    : t.lang === "ka"
+    ? ["ᲞᲠᲝᲓᲣᲥᲢᲘ","API ᲨᲚᲣЗᲘ","ᲡᲔᲠᲕᲘᲡᲔᲑᲘ","ᲛᲝᲜᲐᲪ. ᲤᲔᲜᲐ","ᲛᲝᲜᲘᲢᲝᲠᲘᲜᲒᲘ"]
+    : ["PRODUCT","API GATEWAY","SERVICES","DATA LAYER","OBSERVABILITY"];
   const layers = [
-    { y: 124, label: "PRODUCT",      sub: "FRONTEND · APP · WEB",         color: t.teal },
-    { y: 194, label: "API GATEWAY",  sub: "REST · GRAPHQL · WEBHOOKS",    color: t.teal },
-    { y: 264, label: "SERVICES",     sub: "AUTH · BILLING · ORG",         color: t.teal },
-    { y: 334, label: "DATA LAYER",   sub: "PG · REDIS · S3",              color: t.teal },
-    { y: 404, label: "OBSERVABILITY",sub: "LOGS · METRICS · TRACES",      color: t.tealLt },
+    { y: 124, label: _sl[0],  sub: "FRONTEND · APP · WEB",         color: t.teal },
+    { y: 194, label: _sl[1],  sub: "REST · GRAPHQL · WEBHOOKS",    color: t.teal },
+    { y: 264, label: _sl[2],  sub: "AUTH · BILLING · ORG",         color: t.teal },
+    { y: 334, label: _sl[3],  sub: "PG · REDIS · S3",              color: t.teal },
+    { y: 404, label: _sl[4],  sub: "LOGS · METRICS · TRACES",      color: t.tealLt },
   ];
 
   // Cohort retention curves on the right
@@ -567,9 +571,9 @@ function SchemSaaS({ t, mode }) {
       <CornerXH t={t} />
 
       <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-        fill={t.teal} letterSpacing="0.18em">· STACK · COHORTS · GROWTH ·</text>
+        fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"· СТЕК · КОГОРТЫ · РОСТ ·":t.lang==="ka"?"· ᲡᲢᲔᲙᲘ · ᲙᲝᲰᲝᲠᲢᲔᲑᲘ · ᲖᲠᲓᲐ ·":"· STACK · COHORTS · GROWTH ·"}</text>
       <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-        fill={t.text2} letterSpacing="0.15em">RETENTION · MRR · NRR · CHURN</text>
+        fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"УДЕРЖАНИЕ · MRR · NRR · ОТТОК":t.lang==="ka"?"ᲨᲔᲜᲐᲠᲩ. · MRR · NRR · ᲒᲐᲓᲘᲜᲔᲑᲐ":"RETENTION · MRR · NRR · CHURN"}</text>
 
       {/* LEFT — Stack diagram */}
       <g style={{ animation: "mwSlideIn 0.5s 0.2s backwards" }}>
@@ -609,7 +613,7 @@ function SchemSaaS({ t, mode }) {
         <text x={cx0} y={cy0 - 76} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
           fill={t.text1}>{t.lang==="ru"?"УДЕРЖАНИЕ КОГОРТ":t.lang==="ka"?"ᲙᲝᲰ. ᲨᲔᲜ.":"COHORT RETENTION"}</text>
         <text x={cx0 + cw} y={cy0 - 76} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
-          fill={t.teal} letterSpacing="0.12em">8 WEEKS</text>
+          fill={t.teal} letterSpacing="0.12em">{t.lang==="ru"?"8 НЕДЕЛЬ":t.lang==="ka"?"8 ᲙᲕᲘᲠᲐ":"8 WEEKS"}</text>
 
         {/* axis */}
         <line x1={cx0} y1={cy0 + ch} x2={cx0 + cw} y2={cy0 + ch} stroke={t.border} />
@@ -692,12 +696,22 @@ function SchemAI({ t, mode }) {
   const r1 = 90, r2 = 150;
 
   // Coach session timeline on right
+  const _sl2 = t.lang === "ru"
+    ? ["ОТКРЫТИЕ","ПРОТОТИП","ОЦЕНКИ","ДЕПЛОЙ","ПЕРЕДАЧА"]
+    : t.lang === "ka"
+    ? ["ᲐᲦᲛᲝᲩᲔᲜᲐ","ᲞᲠᲝᲢᲝᲢᲘᲞᲘ","ᲨᲔᲤᲐᲡᲔᲑᲐ","ᲓᲔᲞᲚᲝᲘ","ᲒᲐᲓᲐᲪᲔᲛᲐ"]
+    : ["DISCOVERY","PROTOTYPE","EVALS","DEPLOYMENT","HANDOFF"];
+  const _wk = t.lang === "ru"
+    ? ["НЕДЕЛИ 1–2","НЕДЕЛИ 3–4","НЕДЕЛИ 5–6","НЕДЕЛИ 7–8","НЕДЕЛЯ 9"]
+    : t.lang === "ka"
+    ? ["ᲙᲕᲘᲠᲐ 1–2","ᲙᲕᲘᲠᲐ 3–4","ᲙᲕᲘᲠᲐ 5–6","ᲙᲕᲘᲠᲐ 7–8","ᲙᲕᲘᲠᲐ 9"]
+    : ["WEEKS 1–2","WEEKS 3–4","WEEKS 5–6","WEEKS 7–8","WEEK 9"];
   const sessions = [
-    { y: 164, label: "DISCOVERY",  weeks: "WEEKS 1–2", state: "done"    },
-    { y: 236, label: "PROTOTYPE",  weeks: "WEEKS 3–4", state: "done"    },
-    { y: 308, label: "EVALS",      weeks: "WEEKS 5–6", state: "active"  },
-    { y: 380, label: "DEPLOYMENT", weeks: "WEEKS 7–8", state: "next"    },
-    { y: 452, label: "HANDOFF",    weeks: "WEEK 9",    state: "next"    },
+    { y: 164, label: _sl2[0], weeks: _wk[0], state: "done"    },
+    { y: 236, label: _sl2[1], weeks: _wk[1], state: "done"    },
+    { y: 308, label: _sl2[2], weeks: _wk[2], state: "active"  },
+    { y: 380, label: _sl2[3], weeks: _wk[3], state: "next"    },
+    { y: 452, label: _sl2[4], weeks: _wk[4], state: "next"    },
   ];
 
   return (
@@ -706,9 +720,9 @@ function SchemAI({ t, mode }) {
       <CornerXH t={t} />
 
       <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-        fill={t.teal} letterSpacing="0.18em">· EVALS · AGENTS · COACHING ·</text>
+        fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"· ОЦЕНКИ · АГЕНТЫ · КОУЧИНГ ·":t.lang==="ka"?"· ᲨᲔᲤᲐᲡᲔᲑᲐ · ᲐᲒᲔᲜᲢᲔᲑᲘ · ᲙᲝᲣᲩᲘᲜᲒᲘ ·":"· EVALS · AGENTS · COACHING ·"}</text>
       <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-        fill={t.text2} letterSpacing="0.15em">9-WEEK BUILD-IN-PUBLIC PROGRAM</text>
+        fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"9-НЕДЕЛЬНАЯ ПРОГРАММА":"9-WEEK BUILD-IN-PUBLIC PROGRAM"}</text>
 
       {/* LEFT — neural core */}
       <g>
@@ -752,7 +766,7 @@ function SchemAI({ t, mode }) {
           fill={t.bg} letterSpacing="-0.02em">.AI</text>
         <text x={cx} y={cy + 22} textAnchor="middle"
           fontFamily="'Courier New', monospace" fontSize="8" fontWeight="700"
-          fill={t.teal} letterSpacing="0.18em">EVAL · LOOP</text>
+          fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"ЦИКЛ ОЦЕНКИ":t.lang==="ka"?"ᲨᲔᲤ. ᲪᲘᲙᲚᲘ":"EVAL · LOOP"}</text>
 
         {/* labels around */}
         {[
@@ -778,7 +792,7 @@ function SchemAI({ t, mode }) {
       {/* RIGHT — coaching timeline */}
       <g style={{ animation: "mwSlideInR 0.5s 0.4s backwards" }}>
         <text x={680} y={114} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>{t.lang==="ru"?"ПРОГРАММА КОУЧИНГА":t.lang==="ka"?"COACHING JOURNEY":"COACHING JOURNEY"}</text>
+          fill={t.text1}>{t.lang==="ru"?"ПРОГРАММА КОУЧИНГА":t.lang==="ka"?"ᲙᲝᲣᲩᲘᲜᲒᲘᲡ ᲒᲖᲐ":"COACHING JOURNEY"}</text>
         <line x1={720} y1={164} x2={720} y2={464} stroke={t.border} strokeWidth="1.5" />
 
         {sessions.map((s, i) => {
@@ -816,11 +830,16 @@ function SchemAI({ t, mode }) {
 function SchemGov({ t, mode }) {
   const W = 1220, H = 560;
 
+  const _gp = t.lang === "ru"
+    ? [["ПОЛИТИКА","КОНСУЛТ. · ПРОЕКТ"],["ДАННЫЕ","ОТКРЫТ. · RGPD · GOV2"],["ПОСТАВКА","ЗАКУПКИ · ВЕХИ"],["АУДИТ","ТРЕЙС · НАДЗОР"]]
+    : t.lang === "ka"
+    ? [["ᲞᲝᲚᲘᲢᲘᲙᲐ","ᲙᲝᲜᲡᲣᲚᲢ. · ᲞᲠᲝᲔᲥᲢᲘ"],["ᲛᲝᲜᲐᲪᲔᲛᲘ","ᲦᲘᲐᲓ · RGPD · GOV2"],["ᲛᲘᲬᲝᲓᲔᲑᲐ","ᲨᲔᲡᲧᲘᲓᲕᲐ · ᲔᲢᲐᲞᲘ"],["ᲐᲣᲓᲘᲢᲘ","ᲢᲠᲔᲘᲡᲘ · ᲖᲔᲓᲐᲛᲮ."]]
+    : [["POLICY","CONSULTATION · DRAFT"],["DATA","OPEN · RGPD · GOV2"],["DELIVERY","PROCURE · MILESTONE"],["AUDIT","TRACE · OVERSIGHT"]];
   const pillars = [
-    { x: 90,  label: "POLICY",     sub: "CONSULTATION · DRAFT" },
-    { x: 240, label: "DATA",       sub: "OPEN · RGPD · GOV2" },
-    { x: 390, label: "DELIVERY",   sub: "PROCURE · MILESTONE" },
-    { x: 540, label: "AUDIT",      sub: "TRACE · OVERSIGHT" },
+    { x: 90,  label: _gp[0][0], sub: _gp[0][1] },
+    { x: 240, label: _gp[1][0], sub: _gp[1][1] },
+    { x: 390, label: _gp[2][0], sub: _gp[2][1] },
+    { x: 540, label: _gp[3][0], sub: _gp[3][1] },
   ];
 
   const audit = [
@@ -838,9 +857,9 @@ function SchemGov({ t, mode }) {
       <CornerXH t={t} />
 
       <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-        fill={t.teal} letterSpacing="0.18em">· POLICY · DATA · DELIVERY · AUDIT ·</text>
+        fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"· ПОЛИТИКА · ДАННЫЕ · ПОСТАВКА · АУДИТ ·":t.lang==="ka"?"· ᲞᲝᲚᲘᲢᲘᲙᲐ · ᲛᲝᲜᲐᲪᲔᲛᲘ · ᲛᲘᲬᲝᲓᲔᲑᲐ · ᲐᲣᲓᲘᲢᲘ ·":"· POLICY · DATA · DELIVERY · AUDIT ·"}</text>
       <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-        fill={t.text2} letterSpacing="0.15em">EU · FED · PROVINCIAL · MUNICIPAL</text>
+        fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ЕС · ФЕД · ПРОВИНЦ. · МУНИЦ.":t.lang==="ka"?"EU · ФED · ᲞᲠᲝᲕᲘᲜᲪ. · ᲛᲣᲜᲘᲪ.":"EU · FED · PROVINCIAL · MUNICIPAL"}</text>
 
       {/* LEFT — Civic building / pillars */}
       <g style={{ animation: "mwSlideUp 0.5s 0.2s backwards" }}>
@@ -889,7 +908,7 @@ function SchemGov({ t, mode }) {
           <circle cx={0} cy={0} r="22" fill="none" stroke={t.teal} strokeWidth="0.8" strokeDasharray="2 2" />
           <text x={0} y={-2} textAnchor="middle"
             fontFamily="'Courier New', monospace" fontSize="7" fontWeight="800"
-            fill={t.teal} letterSpacing="0.2em">CERTIFIED</text>
+            fill={t.teal} letterSpacing="0.2em">{t.lang==="ru"?"СЕРТИФ.":t.lang==="ka"?"ᲡᲔᲠᲢᲘᲤ.":"CERTIFIED"}</text>
           <text x={0} y={9} textAnchor="middle"
             fontFamily="'Inter', sans-serif" fontSize="13" fontWeight="900"
             fill={t.text1}>★</text>
@@ -901,7 +920,7 @@ function SchemGov({ t, mode }) {
         <rect x={720} y={114} width={460} height={440} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={744} y={146} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>AUDIT LOG · LIVE</text>
+          fill={t.text1}>{t.lang==="ru"?"ЖУРНАЛ АУДИТА · LIVE":t.lang==="ka"?"ᲐᲣᲓᲘᲢᲘᲡ ЛОГ · LIVE":"AUDIT LOG · LIVE"}</text>
         <g transform="translate(1156, 136)">
           <circle cx={0} cy={0} r="4" fill={t.teal}>
             <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
@@ -949,20 +968,25 @@ function SchemEdu({ t, mode }) {
   const cx = 360, cy = 330;
 
   // Knowledge graph nodes — radial topic clusters
+  const _en = t.lang === "ru"
+    ? ["ИССЛЕД.","ДАННЫЕ","МЕТОДЫ","ОБЗОР","РЕЗУЛЬТ.","ПУБЛИК.","ДАТАСЕТЫ","КОД","ОЦЕНКИ","ЭКСПЕРИМ.","ЦИТИР.","РЕЦЕНЗИЯ"]
+    : t.lang === "ka"
+    ? ["ᲙᲕᲚᲔᲕᲐ","ᲛᲝᲜᲐᲪᲔᲛᲘ","ᲛᲔᲗᲝᲓᲔᲑᲘ","ᲛᲘᲛᲝᲮᲘᲚᲕᲐ","ᲨᲔᲓᲔᲒᲔᲑᲘ","ᲞᲣᲑᲚᲘᲙ.","ᲓᲐᲢᲐᲡᲔᲢᲘ","ᲙᲝᲓᲘ","ᲨᲔᲤᲐᲡᲔᲑᲐ","ᲔᲥᲡᲞᲔᲠ.","ᲪᲘᲢᲐᲢᲐ","ᲠᲔᲪᲔᲜᲖ."]
+    : ["RESEARCH","DATA","METHODS","REVIEW","FINDINGS","PUBLISH","DATASETS","CODE","EVALS","EXPERIMENTS","CITATIONS","PEER"];
   const nodes = [
-    { id: "core", x: cx,         y: cy,          label: "RESEARCH",     r: 48, primary: true },
-    { id: "n1",   x: cx - 175,   y: cy - 140,    label: "DATA",          r: 30 },
-    { id: "n2",   x: cx + 175,   y: cy - 140,    label: "METHODS",       r: 30 },
-    { id: "n3",   x: cx - 225,   y: cy + 50,     label: "REVIEW",        r: 30 },
-    { id: "n4",   x: cx + 225,   y: cy + 50,     label: "FINDINGS",      r: 30 },
-    { id: "n5",   x: cx,         y: cy + 160,    label: "PUBLISH",       r: 30 },
+    { id: "core", x: cx,         y: cy,          label: _en[0],  r: 48, primary: true },
+    { id: "n1",   x: cx - 175,   y: cy - 140,    label: _en[1],  r: 30 },
+    { id: "n2",   x: cx + 175,   y: cy - 140,    label: _en[2],  r: 30 },
+    { id: "n3",   x: cx - 225,   y: cy + 50,     label: _en[3],  r: 30 },
+    { id: "n4",   x: cx + 225,   y: cy + 50,     label: _en[4],  r: 30 },
+    { id: "n5",   x: cx,         y: cy + 160,    label: _en[5],  r: 30 },
 
-    { id: "s1",   x: cx - 268,   y: cy - 200,    label: "DATASETS",      r: 36 },
-    { id: "s2",   x: cx - 72,    y: cy - 200,    label: "CODE",          r: 36 },
-    { id: "s3",   x: cx + 72,    y: cy - 200,    label: "EVALS",         r: 36 },
-    { id: "s4",   x: cx + 268,   y: cy - 200,    label: "EXPERIMENTS",   r: 36 },
-    { id: "s5",   x: cx + 288,   y: cy + 120,    label: "CITATIONS",     r: 36 },
-    { id: "s6",   x: cx - 288,   y: cy + 120,    label: "PEER",          r: 36 },
+    { id: "s1",   x: cx - 268,   y: cy - 200,    label: _en[6],  r: 36 },
+    { id: "s2",   x: cx - 72,    y: cy - 200,    label: _en[7],  r: 36 },
+    { id: "s3",   x: cx + 72,    y: cy - 200,    label: _en[8],  r: 36 },
+    { id: "s4",   x: cx + 268,   y: cy - 200,    label: _en[9],  r: 36 },
+    { id: "s5",   x: cx + 288,   y: cy + 120,    label: _en[10], r: 36 },
+    { id: "s6",   x: cx - 288,   y: cy + 120,    label: _en[11], r: 36 },
   ];
   const edges = [
     ["core","n1"], ["core","n2"], ["core","n3"], ["core","n4"], ["core","n5"],
@@ -977,9 +1001,9 @@ function SchemEdu({ t, mode }) {
       <CornerXH t={t} />
 
       <text x={60} y={80} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-        fill={t.teal} letterSpacing="0.18em">· RESEARCH · COURSEWARE · OPEN-DATA ·</text>
+        fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"· ИССЛЕДОВАНИЯ · КУРСЫ · ОТКР. ДАННЫЕ ·":t.lang==="ka"?"· ᲙᲕᲚᲔᲕᲐ · ᲙᲣᲠᲡᲔᲑᲘ · ᲦᲘᲐᲓ ᲛᲝᲜᲐᲪ. ·":"· RESEARCH · COURSEWARE · OPEN-DATA ·"}</text>
       <text x={W-60} y={80} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-        fill={t.text2} letterSpacing="0.15em">UNIVERSITIES · LABS · NSERC · FRQ</text>
+        fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"УНИВЕРСИТЕТЫ · ЛАБОР. · NSERC · FRQ":t.lang==="ka"?"ᲣᲜᲘᲕᲔᲠᲡᲘᲢᲔᲢᲔᲑᲘ · ᲚᲐᲑ. · NSERC · FRQ":"UNIVERSITIES · LABS · NSERC · FRQ"}</text>
 
       {/* glow */}
       <circle cx={cx} cy={cy} r="260" fill={`url(#modelGlow-${mode})`} opacity="0.7" />
@@ -1025,9 +1049,9 @@ function SchemEdu({ t, mode }) {
           fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ИССЛЕДОВАНИЯ · 2024":t.lang==="ka"?"კვლ. · 2024":"RESEARCH OUTPUT · 2024"}</text>
         <g transform="translate(804, 134)">
           {[
-            { val: "47",  lbl: "PAPERS"     },
-            { val: "12",  lbl: "DATASETS"   },
-            { val: "8",   lbl: "WORKSHOPS"  },
+            { val: "47",  lbl: t.lang==="ru"?"СТАТЕЙ":t.lang==="ka"?"ᲜᲐᲨᲠᲝᲛᲘ":"PAPERS" },
+            { val: "12",  lbl: t.lang==="ru"?"ДАТАСЕТОВ":t.lang==="ka"?"ᲓᲐᲢᲐᲡᲔᲢᲘ":"DATASETS" },
+            { val: "8",   lbl: t.lang==="ru"?"ВОРКШОПОВ":t.lang==="ka"?"ᲕᲝᲠᲥᲨᲝᲞᲘ":"WORKSHOPS" },
           ].map((s, i) => (
             <g key={i} transform={`translate(${i * 120}, 0)`}>
               <text x={0} y={48} fontFamily="'Inter', sans-serif" fontSize="38" fontWeight="900"
@@ -1042,7 +1066,7 @@ function SchemEdu({ t, mode }) {
         <rect x={780} y={244} width={400} height={308} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={804} y={272} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>{t.lang==="ru"?"ЦИТИРОВАНИЯ · 5 ЛЕТ":t.lang==="ka"?"CITATION · 5 WL":"CITATIONS · 5-YEAR"}</text>
+          fill={t.text1}>{t.lang==="ru"?"ЦИТИРОВАНИЯ · 5 ЛЕТ":t.lang==="ka"?"ᲪᲘᲢᲘᲠᲔᲑᲐ · 5 ᲬᲔᲚᲘ":"CITATIONS · 5-YEAR"}</text>
         <text x={1156} y={272} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
           fill={t.teal} letterSpacing="0.12em">↑ 4.2×</text>
 
@@ -1100,8 +1124,8 @@ function SchemNGO({ t, mode }) {
   // Region tags around outer ring
   const regions = [
     { a: -Math.PI * 0.5,             label: "EMEA" },
-    { a: -Math.PI * 0.5 + Math.PI/4, label: "WEST AFRICA" },
-    { a:  Math.PI * 0.0,             label: "EAST AFRICA" },
+    { a: -Math.PI * 0.5 + Math.PI/4, label: t.lang==="ru"?"ЗАП. АФРИКА":t.lang==="ka"?"ᲓᲐᲡᲐᲕ. ᲐᲤᲠᲘᲙᲐ":"WEST AFRICA" },
+    { a:  Math.PI * 0.0,             label: t.lang==="ru"?"ВОСТ. АФРИКА":t.lang==="ka"?"ᲐᲦᲛ. ᲐᲤᲠᲘᲙᲐ":"EAST AFRICA" },
     { a:  Math.PI * 0.25,            label: "S. ASIA" },
     { a:  Math.PI * 0.5,             label: "L. AMERICA" },
     { a:  Math.PI * 0.75,            label: "EUROPE" },
@@ -1142,7 +1166,7 @@ function SchemNGO({ t, mode }) {
           fill={t.text1}>GIVES</text>
         <text x={cx} y={cy + 22} textAnchor="middle"
           fontFamily="'Courier New', monospace" fontSize="7.5" fontWeight="700"
-          fill={t.teal} letterSpacing="0.18em">PRO BONO</text>
+          fill={t.teal} letterSpacing="0.18em">{t.lang==="ru"?"ПРО БОНО":t.lang==="ka"?"ᲞᲠᲝ ᲑᲝᲜᲝ":"PRO BONO"}</text>
       </g>
 
       {/* Bottom stat strip — sits below the ring */}
@@ -1192,16 +1216,16 @@ function SchemNGO({ t, mode }) {
           fill={t.text1}>FUND ALLOCATION</text>
         <text x={1156} y={120} textAnchor="end"
           fontFamily="'Courier New', monospace" fontSize="9.5" fontWeight="700"
-          fill={t.teal} letterSpacing="0.12em">FY 2024</text>
+          fill={t.teal} letterSpacing="0.12em">{t.lang==="ru"?"ФГ 2024":t.lang==="ka"?"ᲤᲘᲜ. ᲬᲔᲚᲘ 2024":"FY 2024"}</text>
         <line x1={744} y1={134} x2={1156} y2={134} stroke={t.border} />
 
         {(() => {
           const allocs = [
-            { lbl: "DIRECT PROGRAMS",        pct: 78, amount: "$6.55M" },
-            { lbl: "RESEARCH & EVALUATION",  pct: 9,  amount: "$760K"  },
-            { lbl: "ADMINISTRATION",         pct: 7,  amount: "$590K"  },
-            { lbl: "FUNDRAISING",            pct: 4,  amount: "$340K"  },
-            { lbl: "RESERVES",               pct: 2,  amount: "$170K"  },
+            { lbl: t.lang==="ru"?"ПРЯМЫЕ ПРОГРАММЫ":t.lang==="ka"?"ᲞᲘᲠᲓᲐᲞ. ᲞᲠᲝᲒᲠᲐᲛᲐ":"DIRECT PROGRAMS",        pct: 78, amount: "$6.55M" },
+            { lbl: t.lang==="ru"?"ИССЛЕД. И ОЦЕНКА":t.lang==="ka"?"ᲙᲕᲚ. & ᲨᲔᲤᲐᲡᲔᲑᲐ":"RESEARCH & EVALUATION",  pct: 9,  amount: "$760K"  },
+            { lbl: t.lang==="ru"?"АДМИНИСТРАЦИЯ":t.lang==="ka"?"ᲐᲓᲛᲘᲜᲘᲡᲢᲠ.":"ADMINISTRATION",         pct: 7,  amount: "$590K"  },
+            { lbl: t.lang==="ru"?"ФАНДРАЙЗИНГ":t.lang==="ka"?"ᲤᲐᲜᲓᲠᲐᲘᲖᲘᲜᲒᲘ":"FUNDRAISING",            pct: 4,  amount: "$340K"  },
+            { lbl: t.lang==="ru"?"РЕЗЕРВЫ":t.lang==="ka"?"ᲠᲔᲖᲔᲠᲕᲔᲑᲘ":"RESERVES",               pct: 2,  amount: "$170K"  },
           ];
           return allocs.map((a, i) => {
             const y = 156 + i * 64;

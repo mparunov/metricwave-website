@@ -292,13 +292,7 @@ function ServiceHero({
             border: "none", background: t.teal, color: t.bg,
             letterSpacing: "-0.01em",
           }} onClick={onClickPrimary}>{ctaPrimary} →</button>
-          <button style={{
-            fontFamily: "inherit", fontSize: 15, fontWeight: 700,
-            padding: "14px 32px", borderRadius: 8, cursor: "pointer",
-            background: "transparent", color: t.teal,
-            border: `2px solid ${t.teal}`,
-            letterSpacing: "-0.01em",
-          }} onClick={onClickSecondary}>{ctaSecondary}</button>
+
         </div>
       </div>
 
@@ -330,7 +324,7 @@ function ServiceHero({
             width: 6, height: 6, borderRadius: 999,
             background: t.teal, animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
         </span>
       </div>
     </div>
@@ -927,13 +921,18 @@ function SchemProcess({ t, mode }) {
 ============================================================ */
 function SchemAutomation({ t, mode }) {
   const cx = 610, cy = 280;
+  const _tn = t.lang === "ru"
+    ? ["СОРТ. ПОЧТЫ","СИНХР. ДАННЫХ","МАРШР. АЛЕРТОВ","ОБНОВЛ. CRM","ГЕН. ОТЧЁТОВ","СВЕРКА СЧЕТОВ"]
+    : t.lang === "ka"
+    ? ["ფოსტის სორტ.","მონაც. სინქრ.","შეტყობ. მარშრ.","CRM განახლ.","ანგარ. გენერ.","ინვოის. შედარ."]
+    : ["EMAIL TRIAGE","DATA SYNC","ALERT ROUTING","CRM UPDATE","REPORT GEN","INVOICE MATCH"];
   const tasks = [
-    { name: "EMAIL TRIAGE",   side: "L", row: 0 },
-    { name: "DATA SYNC",      side: "L", row: 1 },
-    { name: "ALERT ROUTING",  side: "L", row: 2 },
-    { name: "CRM UPDATE",     side: "R", row: 0 },
-    { name: "REPORT GEN",     side: "R", row: 1 },
-    { name: "INVOICE MATCH",  side: "R", row: 2 },
+    { name: _tn[0], side: "L", row: 0 },
+    { name: _tn[1], side: "L", row: 1 },
+    { name: _tn[2], side: "L", row: 2 },
+    { name: _tn[3], side: "R", row: 0 },
+    { name: _tn[4], side: "R", row: 1 },
+    { name: _tn[5], side: "R", row: 2 },
   ];
 
   return (
@@ -957,9 +956,9 @@ function SchemAutomation({ t, mode }) {
         <text x={cx} y={cy - 14} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="10"
           fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE</text>
         <text x={cx} y={cy + 8} textAnchor="middle" fontFamily="'Inter', sans-serif" fontSize="18" fontWeight="900"
-          fill={t.modelInk} letterSpacing="-0.02em">AI AGENT</text>
+          fill={t.modelInk} letterSpacing="-0.02em">{t.lang==="ru"?"AI-АГЕНТ":t.lang==="ka"?"AI აგენტი":"AI AGENT"}</text>
         <text x={cx} y={cy + 30} textAnchor="middle" fontFamily="'Inter', sans-serif" fontSize="18" fontWeight="900"
-          fill={t.modelInk} letterSpacing="-0.02em">CORE</text>
+          fill={t.modelInk} letterSpacing="-0.02em">{t.lang==="ru"?"ЯДРО":t.lang==="ka"?"ბირთვი":"CORE"}</text>
         <circle cx={cx + 55} cy={cy - 60} r={4} fill={t.teal}
           style={{ animation: "mwPulse 1.6s infinite" }} />
       </g>
@@ -1045,11 +1044,12 @@ function SchemStrategy({ t, mode }) {
     : t.lang === "ka"
     ? ["სწრაფი შედეგი", "ბაზრის ზრდა", "საფუძველი", "გადადება"]
     : ["Quick Wins", "Market Expansion", "Foundation", "Defer"];
+  const _itm = t.lang === "ru" ? "ЭЛ." : t.lang === "ka" ? "ელ." : "ITEMS";
   const bubbles = [
-    { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,    label: _bbl[0], sub: "5 ITEMS", delay: 0.8 },
-    { x: qx0 + 360, y: qy0 + 110, r: 45, fill: t.surface2, label: _bbl[1], sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
-    { x: qx0 + 130, y: qy0 + 270, r: 52, fill: t.surface2, label: _bbl[2], sub: "4 ITEMS", delay: 1.3, stroke: t.teal },
-    { x: qx0 + 360, y: qy0 + 280, r: 37, fill: t.surface2, label: _bbl[3], sub: "2 ITEMS", delay: 1.55, muted: true },
+    { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,    label: _bbl[0], sub: "5 "+_itm, delay: 0.8 },
+    { x: qx0 + 360, y: qy0 + 110, r: 45, fill: t.surface2, label: _bbl[1], sub: "3 "+_itm, delay: 1.05, stroke: t.teal },
+    { x: qx0 + 130, y: qy0 + 270, r: 52, fill: t.surface2, label: _bbl[2], sub: "4 "+_itm, delay: 1.3, stroke: t.teal },
+    { x: qx0 + 360, y: qy0 + 280, r: 37, fill: t.surface2, label: _bbl[3], sub: "2 "+_itm, delay: 1.55, muted: true },
   ];
 
   const _okr = t.lang === "ru"
@@ -1085,9 +1085,9 @@ function SchemStrategy({ t, mode }) {
 
         {/* labels */}
         <text x={qx0 - 12} y={qy0 + 8} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="10"
-          fontWeight="700" fill={t.teal} letterSpacing="0.12em">IMPACT</text>
+          fontWeight="700" fill={t.teal} letterSpacing="0.12em">{t.lang==="ru"?"ВЛИЯНИЕ":t.lang==="ka"?"ᲒᲐᲕᲚᲔᲜᲐ":"IMPACT"}</text>
         <text x={qx0 + qw + 14} y={qy0 + qh + 4} fontFamily="'Courier New', monospace" fontSize="10"
-          fontWeight="700" fill={t.teal} letterSpacing="0.12em">EFFORT</text>
+          fontWeight="700" fill={t.teal} letterSpacing="0.12em">{t.lang==="ru"?"УСИЛИЯ":t.lang==="ka"?"ᲫᲐᲚᲘᲡᲮᲛ.":"EFFORT"}</text>
         {/* quadrant captions */}
         <text x={qx0 + 10} y={qy0 + 22} fontFamily="'Courier New', monospace" fontSize="9"
           fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ВЫС.ВЛИЯНИЕ · НИЗ.УСИЛИЯ":t.lang==="ka"?"მაღ.ᲒᲐᲕᲚ. · დაბ.Ძ-ХМ.":"HIGH IMPACT · LOW EFFORT"}</text>
@@ -1117,13 +1117,13 @@ function SchemStrategy({ t, mode }) {
         ))}
 
         <text x={qx0 + 10} y={qy0 + qh + 24} fontFamily="'Courier New', monospace" fontSize="10"
-          fontWeight="600" fill={t.text2} letterSpacing="0.18em">PRIORITISATION MATRIX</text>
+          fontWeight="600" fill={t.text2} letterSpacing="0.18em">{t.lang==="ru"?"МАТРИЦА ПРИОРИТИЗАЦИИ":t.lang==="ka"?"ᲞᲠᲘᲝᲠᲘᲢᲔᲢᲔᲑᲘᲡ ᲛᲐᲢᲠᲘᲪᲐ":"PRIORITISATION MATRIX"}</text>
       </g>
 
       {/* RIGHT — OKR bars */}
       <g>
         <text x={620} y={120} fontFamily="'Courier New', monospace" fontSize="11"
-          fontWeight="700" fill={t.text2} letterSpacing="0.18em">OKRs · Q4 PROGRESS</text>
+          fontWeight="700" fill={t.text2} letterSpacing="0.18em">{t.lang==="ru"?"OKR · ПРОГРЕСС Q4":t.lang==="ka"?"OKR · Q4 ᲞᲠᲝᲒᲠᲔᲡᲘ":"OKRs · Q4 PROGRESS"}</text>
         {okrs.map((o, i) => {
           const y = 160 + i * 70, w = 540;
           return (
@@ -1147,7 +1147,7 @@ function SchemStrategy({ t, mode }) {
         {/* line chart below */}
         <g style={{ animation: "mwFadeIn 0.6s 2.4s backwards" }}>
           <text x={620} y={400} fontFamily="'Courier New', monospace" fontSize="10"
-            fontWeight="700" fill={t.text2} letterSpacing="0.15em">PERFORMANCE · 6 PERIODS</text>
+            fontWeight="700" fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"РЕЗУЛЬТАТЫ · 6 ПЕРИОДОВ":t.lang==="ka"?"ᲨᲔᲓᲔᲒᲔᲑᲘ · 6 ᲞᲔᲠᲘᲝᲓᲘ":"PERFORMANCE · 6 PERIODS"}</text>
           <rect x={620} y={414} width={540} height={110} rx="8"
             fill={t.surface1} stroke={t.border} strokeWidth="1" />
           {/* gridlines */}
@@ -1474,13 +1474,23 @@ function SchemBlog({ t, mode }) {
    8. INDUSTRIES — Hexagon Cluster
 ============================================================ */
 function SchemIndustries({ t, mode }) {
+  const _hl = t.lang === "ru"
+    ? ["ЛОГИСТИКА","РЕГУЛ. SAAS","ГОС. ПОЛИТИКА","НЕКОММЕРЧ.","ОБРАЗОВАНИЕ","AI УПРАВЛЕНИЕ"]
+    : t.lang === "ka"
+    ? ["ლოგისტიკა","ᲠᲔᲒᲣᲚ. SAAS","მთავრ. პოლ.","არაკომერც.","განათლება","AI ᲛᲐᲠᲗᲕᲐ"]
+    : ["LOGISTICS","REGULATED SAAS","GOV & POLICY","NON-PROFIT","EDUCATION","AI GOVERNANCE"];
+  const _hs = t.lang === "ru"
+    ? ["MTL Moving · Dynamic Movers","150+ релизов продукта","€3.3M программа ЕС","3,000+ муниципалитетов","2 выпускника Notre Dame","AI governance НКО"]
+    : t.lang === "ka"
+    ? ["MTL Moving · Dynamic Movers","150+ პროდუქტის რელიზი","€3.3M EU პროგრამა","3,000+ მუნიციპალიტეტი","2 Notre Dame კურსდამთ.","AI governance NGO"]
+    : ["MTL Moving · Dynamic Movers","150+ product releases","€3.3M EU programme","3,000+ municipalities","2 Notre Dame alumni","AI governance NGO"];
   const hexes = [
-    { id: "logistics", row: 0, col: 0, label: "LOGISTICS",      stat: "MTL Moving · Dynamic Movers" },
-    { id: "saas",      row: 0, col: 1, label: "REGULATED SAAS", stat: "150+ product releases" },
-    { id: "gov",       row: 0, col: 2, label: "GOV & POLICY",   stat: "€3.3M EU programme" },
-    { id: "nonprofit", row: 1, col: 0, label: "NON-PROFIT",     stat: "3,000+ municipalities" },
-    { id: "edu",       row: 1, col: 1, label: "EDUCATION",      stat: "2 Notre Dame alumni" },
-    { id: "ai",        row: 1, col: 2, label: "AI GOVERNANCE",  stat: "AI governance NGO" },
+    { id: "logistics", row: 0, col: 0, label: _hl[0], stat: _hs[0] },
+    { id: "saas",      row: 0, col: 1, label: _hl[1], stat: _hs[1] },
+    { id: "gov",       row: 0, col: 2, label: _hl[2], stat: _hs[2] },
+    { id: "nonprofit", row: 1, col: 0, label: _hl[3], stat: _hs[3] },
+    { id: "edu",       row: 1, col: 1, label: _hl[4], stat: _hs[4] },
+    { id: "ai",        row: 1, col: 2, label: _hl[5], stat: _hs[5] },
   ];
 
   const HEX_R = 75;        // radius

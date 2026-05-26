@@ -176,6 +176,7 @@ function ServiceHero({
   Schematic,
   navActive = "Services",
   showNav = true,
+  lang = "en",
 }) {
   const mode = useTheme();
   const t = HERO_TOKENS[mode];
@@ -323,7 +324,7 @@ function ServiceHero({
             width: 6, height: 6, borderRadius: 999,
             background: t.teal, animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
         </span>
       </div>
     </div>
@@ -1694,7 +1695,7 @@ function PageNav({ t, mode, active }) {
   );
 }
 
-function PageTicker({ t, mode, label }) {
+function PageTicker({ t, mode, label, lang }) {
   return (
     <div style={{
       position: "absolute", left: 0, right: 0, bottom: 0, height: 30, zIndex: 10,
@@ -1709,7 +1710,7 @@ function PageTicker({ t, mode, label }) {
       <span>{label}</span>
       <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
-        Live · Always in sync
+        {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
       </span>
     </div>
   );
@@ -1969,17 +1970,12 @@ function ServicesPage() {
               padding: "16px 32px", borderRadius: 8, cursor: "pointer",
               border: "none", background: t.teal, color: t.bg, whiteSpace: "nowrap",
             }}>{L.ctaBook}</button>
-            <button onClick={() => { window.top.location.href = 'pricing.html'; }} style={{
-              fontFamily: "inherit", fontSize: 15, fontWeight: 700,
-              padding: "16px 32px", borderRadius: 8, cursor: "pointer",
-              background: "transparent", color: t.teal, whiteSpace: "nowrap",
-              border: `2px solid ${t.teal}`,
-            }}>{L.ctaPricing}</button>
+            
           </div>
         </div>
       </div>
 
-      <PageTicker t={t} mode={mode} label={L.tickerLabel} />
+      <PageTicker t={t} mode={mode} lang={lang} label={L.tickerLabel} />
     </div>
   );
 }

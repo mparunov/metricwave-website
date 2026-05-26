@@ -190,6 +190,7 @@ function ServiceHero({
   Schematic,
   navActive = "Services",
   showNav = true,
+  lang = "en",
 }) {
   const mode = useTheme();
   const t = HERO_TOKENS[mode];
@@ -337,7 +338,7 @@ function ServiceHero({
             width: 6, height: 6, borderRadius: 999,
             background: t.teal, animation: "mwPulse 1.6s infinite",
           }} />
-          Live · Always in sync
+          {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
         </span>
       </div>
     </div>
@@ -578,7 +579,7 @@ function PageNav({ t, mode, active }) {
   );
 }
 
-function PageTicker({ t, mode, label }) {
+function PageTicker({ t, mode, label, lang }) {
   return (
     <div style={{
       position: "absolute", left: 0, right: 0, bottom: 0, height: 30, zIndex: 10,
@@ -592,7 +593,7 @@ function PageTicker({ t, mode, label }) {
       <span>{label}</span>
       <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ width: 6, height: 6, borderRadius: 999, background: t.teal, animation: "mwPulse 1.6s infinite" }} />
-        Live · Always in sync
+        {lang==="ru"?"В реальном времени · Всегда синхронизировано":lang==="ka"?"ლაივ · ყოველთვის სინქრონიზებული":"Live · Always in sync"}
       </span>
     </div>
   );
@@ -651,8 +652,15 @@ const SIDEBAR_CLIENTS = [
   { city: "Brussels",    country: "Belgium", count: "2 clients" },
   { city: "Tbilisi",     country: "Georgia", count: "4 clients" },
 ];
+const CITY_T = {
+  ru: { "Montréal":"Монреаль","New York":"Нью-Йорк","Indianapolis":"Индианаполис","London":"Лондон","Brussels":"Брюссель","Tbilisi":"Тбилиси","Valletta":"Валлетта","Chișinău":"Кишинёв","Kathmandu":"Катманду",
+        "Canada":"Канада","USA":"США","UK":"Великобритания","Belgium":"Бельгия","Georgia":"Грузия","Malta":"Мальта","Moldova":"Молдова","Nepal":"Непал" },
+  ka: { "Montréal":"მონრეალი","New York":"ნიუ-იორკი","Indianapolis":"ინდიანაპოლისი","London":"ლონდონი","Brussels":"ბრიუსელი","Tbilisi":"თბილისი","Valletta":"ვალეტა","Chișinău":"კიშინიოვი","Kathmandu":"კატმანდუ",
+        "Canada":"კანადა","USA":"აშშ","UK":"გაერთიანებული სამეფო","Belgium":"ბელგია","Georgia":"საქართველო","Malta":"მალტა","Moldova":"მოლდოვა","Nepal":"ნეპალი" },
+};
+function tCity(name, lang) { return (CITY_T[lang] && CITY_T[lang][name]) || name; }
 
-function WorldMap({ t, mode }) {
+function WorldMap({ t, mode, lang }) {
   const svgRef   = React.useRef(null);
   const zoomRef  = React.useRef(null);
   const [zoomLevel, setZoomLevel] = React.useState("1.00");
@@ -759,7 +767,7 @@ function WorldMap({ t, mode }) {
         color:t.text2,textTransform:"uppercase",fontWeight:700 }}>
         <div style={{ display:"flex",alignItems:"center",gap:8 }}>
           <span style={{ width:8,height:8,borderRadius:999,background:t.teal,boxShadow:`0 0 0 3px ${t.teal}30`,display:"inline-block" }} />
-          <span>CLIENT LOCATION</span>
+          <span>{lang==="ru"?"МЕСТОПОЛОЖЕНИЕ КЛИЕНТОВ":lang==="ka"?"ᲙᲚᲘᲔᲜᲢᲘᲡ ᲛᲓᲔᲑᲐᲠᲔᲝᲑᲐ":"CLIENT LOCATION"}</span>
         </div>
       </div>
     </div>
@@ -1195,7 +1203,7 @@ function ContactPage() {
           border: `1px solid ${t.border}`, borderRadius: 16,
           overflow: "hidden", position: "relative",
         }}>
-          <WorldMap t={t} mode={mode} />
+          <WorldMap t={t} mode={mode} lang={lang} />
         </div>
 
         {/* Sidebar: no eyebrow — first card top-aligns with map border */}
@@ -1208,10 +1216,10 @@ function ContactPage() {
             }}>
               <div>
                 <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 18, letterSpacing: "-0.01em", color: t.text1 }}>
-                  {c.city}, {c.country}
+                  {tCity(c.city,lang)}, {tCity(c.country,lang)}
                 </div>
                 <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.12em", marginTop: 4 }}>
-                  · {c.count.toUpperCase()} ·
+                  · {(lang==="ru"?c.count.replace("clients","КЛИЕНТОВ").replace("client","КЛИЕНТ").toUpperCase():lang==="ka"?c.count.replace("clients","ᲙᲚᲘᲔᲜᲢᲘ").replace("client","ᲙᲚᲘᲔᲜᲢᲘ").toUpperCase():c.count.toUpperCase())} ·
                 </div>
               </div>
               <div style={{ width: 12, height: 12, borderRadius: 999, background: t.teal, boxShadow: `0 0 0 4px ${t.teal}22`, flexShrink: 0 }} />
@@ -1220,7 +1228,7 @@ function ContactPage() {
         </div>
       </div>
 
-      <PageTicker t={t} mode={mode} label="· MONTRÉAL · NEW YORK · INDIANAPOLIS · LONDON · BRUSSELS · TBILISI · VALLETTA · CHIȘINĂU · FOLLOW THE SUN ·" />
+      <PageTicker t={t} mode={mode} lang={lang} label={lang==="ru"?"· МОНРЕАЛЬ · НЬЮ-ЙОРК · ИНДИАНАПОЛИС · ЛОНДОН · БРЮССЕЛЬ · ТБИЛИСИ · ВАЛЛЕТТА · КИШИНЁВ · СЛЕДУЕМ ЗА СОЛНЦЕМ ·":lang==="ka"?"· ᲛᲝᲜᲠᲔᲐᲚᲘ · ΝΙΥ-ᲘᲝᲠᲙᲘ · ᲘᲜᲓᲘᲐᲜᲐᲞᲝᲚᲘᲡᲘ · ᲚᲝᲜᲓᲝᲜᲘ · ᲑᲠᲘᲣᲡᲔᲚᲘ · ᲗᲑᲘᲚᲘᲡᲘ · ᲕᲐᲚᲔᲢᲐ · ᲙᲘᲨᲘᲜᲘᲝᲕᲘ · ᲛᲖᲔᲡ ᲛᲘᲕᲧᲕᲔᲑᲘᲗ ·":"· MONTRÉAL · NEW YORK · INDIANAPOLIS · LONDON · BRUSSELS · TBILISI · VALLETTA · CHIȘINĂU · FOLLOW THE SUN ·"} />
     </div>
   );
 }

@@ -202,24 +202,36 @@ function Ticker({ base = 24817, jitter = 7, interval = 900, prefix = "", suffix 
 }
 
 /* ---------- The schematic itself ---------- */
-function Schematic({ t, mode }) {
+function Schematic({ t, mode, lang }) {
   // sources stack — left side
+  const _src = lang === "ru"
+    ? { subs: ["маркетинг","доходы","хранилище","пайплайн","операции"], hints: ["live","live","подкл.","live","live"] }
+    : lang === "ka"
+    ? { subs: ["მარკეტინგი","შემოსავალი","საცავი","პაიპლაინი","ოპერაციები"], hints: ["live","live","დაკავშ.","live","live"] }
+    : { subs: ["marketing","revenue","warehouse","pipeline","operations"], hints: ["live","live","connected","live","live"] };
   const sources = [
-    { y: 60,  label: "GA4 + META ADS",     sub: "marketing",  hint: "live" },
-    { y: 130, label: "STRIPE / MOLLIE",    sub: "revenue",    hint: "live" },
-    { y: 200, label: "SQL DATABASE",       sub: "warehouse",  hint: "connected" },
-    { y: 270, label: "SALESFORCE / HUBSPOT",sub: "pipeline",  hint: "live" },
-    { y: 340, label: "EXCEL / SHEETS",     sub: "operations", hint: "live" },
+    { y: 60,  label: "GA4 + META ADS",     sub: _src.subs[0],  hint: _src.hints[0] },
+    { y: 130, label: "STRIPE / MOLLIE",    sub: _src.subs[1],  hint: _src.hints[1] },
+    { y: 200, label: lang==="ru"?"БАЗА ДАННЫХ SQL":lang==="ka"?"SQL ᲛᲝᲜᲐᲪᲔᲛᲗᲐ ᲑᲐᲖᲐ":"SQL DATABASE",       sub: _src.subs[2],  hint: _src.hints[2] },
+    { y: 270, label: "SALESFORCE / HUBSPOT",sub: _src.subs[3],  hint: _src.hints[3] },
+    { y: 340, label: "EXCEL / SHEETS",     sub: _src.subs[4], hint: _src.hints[4] },
   ];
   // outputs — right side
+  const _out = lang === "ru"
+    ? { labels: ["BI ДАШБОРДЫ","ОТЧЁТЫ","КОУЧИНГ"], subs: ["кастомные KPI-виды","еженедельные брифинги","сессии 1-на-1"], emits: ["live","активно","работает"] }
+    : lang === "ka"
+    ? { labels: ["BI ᲓᲐᲤᲔᲑᲘ","ᲐᲜᲒᲐᲠᲘᲨᲔᲑᲘ","ᲥᲝᲣᲩᲘᲜᲒᲘ"], subs: ["მორგებული KPI ხედები","ყოველკვირეული ბრიფინგი","1-ზე-1 სესიები"], emits: ["live","აქტიური","მიმდინარე"] }
+    : { labels: ["BI DASHBOARDS","REPORTS","COACHING"], subs: ["custom KPI views","weekly briefings","1-on-1 sessions"], emits: ["live","active","running"] };
   const outputs = [
-    { y: 80,  label: "BI DASHBOARDS",   sub: "custom KPI views",     emit: "live" },
-    { y: 200, label: "REPORTS",         sub: "weekly briefings",     emit: "active" },
-    { y: 320, label: "COACHING",        sub: "1-on-1 sessions",      emit: "running" },
+    { y: 80,  label: _out.labels[0],   sub: _out.subs[0],     emit: _out.emits[0] },
+    { y: 200, label: _out.labels[1],   sub: _out.subs[1],     emit: _out.emits[1] },
+    { y: 320, label: _out.labels[2],   sub: _out.subs[2],     emit: _out.emits[2] },
   ];
 
   // model in the middle
   const modelX = 480, modelY = 200;
+  const modelW = (lang === "ka" || lang === "ru") ? 200 : 160;
+  const modelH = 120;
   const sourceX = 130, outputX = 800;
 
   return (
@@ -252,7 +264,7 @@ function Schematic({ t, mode }) {
       {/* INPUT edges */}
       {sources.map((s, i) => {
         const startX = sourceX + 80;
-        const endX = modelX - 80;
+        const endX = modelX - modelW/2;
         const d = `M ${startX} ${s.y} C ${(startX + endX) / 2} ${s.y}, ${(startX + endX) / 2} ${modelY}, ${endX} ${modelY}`;
         return (
           <g key={`in-${i}`}>
@@ -278,7 +290,7 @@ function Schematic({ t, mode }) {
 
       {/* OUTPUT edges */}
       {outputs.map((o, i) => {
-        const startX = modelX + 80;
+        const startX = modelX + modelW/2;
         const endX = outputX - 80;
         const d = `M ${startX} ${modelY} C ${(startX + endX) / 2} ${modelY}, ${(startX + endX) / 2} ${o.y}, ${endX} ${o.y}`;
         return (
@@ -332,15 +344,15 @@ function Schematic({ t, mode }) {
       <g>
         {/* outer ring */}
         <circle
-          cx={modelX} cy={modelY} r="78"
+          cx={modelX} cy={modelY} r={modelW/2 + 18}
           fill="none" stroke={t.teal} strokeWidth="1" strokeOpacity="0.25"
           strokeDasharray="3 4"
           style={{ animation: "mwSpin 60s linear infinite", transformOrigin: `${modelX}px ${modelY}px` }}
         />
         {/* core */}
         <rect
-          x={modelX - 80} y={modelY - 60}
-          width="160" height="120" rx="16"
+          x={modelX - modelW/2} y={modelY - 60}
+          width={modelW} height={modelH} rx="16"
           fill={t.modelFill}
           stroke={t.teal}
           strokeWidth="1.2"
@@ -352,18 +364,18 @@ function Schematic({ t, mode }) {
           fontFamily="JetBrains Mono, monospace" fontSize="9.5"
           fill={mode === "dark" ? t.modelAcc : t.modelAcc} fillOpacity="0.6"
           letterSpacing="0.18em"
-        >METRICWAVE / MODEL</text>
+        >{lang==="ru"?"METRICWAVE / МОДЕЛЬ":lang==="ka"?"METRICWAVE / ᲛᲝᲓᲔᲚᲘ":"METRICWAVE / MODEL"}</text>
         <text
           x={modelX} y={modelY + 2}
           textAnchor="middle"
-          fontFamily="'Inter Tight', sans-serif" fontSize="17" fontWeight="500"
+          fontFamily="'Inter Tight', sans-serif" fontSize={lang==="ka"||lang==="ru"?14.5:17} fontWeight="500"
           fill={t.modelInk} letterSpacing="-0.02em"
-        >AI &amp; Analytics Core</text>
+        >{lang==="ru"?"AI и Аналитика — Ядро":lang==="ka"?"AI და ანალიტიკის ბირთვი":"AI & Analytics Core"}</text>
         {/* live processing line — clipped to inside the model card */}
         <clipPath id={`mwBarsClip-${mode}`}>
-          <rect x={modelX - 64} y={modelY + 22} width="128" height="32" rx="4" />
+          <rect x={modelX - modelW/2 + 16} y={modelY + 22} width={modelW - 32} height="32" rx="4" />
         </clipPath>
-        <g transform={`translate(${modelX - 60}, ${modelY + 46})`} clipPath={`url(#mwBarsClip-${mode})`}>
+        <g transform={`translate(${modelX - modelW/2 + 20}, ${modelY + 46})`} clipPath={`url(#mwBarsClip-${mode})`}>
           {Array.from({ length: 24 }).map((_, i) => (
             <rect
               key={i}
@@ -380,7 +392,7 @@ function Schematic({ t, mode }) {
           ))}
         </g>
         {/* status dot */}
-        <circle cx={modelX + 64} cy={modelY - 46} r="3.5" fill={mode === "dark" ? t.modelAcc : t.mint} style={{ animation: "mwPulse 1.6s infinite" }} />
+        <circle cx={modelX + modelW/2 - 16} cy={modelY - 46} r="3.5" fill={mode === "dark" ? t.modelAcc : t.mint} style={{ animation: "mwPulse 1.6s infinite" }} />
       </g>
 
       {/* OUTPUT NODES */}
@@ -388,7 +400,7 @@ function Schematic({ t, mode }) {
         <g key={`o-${i}`}>
           <rect
             x={outputX - 60} y={o.y - 30}
-            width="160" height="60" rx="10"
+            width={(lang==="ka"||lang==="ru")?180:160} height="60" rx="10"
             fill={t.nodeFill}
             stroke={t.teal}
             strokeWidth="1.2"
@@ -405,7 +417,7 @@ function Schematic({ t, mode }) {
             fill={t.muted}
           >{o.sub2 || o.sub}</text>
           <text
-            x={outputX + 95} y={o.y + 21}
+            x={outputX + ((lang==="ka"||lang==="ru")?115:95)} y={o.y + 21}
             textAnchor="end"
             fontFamily="JetBrains Mono, monospace" fontSize="9.5"
             fill={t.teal} letterSpacing="0.06em"
@@ -425,17 +437,17 @@ function Schematic({ t, mode }) {
       <text x={sourceX} y={420} textAnchor="middle"
         fontFamily="JetBrains Mono, monospace" fontSize="9" fill={t.muted}
         letterSpacing="0.18em">
-        SOURCES
+        {lang==="ru"?"ИСТОЧНИКИ":lang==="ka"?"ᲬᲧᲐᲠᲝᲔᲑᲘ":"SOURCES"}
       </text>
       <text x={modelX} y={420} textAnchor="middle"
         fontFamily="JetBrains Mono, monospace" fontSize="9" fill={t.muted}
         letterSpacing="0.18em">
-        MODEL
+        {lang==="ru"?"МОДЕЛЬ":lang==="ka"?"ᲛᲝᲓᲔᲚᲘ":"MODEL"}
       </text>
       <text x={outputX + 20} y={420} textAnchor="middle"
         fontFamily="JetBrains Mono, monospace" fontSize="9" fill={t.muted}
         letterSpacing="0.18em">
-        DELIVERY
+        {lang==="ru"?"ДОСТАВКА":lang==="ka"?"ᲛᲘᲬᲝᲓᲔᲑᲐ":"DELIVERY"}
       </text>
     </svg>
   );
@@ -557,7 +569,7 @@ function MetricWaveHeader({ mode = "light" }) {
           zIndex: 2,
         }}
       >
-        <Schematic t={t} mode={mode} />
+        <Schematic t={t} mode={mode} lang={lang} />
       </div>
 
       {/* footer rail */}
