@@ -81,6 +81,30 @@ const HEADER_T = {
     rail:     "[ INLEZEN → ANALYSEREN → VISUALISEREN → BESLISSEN ]",
     live:     "Live · Altijd gesynchroniseerd",
   },
+  ka: {
+    badge:    "ანალიტიკა · BI · სტრატეგია · ავტომატიზაცია",
+    h1pre:    "გადააქციეთ თქვენი მონაცემები თქვენს",
+    h1italic: "უდიდეს",
+    h1post:   "კონკურენტულ უპირატესობად.",
+    h1Size:   68,
+    lead:     "",
+    cta1:     "უფასო კონსულტაცია",
+    cta2:     "ნახეთ ნამუშევრები",
+    rail:     "[ მიღება → ანალიზი → ვიზუალიზაცია → გადაწყვეტილება ]",
+    live:     "პირდაპირ · ყოველთვის სინქრონიზებული",
+  },
+  ru: {
+    badge:    "Аналитика · BI · Стратегия · Автоматизация",
+    h1pre:    "Превратите Ваши данные в Ваше",
+    h1italic: "величайшее",
+    h1post:   "конкурентное преимущество.",
+    h1Size:   68,
+    lead:     "",
+    cta1:     "Бесплатная консультация",
+    cta2:     "Наши работы",
+    rail:     "[ СБОР → АНАЛИЗ → ВИЗУАЛИЗАЦИЯ → РЕШЕНИЕ ]",
+    live:     "В реальном времени · Всегда синхронизировано",
+  },
 };
 
 /* ============================================================
@@ -461,7 +485,7 @@ function MetricWaveHeader({ mode = "light" }) {
       )}
 
       {/* copy column */}
-      <div style={{ position: "absolute", left: 150, top: 70, zIndex: 3, maxWidth: 560 }}>
+      <div style={{ position: "absolute", left: 150, top: 70, zIndex: 3, maxWidth: 680 }}>
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace", fontSize: 13,
@@ -496,16 +520,18 @@ function MetricWaveHeader({ mode = "light" }) {
           }}>{T.h1italic}</span>{" "}
           {T.h1post}
         </h1>
-        <p
-          style={{
-            fontSize: 23, lineHeight: 1.55, color: t.inkSoft,
-            marginTop: 26, marginBottom: 0, maxWidth: 540,
-            textWrap: "pretty",
-          }}
-        >
-          {T.lead}
-        </p>
-        <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
+        {T.lead && (
+          <p
+            style={{
+              fontSize: 23, lineHeight: 1.55, color: t.inkSoft,
+              marginTop: 26, marginBottom: 0, maxWidth: 540,
+              textWrap: "pretty",
+            }}
+          >
+            {T.lead}
+          </p>
+        )}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 30 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 18, fontWeight: 500,
             padding: "18px 32px", borderRadius: 8, cursor: "pointer",

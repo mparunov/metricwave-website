@@ -146,9 +146,10 @@ function ServiceHero({
   ctaSecondary,
   ticker,
   Schematic,
+  lang = "en",
 }) {
   const mode = useTheme();
-  const t = HERO_TOKENS[mode];
+  const t = { ...HERO_TOKENS[mode], lang };
 
   return (
     <div style={{
@@ -168,7 +169,7 @@ function ServiceHero({
       )}
 
       {/* LEFT COLUMN — copy */}
-      <div style={{ position: "absolute", left: 80, top: 55, width: 500, zIndex: 3 }}>
+      <div style={{ position: "absolute", left: 80, top: lead ? 55 : 75, width: 640, zIndex: 3 }}>
         <div style={{
           fontFamily: "'Courier New', monospace",
           fontSize: "0.7rem", letterSpacing: "0.15em",
@@ -177,9 +178,9 @@ function ServiceHero({
 
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
-          fontWeight: 900, fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          fontWeight: 900, fontSize: lead ? "clamp(3rem, 4vw, 4.25rem)" : "clamp(2.25rem, 3vw, 3.25rem)",
           lineHeight: 1.1, letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
+          color: t.text1, margin: 0, textWrap: "balance", maxWidth: 500,
         }}>
           {headline.pre}
           {headline.italic && (
@@ -188,13 +189,13 @@ function ServiceHero({
           {headline.post && <>{" "}{headline.post}</>}
         </h1>
 
-        <p style={{
+        {lead && <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
+        }}>{lead}</p>}
 
-        <div style={{ display: "flex", gap: 14, marginTop: 36 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 36 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 17, fontWeight: 700,
             padding: "16px 44px", borderRadius: 9, cursor: "pointer", whiteSpace: "nowrap",
@@ -573,7 +574,7 @@ function SchemSaaS({ t, mode }) {
       {/* LEFT — Stack diagram */}
       <g style={{ animation: "mwSlideIn 0.5s 0.2s backwards" }}>
         <text x={60} y={114} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>PRODUCT STACK</text>
+          fill={t.text1}>{t.lang==="ru"?"СТЕК ПРОДУКТА":t.lang==="ka"?"ᲞᲠᲝᲓ. ᲡTЕКᲘ":"PRODUCT STACK"}</text>
         {layers.map((l, i) => (
           <g key={l.label} style={{ animation: `mwSlideUp 0.4s ${0.2 + i * 0.1}s backwards` }}>
             <rect x={60} y={l.y} width={620} height={50} rx="6"
@@ -604,7 +605,7 @@ function SchemSaaS({ t, mode }) {
         <rect x={cx0 - 44} y={cy0 - 100} width={cw + 88} height={ch + 140} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={cx0} y={cy0 - 76} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>COHORT RETENTION</text>
+          fill={t.text1}>{t.lang==="ru"?"УДЕРЖАНИЕ КОГОРТ":t.lang==="ka"?"ᲙᲝᲰ. ᲨᲔᲜ.":"COHORT RETENTION"}</text>
         <text x={cx0 + cw} y={cy0 - 76} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
           fill={t.teal} letterSpacing="0.12em">8 WEEKS</text>
 
@@ -652,9 +653,9 @@ function SchemSaaS({ t, mode }) {
         {/* legend */}
         <g transform={`translate(${cx0}, ${cy0 + ch + 22})`}>
           {[
-            { c: t.teal,    label: "WITH METRICWAVE" },
-            { c: "#9CA3AF", label: "BASELINE" },
-            { c: t.tealLt,  label: "POWER USERS" },
+            { c: t.teal,    label: t.lang==="ru"?"С METRICWAVE":t.lang==="ka"?"METRICWAVE-ით":"WITH METRICWAVE" },
+            { c: "#9CA3AF", label: t.lang==="ru"?"БАЗОВЫЙ":t.lang==="ka"?"საბაზო":"BASELINE" },
+            { c: t.tealLt,  label: t.lang==="ru"?"АКТИВНЫЕ":t.lang==="ka"?"აქტ. USERS":"POWER USERS" },
           ].map((l, i) => (
             <g key={i} transform={`translate(${i * 130}, 0)`}>
               <rect x={0} y={0} width={10} height={3} fill={l.c} />
@@ -775,7 +776,7 @@ function SchemAI({ t, mode }) {
       {/* RIGHT — coaching timeline */}
       <g style={{ animation: "mwSlideInR 0.5s 0.4s backwards" }}>
         <text x={680} y={114} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>COACHING JOURNEY</text>
+          fill={t.text1}>{t.lang==="ru"?"ПРОГРАММА КОУЧИНГА":t.lang==="ka"?"COACHING JOURNEY":"COACHING JOURNEY"}</text>
         <line x1={720} y1={164} x2={720} y2={464} stroke={t.border} strokeWidth="1.5" />
 
         {sessions.map((s, i) => {
@@ -1019,7 +1020,7 @@ function SchemEdu({ t, mode }) {
         <rect x={780} y={90} width={400} height={140} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={804} y={118} fontFamily="'Courier New', monospace" fontSize="10" fontWeight="700"
-          fill={t.text2} letterSpacing="0.15em">RESEARCH OUTPUT · 2024</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ИССЛЕДОВАНИЯ · 2024":t.lang==="ka"?"კვლ. · 2024":"RESEARCH OUTPUT · 2024"}</text>
         <g transform="translate(804, 134)">
           {[
             { val: "47",  lbl: "PAPERS"     },
@@ -1039,7 +1040,7 @@ function SchemEdu({ t, mode }) {
         <rect x={780} y={244} width={400} height={308} rx="10"
           fill={t.surface1} stroke={t.border} strokeWidth="1" />
         <text x={804} y={272} fontFamily="'Inter', sans-serif" fontSize="14" fontWeight="800"
-          fill={t.text1}>CITATIONS · 5-YEAR</text>
+          fill={t.text1}>{t.lang==="ru"?"ЦИТИРОВАНИЯ · 5 ЛЕТ":t.lang==="ka"?"CITATION · 5 WL":"CITATIONS · 5-YEAR"}</text>
         <text x={1156} y={272} textAnchor="end" fontFamily="'Courier New', monospace" fontSize="9.5"
           fill={t.teal} letterSpacing="0.12em">↑ 4.2×</text>
 
@@ -1082,11 +1083,16 @@ function SchemNGO({ t, mode }) {
   // Three concentric impact rings (showing funds → programs → beneficiaries)
   const cx = 320, cy = 280;
   const RING_R = 185;
+  const _ngoL = t.lang === "ru"
+    ? ["ФОНДЫ", "ПРОГРАММЫ", "ПАРТНЁРЫ", "БЕНЕФИЦИАРЫ"]
+    : t.lang === "ka"
+    ? ["ᲤᲝᲜᲓᲔᲑᲘ", "ᲞᲠᲝᲒ.", "ᲞᲐᲠᲢᲜ.", "ᲑᲔᲜᲔᲤ."]
+    : ["FUNDS", "PROGRAMS", "PARTNERS", "BENEFICIARIES"];
   const layers = [
-    { r: 55,       label: "FUNDS",         val: "$8.4M",   color: t.teal },
-    { r: 100,      label: "PROGRAMS",      val: "47",      color: t.teal },
-    { r: 145,      label: "PARTNERS",      val: "128",     color: t.tealLt },
-    { r: RING_R,   label: "BENEFICIARIES", val: "62K",     color: t.tealLt },
+    { r: 55,       label: _ngoL[0], val: "$8.4M",   color: t.teal },
+    { r: 100,      label: _ngoL[1], val: "47",      color: t.teal },
+    { r: 145,      label: _ngoL[2], val: "128",     color: t.tealLt },
+    { r: RING_R,   label: _ngoL[3], val: "62K",     color: t.tealLt },
   ];
 
   // Region tags around outer ring
@@ -1229,14 +1235,34 @@ Object.assign(window, {
 
 </script>
 <script>
-  window.MW_SERVICE = {
+  window.MW_SERVICE_T = {
+    en: {
     schematic:   "saas",
-    eyebrow:     "· PRODUCT · GROWTH · RETENTION ·",
-    headline:    { pre: "We turn product signals into", italic: "compounding growth.", post: undefined },
-    lead:        "From activation to expansion revenue — we build the analytics infrastructure that lets SaaS teams make faster, smarter decisions with the data they already have.",
+    eyebrow:     "· SAAS · PRODUCT · PROCESS ·",
+    headline:    { pre: "Operational clarity for", italic: "software companies.", post: undefined },
+    lead:        "From process mining at Celonis to running data ops inside a global SaaS at Flutter International — we know where your operational signal is leaking, and how to fix it.",
     ctaPrimary:  "Talk to us",
     ctaSecondary:"See our work",
-    ticker:      "· MRR · NRR · ACTIVATION · CHURN · COHORTS · USAGE · BILLING ·",
+    ticker:      "· SAAS · PROCESS MINING · BI · DATA QUALITY · KPIs · PRODUCT ANALYTICS ·",
+  },
+    ka: {
+    schematic:   "saas",
+    eyebrow:     "· SAAS · პროდუქტი · პროცესი ·",
+    headline:    { pre: "ოპერაციული სიცხადე", italic: "პროგრამული კომპანიებისთვის.", post: undefined },
+    lead: "",
+    ctaPrimary:  "დაგვიკავშირდით",
+    ctaSecondary:"ნახეთ ჩვენი ნამუშევრები",
+    ticker:      "· SAAS · PROCESS MINING · BI · მონაცემთა ხარისხი · KPIs · პროდუქტის ანალიტიკა ·",
+  },
+    ru: {
+    schematic:   "saas",
+    eyebrow:     "· SAAS · ПРОДУКТ · ПРОЦЕСС ·",
+    headline:    { pre: "Операционная ясность для", italic: "софтверных компаний.", post: undefined },
+    lead: "",
+    ctaPrimary:  "Поговорить с нами",
+    ctaSecondary:"Посмотреть наши работы",
+    ticker:      "· SAAS · PROCESS MINING · BI · КАЧЕСТВО ДАННЫХ · KPIs · ПРОДУКТОВАЯ АНАЛИТИКА ·",
+  },
   };
 </script>
 <script type="text/babel" data-presets="env,react">
@@ -1251,10 +1277,28 @@ const MW_SCHEMATICS = {
   edu:       typeof SchemEdu      !== "undefined" ? SchemEdu      : null,
   ngo:       typeof SchemNGO      !== "undefined" ? SchemNGO      : null,
 };
+function useLang() {
+  const [lang, setLang] = React.useState(() => {
+    try { return localStorage.getItem('language') || 'en'; } catch { return 'en'; }
+  });
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang);
+    };
+    const onStorage = (e) => {
+      if (e.key === 'language' && e.newValue) setLang(e.newValue);
+    };
+    window.addEventListener('message', handler);
+    window.addEventListener('storage', onStorage);
+    return () => { window.removeEventListener('message', handler); window.removeEventListener('storage', onStorage); };
+  }, []);
+  return lang;
+}
 function App() {
-  const cfg = window.MW_SERVICE;
+  const lang = useLang();
+  const cfg = (window.MW_SERVICE_T && (window.MW_SERVICE_T[lang] || window.MW_SERVICE_T.en)) || window.MW_SERVICE;
   const Schem = MW_SCHEMATICS[cfg.schematic];
-  return React.createElement(ServiceHero, { ...cfg, Schematic: Schem });
+  return React.createElement(ServiceHero, { ...cfg, Schematic: Schem, lang });
 }
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>

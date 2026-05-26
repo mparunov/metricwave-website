@@ -260,7 +260,7 @@ function ServiceHero({
 
       {/* LEFT COLUMN — copy */}
       <div style={{
-        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+        position: "absolute", left: 80, top: lead ? copyTop : copyTop + 20, width: 640, zIndex: 3,
       }}>
         <div style={{
           fontFamily: "'Courier New', monospace",
@@ -273,10 +273,10 @@ function ServiceHero({
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 900,
-          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          fontSize: lead ? "clamp(3rem, 4vw, 4.25rem)" : "clamp(2.25rem, 3vw, 3.25rem)",
           lineHeight: 1.1,
           letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
+          color: t.text1, margin: 0, textWrap: "balance", maxWidth: 500,
         }}>
           {headline.pre}
           {headline.italic && (
@@ -286,13 +286,13 @@ function ServiceHero({
           {headline.cursor && <BlinkCursor color={t.teal} />}
         </h1>
 
-        <p style={{
+        {lead && <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
+        }}>{lead}</p>}
 
-        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 32 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 14, fontWeight: 700,
             padding: "12px 28px", borderRadius: 8, cursor: "pointer",
@@ -885,10 +885,102 @@ function ContinentShapes({ t, mode, W, H }) {
   );
 }
 
-function ContactForm({ t, mode }) {
-  const SVCS = ["Analytics & BI", "Web", "Process Mining", "Automation", "Strategy", "Data Engineering"];
-  const SVC_PARAM = { analytics: "Analytics & BI", "analytics-bi": "Analytics & BI", web: "Web", "web-development": "Web", process: "Process Mining", "process-mining": "Process Mining", automation: "Automation", "automation-ai": "Automation", strategy: "Strategy", "business-strategy": "Strategy", dataeng: "Data Engineering", "data-engineering": "Data Engineering" };
-  const preselect = (() => { try { const p = new URLSearchParams(window.location.search).get("service"); return SVC_PARAM[p] ? [SVC_PARAM[p]] : ["Analytics & BI"]; } catch { return ["Analytics & BI"]; } })();
+const CONTACT_T = {
+  en: {
+    heroEyebrow: "· CONTACT · WORLDWIDE ·",
+    h1pre: "Clients across",
+    h1mid: "5 countries.",
+    h1post: "Always one timezone away.",
+    lead: "We work across North America and Europe — wherever your data, your team, or your regulators are.",
+    formEyebrow: "· SEND US A NOTE ·",
+    formTitle: "Reply usually within 1 working day.",
+    fName: "Your name *", fNamePh: "Jane Doe",
+    fEmail: "Work email *", fEmailPh: "jane@company.com",
+    fCompany: "Company", fCompanyPh: "Acme Co.",
+    fServices: "Services of interest",
+    fMessage: "What's the problem to solve? *",
+    fMessagePh: "A few sentences about what you're trying to figure out…",
+    sending: "Sending…", send: "Send message →",
+    error: "Something went wrong — please try again or email us directly at mikheil@metricwave.net",
+    sentTitle: "Message sent!",
+    sentBody: "Thanks for reaching out. We'll get back to you within 1 working day at",
+    lblGeneral: "GENERAL", lblPress: "PRESS", lblPhone: "PHONE",
+    lblHours: "OPERATING HOURS",
+    hoursMonFri: "Mon–Fri · 09:00–19:00 UTC +2",
+    hoursSat: "Sat · 10:00–17:00 UTC +2",
+    hoursAsync: "Async support 24/7 via shared Slack",
+    svcAnalytics: "Analytics & BI", svcAutomation: "AI Enablement & Automation", svcStrategy: "Strategy",
+  },
+  ka: {
+    heroEyebrow: "· კონტაქტი · მსოფლიო მასშტაბით ·",
+    h1pre: "კლიენტები",
+    h1mid: "5 ქვეყანაში.",
+    h1post: "ყოველთვის ერთი დროის ზონის მოშორებით.",
+    lead: "ჩვენ ვმუშაობთ ჩრდილოეთ ამერიკაში და ევროპაში — სადაც თქვენი მონაცემები, თქვენი გუნდი ან თქვენი მარეგულირებლები არიან.",
+    formEyebrow: "· მოგვწერეთ ·",
+    formTitle: "პასუხი ჩვეულებრივ 1 სამუშაო დღეში.",
+    fName: "თქვენი სახელი *", fNamePh: "ნინო თბილელი",
+    fEmail: "სამუშაო ელ-ფოსტა *", fEmailPh: "nino@company.com",
+    fCompany: "კომპანია", fCompanyPh: "Acme Co.",
+    fServices: "საინტერესო სერვისები",
+    fMessage: "რა პრობლემაა გადასაჭრელი? *",
+    fMessagePh: "რამდენიმე წინადადება იმის შესახებ, რის გარკვევას ცდილობთ…",
+    sending: "იგზავნება…", send: "შეტყობინების გაგზავნა →",
+    error: "რაღაც შეცდომა მოხდა — გთხოვთ სცადოთ თავიდან ან მოგვწერეთ პირდაპირ mikheil@metricwave.net-ზე",
+    sentTitle: "შეტყობინება გაიგზავნა!",
+    sentBody: "მადლობა, რომ დაგვიკავშირდით. პასუხს მიიღებთ 1 სამუშაო დღეში მისამართზე",
+    lblGeneral: "ზოგადი", lblPress: "პრესა", lblPhone: "ტელეფონი",
+    lblHours: "სამუშაო საათები",
+    hoursMonFri: "ორშ–პარ · 09:00–19:00 UTC +2",
+    hoursSat: "შაბ · 10:00–17:00 UTC +2",
+    hoursAsync: "Async მხარდაჭერა 24/7 საერთო Slack-ის გავლით",
+    svcAnalytics: "ანალიტიკა & BI", svcAutomation: "AI დანერგვა და ავტომატიზაცია", svcStrategy: "სტრატეგია",
+  },
+  ru: {
+    heroEyebrow: "· КОНТАКТ · ВЕСЬ МИР ·",
+    h1pre: "Клиенты в",
+    h1mid: "5 странах.",
+    h1post: "Всегда в одном часовом поясе.",
+    lead: "Мы работаем в Северной Америке и Европе — где бы ни были Ваши данные, Ваша команда или Ваши регуляторы.",
+    formEyebrow: "· НАПИШИТЕ НАМ ·",
+    formTitle: "Ответ обычно в течение 1 рабочего дня.",
+    fName: "Ваше имя *", fNamePh: "Иван Иванов",
+    fEmail: "Рабочая почта *", fEmailPh: "ivan@company.com",
+    fCompany: "Компания", fCompanyPh: "Acme Co.",
+    fServices: "Интересующие услуги",
+    fMessage: "Какую проблему нужно решить? *",
+    fMessagePh: "Несколько предложений о том, что Вы пытаетесь разобраться…",
+    sending: "Отправка…", send: "Отправить сообщение →",
+    error: "Что-то пошло не так — попробуйте ещё раз или напишите нам напрямую на mikheil@metricwave.net",
+    sentTitle: "Сообщение отправлено!",
+    sentBody: "Спасибо за обращение. Мы свяжемся с Вами в течение 1 рабочего дня по адресу",
+    lblGeneral: "ОБЩЕЕ", lblPress: "ПРЕССА", lblPhone: "ТЕЛЕФОН",
+    lblHours: "ВРЕМЯ РАБОТЫ",
+    hoursMonFri: "Пн–Пт · 09:00–19:00 UTC +2",
+    hoursSat: "Сб · 10:00–17:00 UTC +2",
+    hoursAsync: "Async-поддержка 24/7 через общий Slack",
+    svcAnalytics: "Аналитика & BI", svcAutomation: "Внедрение AI и автоматизация", svcStrategy: "Стратегия",
+  },
+};
+
+function useContactLang() {
+  const [lang, setLang] = React.useState(() => {
+    try { return localStorage.getItem('language') || 'en'; } catch { return 'en'; }
+  });
+  React.useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    const onStorage = (e) => { if (e.key === 'language' && e.newValue) setLang(e.newValue); };
+    window.addEventListener('message', handler);
+    window.addEventListener('storage', onStorage);
+    return () => { window.removeEventListener('message', handler); window.removeEventListener('storage', onStorage); };
+  }, []);
+  return lang;
+}
+
+function ContactForm({ t, mode, L }) {
+  const SVCS = [L.svcAnalytics, L.svcAutomation, L.svcStrategy];
+  const SVC_PARAM = { analytics: L.svcAnalytics, "analytics-bi": L.svcAnalytics, web: L.svcAnalytics, "web-development": L.svcAnalytics, process: L.svcAnalytics, "process-mining": L.svcAnalytics, automation: L.svcAutomation, "automation-ai": L.svcAutomation, strategy: L.svcStrategy, "business-strategy": L.svcStrategy, dataeng: L.svcAnalytics, "data-engineering": L.svcAnalytics };
+  const preselect = (() => { try { const p = new URLSearchParams(window.location.search).get("service"); return SVC_PARAM[p] ? [SVC_PARAM[p]] : [L.svcAnalytics]; } catch { return [L.svcAnalytics]; } })();
   const [picked,   setPicked]   = cUseState(preselect);
   const [status,   setStatus]   = cUseState("idle"); // idle | sending | sent | error
   const [vals,     setVals]     = cUseState({ name: "", email: "", company: "", message: "" });
@@ -939,10 +1031,10 @@ function ContactForm({ t, mode }) {
       }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
         <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 26, color: t.teal, margin: "0 0 12px" }}>
-          Message sent!
+          {L.sentTitle}
         </h3>
         <p style={{ color: t.text2, fontSize: 16, lineHeight: 1.6 }}>
-          Thanks for reaching out. We'll get back to you within 1 working day at <strong>{vals.email}</strong>.
+          {L.sentBody} <strong>{vals.email}</strong>.
         </p>
       </div>
     );
@@ -960,15 +1052,15 @@ function ContactForm({ t, mode }) {
       <input type="hidden" name="form-name" value="contact" />
       <div style={{ display: "none" }}><input name="bot-field" /></div>
 
-      <PageEyebrow color={t.teal}>· SEND US A NOTE ·</PageEyebrow>
+      <PageEyebrow color={t.teal}>{L.formEyebrow}</PageEyebrow>
       <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: "-0.02em", margin: "0 0 22px", color: t.text1 }}>
-        Reply usually within 1 working day.
+        {L.formTitle}
       </h3>
 
       {[
-        { id: "name",    label: "Your name *",  type: "text",  ph: "Jane Doe" },
-        { id: "email",   label: "Work email *", type: "email", ph: "jane@company.com" },
-        { id: "company", label: "Company",      type: "text",  ph: "Acme Co." },
+        { id: "name",    label: L.fName,    type: "text",  ph: L.fNamePh },
+        { id: "email",   label: L.fEmail,   type: "email", ph: L.fEmailPh },
+        { id: "company", label: L.fCompany, type: "text",  ph: L.fCompanyPh },
       ].map((f) => (
         <div key={f.id} style={{ marginBottom: 18 }}>
           <label style={labelStyle}>{f.label}</label>
@@ -982,7 +1074,7 @@ function ContactForm({ t, mode }) {
       ))}
 
       <div style={{ marginBottom: 18 }}>
-        <label style={labelStyle}>Services of interest</label>
+        <label style={labelStyle}>{L.fServices}</label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {SVCS.map(s => (
             <button key={s} type="button" onClick={() => toggle(s)} style={{
@@ -999,10 +1091,10 @@ function ContactForm({ t, mode }) {
       </div>
 
       <div style={{ marginBottom: 24 }}>
-        <label style={labelStyle}>What's the problem to solve? *</label>
+        <label style={labelStyle}>{L.fMessage}</label>
         <textarea
           name="message" rows={5} required
-          placeholder="A few sentences about what you're trying to figure out…"
+          placeholder={L.fMessagePh}
           value={vals.message} onChange={change("message")}
           style={{ ...inputStyle, lineHeight: 1.5, resize: "vertical" }}
         />
@@ -1010,7 +1102,7 @@ function ContactForm({ t, mode }) {
 
       {status === "error" && (
         <p style={{ color: t.warn, fontSize: 13, marginBottom: 12 }}>
-          Something went wrong — please try again or email us directly at mikheil@metricwave.net
+          {L.error}
         </p>
       )}
 
@@ -1027,7 +1119,7 @@ function ContactForm({ t, mode }) {
           transition: "background 0.2s",
         }}
       >
-        {status === "sending" ? "Sending…" : "Send message →"}
+        {status === "sending" ? L.sending : L.send}
       </button>
     </form>
   );
@@ -1036,6 +1128,8 @@ function ContactForm({ t, mode }) {
 function ContactPage() {
   const mode = useTheme();
   const t = HERO_TOKENS[mode];
+  const lang = useContactLang();
+  const L = CONTACT_T[lang] || CONTACT_T.en;
   const embedded = window.parent !== window;
 
   return (
@@ -1050,28 +1144,28 @@ function ContactPage() {
 
       {/* HERO */}
       <div style={{ position: "relative", padding: embedded ? "80px 80px 50px" : "180px 80px 50px", zIndex: 3, maxWidth: 1500 }}>
-        <PageEyebrow color={t.teal}>· CONTACT · WORLDWIDE ·</PageEyebrow>
+        <PageEyebrow color={t.teal}>{L.heroEyebrow}</PageEyebrow>
         <h1 style={{
           fontFamily: "'Inter', sans-serif", fontWeight: 900,
           fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
           letterSpacing: "-0.03em", margin: 0, textWrap: "balance",
         }}>
-          Clients across <span style={{ color: t.teal }}>5 countries.</span> Always one timezone away.
+          {L.h1pre} <span style={{ color: t.teal }}>{L.h1mid}</span> {L.h1post}
         </h1>
         <p style={{ fontSize: 18, lineHeight: 1.55, color: t.text2, marginTop: 26, maxWidth: 760, textWrap: "pretty" }}>
-          We work across North America and Europe — wherever your data, your team, or your regulators are.
+          {L.lead}
         </p>
       </div>
 
       {/* FORM + DIRECT CHANNELS */}
       <div style={{ position: "relative", padding: "0 80px 80px", zIndex: 3, display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 50, alignItems: "start" }}>
-        <ContactForm t={t} mode={mode} />
+        <ContactForm t={t} mode={mode} L={L} />
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {[
-            { lbl: "GENERAL",  val: "mikheil@metricwave.net" },
-            { lbl: "PRESS",    val: "mikheil@metricwave.net" },
-            { lbl: "PHONE",    val: "+32 472 440551" },
+            { lbl: L.lblGeneral,  val: "mikheil@metricwave.net" },
+            { lbl: L.lblPress,    val: "mikheil@metricwave.net" },
+            { lbl: L.lblPhone,    val: "+32 472 440551" },
           ].map((row) => (
             <div key={row.lbl} style={{ padding: "16px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${t.border}` }}>
               <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em", marginBottom: 6 }}>· {row.lbl} ·</div>
@@ -1084,11 +1178,11 @@ function ContactPage() {
             background: "transparent",
             border: `1px solid ${t.border}`,
           }}>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em", marginBottom: 10 }}>· OPERATING HOURS ·</div>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.text2, letterSpacing: "0.18em", marginBottom: 10 }}>· {L.lblHours} ·</div>
             <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.7, color: t.text1 }}>
-              Mon–Fri · 09:00–19:00 UTC +2<br/>
-              Sat · 10:00–17:00 UTC +2<br/>
-              Async support 24/7 via shared Slack
+              {L.hoursMonFri}<br/>
+              {L.hoursSat}<br/>
+              {L.hoursAsync}
             </div>
           </div>
         </div>

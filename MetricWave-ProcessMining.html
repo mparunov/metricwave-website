@@ -182,9 +182,10 @@ function ServiceHero({
   Schematic,
   navActive = "Services",
   showNav = true,
+  lang = "en",
 }) {
   const mode = useTheme();
-  const t = HERO_TOKENS[mode];
+  const t = { ...HERO_TOKENS[mode], lang };
   const navItems = ["Home", "About", "Services", "Industries", "Pricing", "Blog"];
 
   // When nav is hidden, shift content up to fill the extra space
@@ -252,7 +253,7 @@ function ServiceHero({
 
       {/* LEFT COLUMN — copy */}
       <div style={{
-        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+        position: "absolute", left: 80, top: lead ? copyTop : copyTop + 20, width: 640, zIndex: 3,
       }}>
         <div style={{
           fontFamily: "'Courier New', monospace",
@@ -265,10 +266,10 @@ function ServiceHero({
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 900,
-          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          fontSize: lead ? "clamp(3rem, 4vw, 4.25rem)" : "clamp(2.25rem, 3vw, 3.25rem)",
           lineHeight: 1.1,
           letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
+          color: t.text1, margin: 0, textWrap: "balance", maxWidth: 500,
         }}>
           {headline.pre}
           {headline.italic && (
@@ -278,13 +279,13 @@ function ServiceHero({
           {headline.cursor && <BlinkCursor color={t.teal} />}
         </h1>
 
-        <p style={{
+        {lead && <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
+        }}>{lead}</p>}
 
-        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 32 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 15, fontWeight: 700,
             padding: "14px 32px", borderRadius: 8, cursor: "pointer",
@@ -629,9 +630,9 @@ function SchemAnalytics({ t, mode }) {
 
       {/* annotation lines + outcomes */}
       {[
-        { y: 188, label: "Decisions in minutes" },
-        { y: 290, label: "One source of truth" },
-        { y: 392, label: "Auto-refreshed" },
+        { y: 188, label: t.lang === "ru" ? "Решения за минуты" : t.lang === "ka" ? "გადაწყვეტა წუთებში" : "Decisions in minutes" },
+        { y: 290, label: t.lang === "ru" ? "Единый источник правды" : t.lang === "ka" ? "ერთი სიმართლე" : "One source of truth" },
+        { y: 392, label: t.lang === "ru" ? "Автообновление" : t.lang === "ka" ? "ავტო-განახლება" : "Auto-refreshed" },
       ].map((a, i) => (
         <g key={i} style={{ animation: `mwFadeIn 0.5s ${2.6 + i * 0.2}s backwards` }}>
           <line x1={920} y1={a.y} x2={970} y2={a.y} stroke={t.teal} strokeWidth="1" strokeDasharray="3 3" />
@@ -975,7 +976,8 @@ function SchemAutomation({ t, mode }) {
           ? `M ${tx} ${y + 28} C ${(tx + sx) / 2} ${y + 28}, ${(tx + sx) / 2} ${sy}, ${sx} ${sy}`
           : `M ${tx} ${y + 28} C ${(tx + sx) / 2} ${y + 28}, ${(tx + sx) / 2} ${sy}, ${sx} ${sy}`;
         const phase = (i % 3); // stagger statuses
-        const statusKey = ["queued", "running", "done"][phase];
+        const _statusLabels = t.lang === "ru" ? ["ожидание", "выполняется", "готово"] : t.lang === "ka" ? ["მოლოდინი", "მიმდ.", "მზადაა"] : ["queued", "running", "done"];
+    const statusKey = _statusLabels[phase];
         const statusColor = phase === 0 ? t.text2 : phase === 1 ? t.teal : t.ok;
         return (
           <g key={i}>
@@ -1015,7 +1017,7 @@ function SchemAutomation({ t, mode }) {
           fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700"
           fill={t.teal} letterSpacing="0.06em" />
         <text x={970} y={522} fontFamily="'Courier New', monospace" fontSize="11" fontWeight="600"
-          fill={t.text2} letterSpacing="0.08em">tasks · 31h saved this week</text>
+          fill={t.text2} letterSpacing="0.08em">{t.lang === "ru" ? "задач · 31ч сэкономлено" : t.lang === "ka" ? "ამოც. · 31სთ დაზოგ." : "tasks · 31h saved this week"}</text>
       </g>
 
       <Crosshairs t={t} />
@@ -1038,17 +1040,27 @@ function SchemStrategy({ t, mode }) {
   const qx0 = 90, qy0 = 110, qw = 460, qh = 360;
   const cx = qx0 + qw / 2, cy = qy0 + qh / 2;
 
+  const _bbl = t.lang === "ru"
+    ? ["Быстрые победы", "Расширение рынка", "Фундамент", "Отложить"]
+    : t.lang === "ka"
+    ? ["სწრაფი შედეგი", "ბაზრის ზრდა", "საფუძველი", "გადადება"]
+    : ["Quick Wins", "Market Expansion", "Foundation", "Defer"];
   const bubbles = [
-    { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,           label: "Quick Wins",      sub: "5 ITEMS",  delay: 0.8 },
-    { x: qx0 + 360, y: qy0 + 110, r: 45, fill: t.surface2,        label: "Market Expansion", sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
-    { x: qx0 + 130, y: qy0 + 270, r: 52, fill: t.surface2,        label: "Foundation",      sub: "4 ITEMS",  delay: 1.3,  stroke: t.teal },
-    { x: qx0 + 360, y: qy0 + 280, r: 37, fill: t.surface2,        label: "Defer",           sub: "2 ITEMS",  delay: 1.55, muted: true },
+    { x: qx0 + 110, y: qy0 + 100, r: 60, fill: t.teal,    label: _bbl[0], sub: "5 ITEMS", delay: 0.8 },
+    { x: qx0 + 360, y: qy0 + 110, r: 45, fill: t.surface2, label: _bbl[1], sub: "3 ITEMS", delay: 1.05, stroke: t.teal },
+    { x: qx0 + 130, y: qy0 + 270, r: 52, fill: t.surface2, label: _bbl[2], sub: "4 ITEMS", delay: 1.3, stroke: t.teal },
+    { x: qx0 + 360, y: qy0 + 280, r: 37, fill: t.surface2, label: _bbl[3], sub: "2 ITEMS", delay: 1.55, muted: true },
   ];
 
+  const _okr = t.lang === "ru"
+    ? ["Рост доли рынка", "Операционная эффективность", "NPS клиентов"]
+    : t.lang === "ka"
+    ? ["ბაზრის წილი", "ოპ. ეფექტიანობა", "კლ. NPS"]
+    : ["Market Share Growth", "Operational Efficiency", "Customer NPS"];
   const okrs = [
-    { label: "Market Share Growth",   pct: 78, delay: 1.4 },
-    { label: "Operational Efficiency",pct: 92, delay: 1.7 },
-    { label: "Customer NPS",          pct: 61, delay: 2.0 },
+    { label: _okr[0], pct: 78, delay: 1.4 },
+    { label: _okr[1], pct: 92, delay: 1.7 },
+    { label: _okr[2], pct: 61, delay: 2.0 },
   ];
 
   return (
@@ -1078,13 +1090,13 @@ function SchemStrategy({ t, mode }) {
           fontWeight="700" fill={t.teal} letterSpacing="0.12em">EFFORT</text>
         {/* quadrant captions */}
         <text x={qx0 + 10} y={qy0 + 22} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.text2} letterSpacing="0.15em">HIGH IMPACT · LOW EFFORT</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ВЫС.ВЛИЯНИЕ · НИЗ.УСИЛИЯ":t.lang==="ka"?"მაღ.ᲒᲐᲕᲚ. · დაბ.Ძ-ХМ.":"HIGH IMPACT · LOW EFFORT"}</text>
         <text x={qx0 + qw / 2 + 10} y={qy0 + 22} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.text2} letterSpacing="0.15em">HIGH IMPACT · HIGH EFFORT</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"ВЫС.ВЛИЯНИЕ · ВЫС.УСИЛИЯ":t.lang==="ka"?"მაღ.ᲒᲐᲕᲚ. · მაღ.Ძ-ХМ.":"HIGH IMPACT · HIGH EFFORT"}</text>
         <text x={qx0 + 10} y={qy0 + qh / 2 + 16} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.text2} letterSpacing="0.15em">LOW IMPACT · LOW EFFORT</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"НИЗ.ВЛИЯНИЕ · НИЗ.УСИЛИЯ":t.lang==="ka"?"დაბ.ᲒᲐᲕᲚ. · დაბ.Ძ-ХМ.":"LOW IMPACT · LOW EFFORT"}</text>
         <text x={qx0 + qw / 2 + 10} y={qy0 + qh / 2 + 16} fontFamily="'Courier New', monospace" fontSize="9"
-          fill={t.text2} letterSpacing="0.15em">LOW IMPACT · HIGH EFFORT</text>
+          fill={t.text2} letterSpacing="0.15em">{t.lang==="ru"?"НИЗ.ВЛИЯНИЕ · ВЫС.УСИЛИЯ":t.lang==="ka"?"დაბ.ᲒᲐᲕᲚ. · მაღ.Ძ-ХМ.":"LOW IMPACT · HIGH EFFORT"}</text>
 
         {/* bubbles */}
         {bubbles.map((b, i) => (
@@ -1663,6 +1675,34 @@ Object.assign(window, { SchemStrategy, SchemDataEng, SchemBlog, SchemIndustries 
     "ticker": "· INLADEN → MAPPEN → ANALYSEREN → OPTIMALISEREN ·",
     "navActive": "Services"
 },
+    ka: {
+    "schematic": "process",
+    "eyebrow": "· აღმოჩენა · ანალიზი · ოპტიმიზაცია ·",
+    "headline": {
+        "pre": "თქვენს პროცესებს დამალული გაჟონვები აქვს.",
+        "italic": "აი ზუსტად სად.",
+        "post": ""
+    },
+    "lead": "",
+    "ctaPrimary": "ჩემი გაჟონვების ნახვა",
+    "ctaSecondary": "ნახეთ დემო",
+    "ticker": "· მიღება → რუკის შედგენა → ანალიზი → ოპტიმიზაცია ·",
+    "navActive": "სერვისები"
+},
+    ru: {
+    "schematic": "process",
+    "eyebrow": "· ОБНАРУЖИТЬ · АНАЛИЗ · ОПТИМИЗАЦИЯ ·",
+    "headline": {
+        "pre": "У Ваших процессов есть скрытые утечки.",
+        "italic": "Вот ровно где.",
+        "post": ""
+    },
+    "lead": "",
+    "ctaPrimary": "Найти мои утечки",
+    "ctaSecondary": "Посмотреть демо",
+    "ticker": "· СБОР → КАРТИРОВАНИЕ → АНАЛИЗ → ОПТИМИЗАЦИЯ ·",
+    "navActive": "Услуги"
+},
   };
 </script>
 
@@ -1701,7 +1741,7 @@ function App() {
   const cfg = (window.MW_SERVICE_T && (window.MW_SERVICE_T[lang] || window.MW_SERVICE_T.en)) || window.MW_SERVICE;
   const Schem = MW_SCHEMATICS[cfg.schematic];
   const handleCTA = () => { window.top.location.href = 'contact.html?service=process'; };
-  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} onClickPrimary={handleCTA} />;
+  return <ServiceHero {...cfg} Schematic={Schem} showNav={false} onClickPrimary={handleCTA} lang={lang} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

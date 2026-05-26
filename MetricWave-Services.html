@@ -246,7 +246,7 @@ function ServiceHero({
 
       {/* LEFT COLUMN — copy */}
       <div style={{
-        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+        position: "absolute", left: 80, top: lead ? copyTop : copyTop + 20, width: 640, zIndex: 3,
       }}>
         <div style={{
           fontFamily: "'Courier New', monospace",
@@ -259,10 +259,10 @@ function ServiceHero({
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 900,
-          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          fontSize: lead ? "clamp(3rem, 4vw, 4.25rem)" : "clamp(2.25rem, 3vw, 3.25rem)",
           lineHeight: 1.1,
           letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
+          color: t.text1, margin: 0, textWrap: "balance", maxWidth: 500,
         }}>
           {headline.pre}
           {headline.italic && (
@@ -272,13 +272,13 @@ function ServiceHero({
           {headline.cursor && <BlinkCursor color={t.teal} />}
         </h1>
 
-        <p style={{
+        {lead && <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
+        }}>{lead}</p>}
 
-        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 32 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 14, fontWeight: 700,
             padding: "12px 28px", borderRadius: 8, cursor: "pointer",
@@ -1740,18 +1740,47 @@ const { useState, useEffect, useRef } = React;
    a miniature schematic preview and copy.
 ============================================================ */
 
-const SERVICES = [
-  { key: "analytics",  Schem: () => SchemAnalytics,  title: "Data Analytics",      tag: "DASHBOARDS · KPIs · REPORTING", lead: "Connect every source into one trusted analytics layer.", file: "service/analytics-bi.html" },
-  { key: "web",        Schem: () => SchemWeb,        title: "Web Development",     tag: "DESIGN · BUILD · MAINTAIN", lead: "Fast, wired sites built into your analytics stack.", file: "service/web-development.html" },
-  { key: "process",    Schem: () => SchemProcess,    title: "Process Mining",      tag: "DISCOVER · ANALYSE · OPTIMISE", lead: "Map exactly where time and money disappear.", file: "service/process-mining.html" },
-  { key: "automation", Schem: () => SchemAutomation, title: "Automation",          tag: "WORKFLOWS · AI AGENTS · LLMs", lead: "AI agents handling repetitive work, end to end.", file: "service/automation-ai.html" },
-  { key: "strategy",   Schem: () => SchemStrategy,   title: "Strategy",            tag: "PLANNING · OKRs · ADVISORY", lead: "Strategic clarity grounded in real performance data.", file: "service/business-strategy.html" },
-  { key: "dataeng",    Schem: () => SchemDataEng,    title: "Data Engineering",    tag: "PIPELINES · WAREHOUSES · APIs", lead: "Pipelines and warehouses you can actually trust.", file: "service/data-engineering.html" },
-];
+const SERVICES_TILE_T = {
+  en: {
+    analytics:  { title: "Data Analytics",                tag: "DASHBOARDS · KPIs · REPORTING", lead: "Connect every source into one trusted analytics layer.", explore: "Explore Data Analytics" },
+    web:        { title: "Web Development",               tag: "DESIGN · BUILD · MAINTAIN",    lead: "Fast, wired sites built into your analytics stack.",     explore: "Explore Web Development" },
+    process:    { title: "Process Mining",                tag: "DISCOVER · ANALYSE · OPTIMISE",lead: "Map exactly where time and money disappear.",            explore: "Explore Process Mining" },
+    automation: { title: "AI Enablement & Automation",    tag: "WORKFLOWS · AI AGENTS · LLMs", lead: "AI agents handling repetitive work, end to end.",        explore: "Explore AI Enablement & Automation" },
+    strategy:   { title: "Strategy",                      tag: "PLANNING · OKRs · ADVISORY",   lead: "Strategic clarity grounded in real performance data.",   explore: "Explore Strategy" },
+    dataeng:    { title: "Data Engineering",              tag: "PIPELINES · WAREHOUSES · APIs",lead: "Pipelines and warehouses you can actually trust.",       explore: "Explore Data Engineering" },
+  },
+  ka: {
+    analytics:  { title: "მონაცემთა ანალიტიკა",          tag: "დაფები · KPIs · ანგარიშები",       lead: "დააკავშირეთ ყოველი წყარო ერთიან სანდო ანალიტიკურ შრედ.",       explore: "ანალიტიკის ნახვა" },
+    web:        { title: "ვებ დეველოპმენტი",              tag: "დიზაინი · აშენება · მოვლა",        lead: "სწრაფი, შეერთებული საიტები თქვენი ანალიტიკის სტეკში.",         explore: "ვებ დეველოპმენტის ნახვა" },
+    process:    { title: "პროცესების მაინინგი",          tag: "აღმოჩენა · ანალიზი · ოპტიმიზაცია", lead: "დახატეთ ზუსტად სად ქრება დრო და ფული.",                          explore: "პროცესების მაინინგის ნახვა" },
+    automation: { title: "AI დანერგვა და ავტომატიზაცია",  tag: "სამ. პროც. · AI აგენტები · LLM",  lead: "AI აგენტები, რომლებიც განმეორებად სამუშაოს ბოლომდე ამუშავებენ.", explore: "AI დანერგვისა და ავტომატიზაციის ნახვა" },
+    strategy:   { title: "სტრატეგია",                     tag: "დაგეგმვა · OKRs · საკონსულტაციო",  lead: "სტრატეგიული სიცხადე რეალურ performance მონაცემებზე დაფუძნებული.", explore: "სტრატეგიის ნახვა" },
+    dataeng:    { title: "მონაცემთა ინჟინერია",          tag: "მილსადენები · საცავები · APIs",    lead: "მონაცემთა მილსადენები და საცავები, რომელსაც ენდობით.",          explore: "მონაცემთა ინჟინერიის ნახვა" },
+  },
+  ru: {
+    analytics:  { title: "Аналитика данных",              tag: "ДАШБОРДЫ · KPIs · ОТЧЁТНОСТЬ",     lead: "Подключите каждый источник в единый доверенный аналитический слой.", explore: "Изучить аналитику" },
+    web:        { title: "Веб-разработка",                tag: "ДИЗАЙН · СБОРКА · ПОДДЕРЖКА",      lead: "Быстрые, подключённые сайты, встроенные в Ваш аналитический стек.",  explore: "Изучить веб-разработку" },
+    process:    { title: "Процессный майнинг",            tag: "ОБНАРУЖИТЬ · АНАЛИЗ · ОПТИМИЗАЦИЯ",lead: "Точно картируйте, где исчезают время и деньги.",                     explore: "Изучить процессный майнинг" },
+    automation: { title: "Внедрение AI и автоматизация",  tag: "ВОРКФЛОУ · AI-АГЕНТЫ · LLMs",     lead: "AI-агенты, обрабатывающие повторяющуюся работу от начала до конца.", explore: "Изучить внедрение AI и автоматизацию" },
+    strategy:   { title: "Стратегия",                     tag: "ПЛАНИРОВАНИЕ · OKRs · КОНСУЛЬТАЦИИ",lead: "Стратегическая ясность, основанная на реальных данных performance.", explore: "Изучить стратегию" },
+    dataeng:    { title: "Инжиниринг данных",             tag: "ПАЙПЛАЙНЫ · ХРАНИЛИЩА · APIs",    lead: "Пайплайны и хранилища, которым действительно можно доверять.",         explore: "Изучить инжиниринг данных" },
+  },
+};
 
-function ServiceTile({ s, t, mode }) {
+const SERVICES = [
+  { key: "analytics",  Schem: () => SchemAnalytics,  file: "service/analytics-bi.html" },
+  { key: "web",        Schem: () => SchemWeb,        file: "service/web-development.html", hidden: true },
+  { key: "process",    Schem: () => SchemProcess,    file: "service/process-mining.html",   hidden: true },
+  { key: "automation", Schem: () => SchemAutomation, file: "service/automation-ai.html" },
+  { key: "strategy",   Schem: () => SchemStrategy,   file: "service/business-strategy.html" },
+  { key: "dataeng",    Schem: () => SchemDataEng,    file: "service/data-engineering.html", hidden: true },
+];
+const VISIBLE_SERVICES = SERVICES.filter(s => !s.hidden);
+
+function ServiceTile({ s, t, mode, lang }) {
   const Schem = s.Schem();
   const [hover, setHover] = useState(false);
+  const TL = (SERVICES_TILE_T[lang] || SERVICES_TILE_T.en)[s.key] || SERVICES_TILE_T.en[s.key];
   return (
     <a href={s.file} target="_parent"
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -1775,55 +1804,128 @@ function ServiceTile({ s, t, mode }) {
         </div>
       </div>
       <div style={{ padding: "22px 24px 24px" }}>
-        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· {s.tag} ·</div>
-        <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 24, letterSpacing: "-0.02em", margin: 0, color: t.text1 }}>{s.title}</h3>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.55, color: t.text2, marginTop: 10, marginBottom: 18 }}>{s.lead}</p>
+        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: t.teal, letterSpacing: "0.15em", marginBottom: 10 }}>· {TL.tag} ·</div>
+        <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 24, letterSpacing: "-0.02em", margin: 0, color: t.text1 }}>{TL.title}</h3>
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.55, color: t.text2, marginTop: 10, marginBottom: 18 }}>{TL.lead}</p>
         <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, fontWeight: 700, color: t.teal, letterSpacing: "0.08em" }}>
-          Explore {s.title} →
+          {TL.explore} →
         </span>
       </div>
     </a>
   );
 }
 
+const SERVICES_PAGE_T = {
+  en: {
+    eyebrow: "· OUR SERVICES · END-TO-END DATA + AI ·",
+    h1pre: "Three services.",
+    h1mid: "One coherent system",
+    h1post: "for turning data into outcomes.",
+    lead: "From pipelines to dashboards to automation — every service we offer plugs into the same stack, so the work compounds instead of fragmenting.",
+    statServices: "SERVICES",
+    statProjects: "PROJECTS DELIVERED",
+    statRows: "ROWS PROCESSED",
+    statTime: "AVG WEEKLY TIME SAVED",
+    ctaEyebrow: "· READY TO START ·",
+    ctaTitlePre: "Not sure which service fits?",
+    ctaTitleHi: "Let's diagnose first.",
+    ctaLead: "A 30-minute call. We'll look at your stack, your team, and where the actual leverage is.",
+    ctaBook: "Book a free consultation →",
+    ctaPricing: "Get pricing",
+    tickerLabel: "· ANALYTICS · WEB DEVELOPMENT · PROCESS MINING · AUTOMATION · STRATEGY · DATA ENGINEERING ·",
+  },
+  ka: {
+    eyebrow: "· ჩვენი სერვისები · END-TO-END DATA + AI ·",
+    h1pre: "სამი სერვისი.",
+    h1mid: "ერთი თანმიმდევრული სისტემა",
+    h1post: "მონაცემების შედეგებად გადასაქცევად.",
+    lead: "მონაცემთა მილსადენებიდან დაფებამდე ავტომატიზაციამდე — ყოველი სერვისი, რომელსაც ვთავაზობთ, ერთვის იმავე სტეკში, ისე რომ სამუშაო გროვდება ფრაგმენტაციის ნაცვლად.",
+    statServices: "სერვისი",
+    statProjects: "მიწოდებული პროექტი",
+    statRows: "დამუშავებული ჩანაწერი",
+    statTime: "საშ. ყოველკვირეული დაზოგვა",
+    ctaEyebrow: "· მზად დასაწყებად ·",
+    ctaTitlePre: "არ ხართ დარწმუნებული, რომელი სერვისი მოგერგებათ?",
+    ctaTitleHi: "ჯერ დიაგნოსტიკას ჩავატაროთ.",
+    ctaLead: "30-წუთიანი ზარი. გადავხედავთ თქვენს სტეკს, თქვენს გუნდს და სად არის რეალური ბერკეტი.",
+    ctaBook: "უფასო კონსულტაციის დაჯავშნა →",
+    ctaPricing: "ფასები",
+    tickerLabel: "· ანალიტიკა · ვებ დეველოპმენტი · პროცესების მაინინგი · ავტომატიზაცია · სტრატეგია · მონაცემთა ინჟინერია ·",
+  },
+  ru: {
+    eyebrow: "· НАШИ УСЛУГИ · END-TO-END DATA + AI ·",
+    h1pre: "Три услуги.",
+    h1mid: "Одна согласованная система",
+    h1post: "для превращения данных в результаты.",
+    lead: "От пайплайнов до дашбордов и автоматизации — каждая услуга, которую мы предлагаем, подключается к одному и тому же стеку, поэтому работа накапливается, а не фрагментируется.",
+    statServices: "УСЛУГИ",
+    statProjects: "ПРОЕКТОВ ДОСТАВЛЕНО",
+    statRows: "СТРОК ОБРАБОТАНО",
+    statTime: "СРЕД. ЭКОНОМИЯ В НЕДЕЛЮ",
+    ctaEyebrow: "· ГОТОВЫ НАЧАТЬ ·",
+    ctaTitlePre: "Не уверены, какая услуга подходит?",
+    ctaTitleHi: "Давайте сначала проведём диагностику.",
+    ctaLead: "30-минутный звонок. Мы посмотрим на Ваш стек, Вашу команду и где находится реальный рычаг.",
+    ctaBook: "Забронировать бесплатную консультацию →",
+    ctaPricing: "Узнать цены",
+    tickerLabel: "· АНАЛИТИКА · ВЕБ-РАЗРАБОТКА · ПРОЦЕССНЫЙ МАЙНИНГ · АВТОМАТИЗАЦИЯ · СТРАТЕГИЯ · ИНЖИНИРИНГ ДАННЫХ ·",
+  },
+};
+
+function useServicesLang() {
+  const [lang, setLang] = React.useState(() => {
+    try { return localStorage.getItem('language') || 'en'; } catch { return 'en'; }
+  });
+  React.useEffect(() => {
+    const handler = (e) => { if (e.data && e.data.type === 'mw-lang') setLang(e.data.lang); };
+    const onStorage = (e) => { if (e.key === 'language' && e.newValue) setLang(e.newValue); };
+    window.addEventListener('message', handler);
+    window.addEventListener('storage', onStorage);
+    return () => { window.removeEventListener('message', handler); window.removeEventListener('storage', onStorage); };
+  }, []);
+  return lang;
+}
+
 function ServicesPage() {
   const mode = useTheme();
-  const t = HERO_TOKENS[mode];
+  const lang = useServicesLang();
+  const t = { ...HERO_TOKENS[mode], lang };
+  const L = SERVICES_PAGE_T[lang] || SERVICES_PAGE_T.en;
   const embedded = window.parent !== window;
 
   return (
     <div style={{
-      width: 1920, minHeight: 1920,
+      width: 1920,
       background: t.bg, color: t.text1,
       fontFamily: "'Inter', system-ui, sans-serif",
       position: "relative", overflow: "hidden", isolation: "isolate",
     }}>
-      <GridBg t={t} mode={mode} w={1920} h={1920} />
+      <GridBg t={t} mode={mode} w={1920} h={"100%"} />
       {!embedded && <PageNav t={t} mode={mode} active="Services" />}
 
       {/* HERO BANNER */}
       <div style={{ position: "relative", padding: embedded ? "80px 80px 80px" : "200px 80px 80px", zIndex: 3 }}>
-        <PageEyebrow color={t.teal}>· OUR SERVICES · END-TO-END DATA + AI ·</PageEyebrow>
+        <PageEyebrow color={t.teal}>{L.eyebrow}</PageEyebrow>
         <h1 style={{
           fontFamily: "'Inter', sans-serif", fontWeight: 900,
           fontSize: "clamp(3rem, 5vw, 5.5rem)", lineHeight: 1.05,
           letterSpacing: "-0.03em", margin: 0, maxWidth: 1500, textWrap: "balance",
         }}>
-          Six services. <span style={{ color: t.teal }}>One coherent system</span> for turning data into outcomes.
+          {L.h1pre} <span style={{ color: t.teal }}>{L.h1mid}</span> {L.h1post}
         </h1>
         <p style={{
           fontSize: 18, lineHeight: 1.55, color: t.text2,
           marginTop: 26, maxWidth: 760, textWrap: "pretty",
         }}>
-          From pipelines to dashboards to automation — every service we offer plugs into the same stack, so the work compounds instead of fragmenting.
+          {L.lead}
         </p>
         {/* live counter row */}
         <div style={{ display: "flex", gap: 60, marginTop: 50, paddingTop: 28, borderTop: `1px solid ${t.border}` }}>
           {[
-            { val: "6", label: "SERVICES" },
-            { val: "70+", label: "PROJECTS DELIVERED" },
-            { val: "5M+", label: "ROWS PROCESSED" },
-            { val: "31h", label: "AVG WEEKLY TIME SAVED" },
+            { val: "3", label: L.statServices },
+            { val: "70+", label: L.statProjects },
+            { val: "5M+", label: L.statRows },
+            { val: "31h", label: L.statTime },
           ].map((s, i) => (
             <div key={i}>
               <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 36, color: t.teal, letterSpacing: "-0.03em" }}>{s.val}</div>
@@ -1836,7 +1938,7 @@ function ServicesPage() {
       {/* SERVICE TILES — 3 × 2 grid */}
       <div style={{ position: "relative", padding: "0 80px 120px", zIndex: 3 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-          {SERVICES.map((s) => <ServiceTile key={s.key} s={s} t={t} mode={mode} />)}
+          {VISIBLE_SERVICES.map((s) => <ServiceTile key={s.key} s={s} t={t} mode={mode} lang={lang} />)}
         </div>
       </div>
 
@@ -1849,16 +1951,16 @@ function ServicesPage() {
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24,
         }}>
           <div>
-            <PageEyebrow color={t.teal}>· READY TO START ·</PageEyebrow>
+            <PageEyebrow color={t.teal}>{L.ctaEyebrow}</PageEyebrow>
             <h2 style={{
               fontFamily: "'Inter', sans-serif", fontWeight: 900,
               fontSize: 44, lineHeight: 1.05, letterSpacing: "-0.025em",
               margin: 0, maxWidth: 800, textWrap: "balance", color: t.text1,
             }}>
-              Not sure which service fits? <span style={{ color: t.teal }}>Let's diagnose first.</span>
+              {L.ctaTitlePre} <span style={{ color: t.teal }}>{L.ctaTitleHi}</span>
             </h2>
             <p style={{ fontSize: 16, color: t.text2, marginTop: 14, maxWidth: 660 }}>
-              A 30-minute call. We'll look at your stack, your team, and where the actual leverage is.
+              {L.ctaLead}
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -1866,18 +1968,18 @@ function ServicesPage() {
               fontFamily: "inherit", fontSize: 15, fontWeight: 700,
               padding: "16px 32px", borderRadius: 8, cursor: "pointer",
               border: "none", background: t.teal, color: t.bg, whiteSpace: "nowrap",
-            }}>Book a free consultation →</button>
+            }}>{L.ctaBook}</button>
             <button onClick={() => { window.top.location.href = 'pricing.html'; }} style={{
               fontFamily: "inherit", fontSize: 15, fontWeight: 700,
               padding: "16px 32px", borderRadius: 8, cursor: "pointer",
               background: "transparent", color: t.teal, whiteSpace: "nowrap",
               border: `2px solid ${t.teal}`,
-            }}>Get pricing</button>
+            }}>{L.ctaPricing}</button>
           </div>
         </div>
       </div>
 
-      <PageTicker t={t} mode={mode} label="· ANALYTICS · WEB DEVELOPMENT · PROCESS MINING · AUTOMATION · STRATEGY · DATA ENGINEERING ·" />
+      <PageTicker t={t} mode={mode} label={L.tickerLabel} />
     </div>
   );
 }

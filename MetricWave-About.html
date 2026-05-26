@@ -243,7 +243,7 @@ function ServiceHero({
 
       {/* LEFT COLUMN — copy */}
       <div style={{
-        position: "absolute", left: 80, top: copyTop, width: 500, zIndex: 3,
+        position: "absolute", left: 80, top: lead ? copyTop : copyTop + 20, width: 640, zIndex: 3,
       }}>
         <div style={{
           fontFamily: "'Courier New', monospace",
@@ -256,10 +256,10 @@ function ServiceHero({
         <h1 style={{
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 900,
-          fontSize: "clamp(3rem, 4vw, 4.25rem)",
+          fontSize: lead ? "clamp(3rem, 4vw, 4.25rem)" : "clamp(2.25rem, 3vw, 3.25rem)",
           lineHeight: 1.1,
           letterSpacing: "-0.025em",
-          color: t.text1, margin: 0, textWrap: "balance",
+          color: t.text1, margin: 0, textWrap: "balance", maxWidth: 500,
         }}>
           {headline.pre}
           {headline.italic && (
@@ -269,13 +269,13 @@ function ServiceHero({
           {headline.cursor && <BlinkCursor color={t.teal} />}
         </h1>
 
-        <p style={{
+        {lead && <p style={{
           fontSize: "1.05rem", lineHeight: 1.6,
           color: t.text2, marginTop: 26, marginBottom: 0,
           maxWidth: 460, textWrap: "pretty", fontWeight: 400,
-        }}>{lead}</p>
+        }}>{lead}</p>}
 
-        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 32 }}>
           <button style={{
             fontFamily: "inherit", fontSize: 14, fontWeight: 700,
             padding: "12px 28px", borderRadius: 8, cursor: "pointer",
@@ -687,8 +687,56 @@ const ABOUT_T = {
     ],
   },
 };
-ABOUT_T.ka = ABOUT_T.en;
-ABOUT_T.ru = ABOUT_T.en;
+ABOUT_T.ka = {
+    eyebrow: "· ჩვენ შესახებ · 2024 → ახლა ·",
+    h1pre: "ორი ოპერატორი, რომელიც დაიღალა",
+    h1teal: "გატეხილი სტეკებით.",
+    leadSize: 16,
+    lead: "MetricWave დაარსდა მას შემდეგ, რაც წლების მანძილზე ვაკვირდებოდით, როგორ ყიდულობდნენ ორგანიზაციები მეტ პროგრამას, ხოლო ხდებოდნენ ნაკლებად შეთანხმებულნი. დაფები, რომელსაც არავინ ენდობოდა. ანგარიშები, რომელსაც არავინ ხსნიდა. სისტემები, რომელსაც არავინ აკავშირებდა. ამიტომ შევქმენით პარტნიორი, რომელიც ფლობს მთელ მარყუჟს — და რჩება სანამ ის არ ამუშავდება.",
+    timelineEyebrow: "· ქრონოლოგია · ეტაპები ·",
+    milestones: [
+      { yr: "2024", title: "MetricWave დაარსდა",          sub: "ბრიუსელი + თბილისი" },
+      { yr: "2024", title: "პირველი 10 კლიენტი მიწოდებული", sub: "ლოგისტიკა · SaaS · მთავრობა" },
+      { yr: "2025", title: "EU პროგრამა მიწოდებული",      sub: "€3.3M პოლიტიკის სტეკი" },
+      { yr: "2025", title: "AI აგენტები წარმოებაში",      sub: "31სთ დაზოგილი / კვირაში / კლიენტზე" },
+      { yr: "2026", title: "150+ პროექტი",                sub: "6 ინდუსტრიაში" },
+    ],
+    timelineH2pre: "სამზარეულოს მაგიდის დაფიდან ნდობით აღჭურვილ პარტნიორამდე",
+    timelineH2teal: "ექვს ინდუსტრიაში.",
+    valuesH2: "რაზე არ დავთმობთ.",
+    valuesEyebrow: "· პრინციპები · როგორ ვმუშაობთ ·",
+    values: [
+      { num: "01", title: "მტკიცებულება ინსტინქტის ნაცვლად.",  body: "ყოველი რეკომენდაცია მიკვლევადია ჩვენ მიერ ვალიდირებულ ოპერაციულ მონაცემებამდე. გადაწყვეტილებები ძვირია — ჩვენი ყოველთვის გამყარებულია." },
+      { num: "02", title: "ვაშენებთ ოპერატორისთვის.",          body: "ჩვენი სამუშაოს ვაფასებთ ორშაბათ დილით 9 საათზე — და არა პარასკევის პრეზენტაციაში." },
+      { num: "03", title: "ერთი სტეკი, არა ათი ხელსაწყო.",      body: "კომპლექსურობა გროვდება უფრო სწრაფად ვიდრე ღირებულება. ჩვენ ფრაგმენტაციას დიზაინით ვებრძვით." },
+      { num: "04", title: "ვაჩვენებთ ჩვენს სამუშაოს.",          body: "ყოველი მოდელი, ავტომატიზაცია და რეკომენდაცია დოკუმენტირებულია და audit-მზადაა. თქვენ ფლობთ ლოგიკას." },
+    ],
+};
+ABOUT_T.ru = {
+    eyebrow: "· О НАС · 2024 → СЕЙЧАС ·",
+    h1pre: "Два оператора, уставших от",
+    h1teal: "сломанных стеков.",
+    leadSize: 16,
+    lead: "MetricWave была основана после многих лет наблюдения за тем, как организации покупают всё больше софта, становясь при этом всё менее согласованными. Дашборды, которым никто не доверял. Отчёты, которые никто не открывал. Системы, которые никто не подключал. Поэтому мы построили партнёра, который владеет всем циклом — и остаётся, пока всё не заработает.",
+    timelineEyebrow: "· ХРОНОЛОГИЯ · ВЕХИ ·",
+    milestones: [
+      { yr: "2024", title: "MetricWave основана",         sub: "Брюссель + Тбилиси" },
+      { yr: "2024", title: "Первые 10 клиентов",          sub: "Логистика · SaaS · Гос" },
+      { yr: "2025", title: "EU-программа доставлена",     sub: "€3.3M политический стек" },
+      { yr: "2025", title: "AI-агенты в production",      sub: "31ч сэкономлено / неделю / клиента" },
+      { yr: "2026", title: "150+ проектов",               sub: "в 6 индустриях" },
+    ],
+    timelineH2pre: "От кухонной доски до партнёра, которому доверяют в",
+    timelineH2teal: "шести индустриях.",
+    valuesH2: "На чём мы не идём на компромиссы.",
+    valuesEyebrow: "· ПРИНЦИПЫ · КАК МЫ РАБОТАЕМ ·",
+    values: [
+      { num: "01", title: "Доказательство важнее инстинкта.", body: "Каждая рекомендация прослеживается до операционных данных, которые мы валидировали. Решения дороги — наши всегда подкреплены." },
+      { num: "02", title: "Строим для оператора.",            body: "Мы оцениваем нашу работу в 9 утра в понедельник — а не в пятничной презентации." },
+      { num: "03", title: "Один стек, а не десять инструментов.", body: "Сложность накапливается быстрее, чем ценность. Мы боремся с фрагментацией by design." },
+      { num: "04", title: "Показываем нашу работу.",          body: "Каждая модель, автоматизация и рекомендация задокументирована и audit-готова. Вы владеете логикой." },
+    ],
+};
 
 /* ============================================================
    ABOUT — narrative + the people behind MetricWave
@@ -698,16 +746,26 @@ ABOUT_T.ru = ABOUT_T.en;
 function AboutSchematic({ t, mode }) {
   // Two founders → MetricWave core → outcomes radiating
   const cx = 610, cy = 280;
+  const _fl = t.lang === "ru"
+    ? [{ lbl: "ОСНОВАТЕЛЬ · СТРАТЕГИЯ", sub: "10 лет · ЕС · Notre Dame" }, { lbl: "ОСНОВАТЕЛЬ · ТЕХ.", sub: "ML · data eng · автоматиз." }]
+    : t.lang === "ka"
+    ? [{ lbl: "ᲓᲐᲛᲤ. · ᲡTРАТᲔᲒᲘᲐ", sub: "10 წ. · EU · Notre Dame" }, { lbl: "ᲓᲐᲛᲤ. · ТЕХ.", sub: "ML · data eng · ავტ." }]
+    : [{ lbl: "FOUNDER · STRATEGY", sub: "10 yrs · EU · Notre Dame" }, { lbl: "FOUNDER · TECH", sub: "ML · data eng · automation" }];
   const founders = [
-    { y: 180, label: "FOUNDER · STRATEGY", sub: "10 yrs · EU · Notre Dame" },
-    { y: 380, label: "FOUNDER · TECH",     sub: "ML · data eng · automation" },
+    { y: 180, label: _fl[0].lbl, sub: _fl[0].sub },
+    { y: 380, label: _fl[1].lbl, sub: _fl[1].sub },
   ];
+  const _rl = t.lang === "ru"
+    ? ["АНАЛИТИКА", "AI / ML", "СТРАТЕГИЯ", "АВТОМАТИЗАЦИЯ", "УПРАВЛЕНИЕ"]
+    : t.lang === "ka"
+    ? ["ანალიტიკა", "AI / ML", "სტრატეგია", "ავტომატ.", "მმართ."]
+    : ["ANALYTICS", "AI / ML", "STRATEGY", "AUTOMATION", "GOVERNANCE"];
   const radials = [
-    { angle: -65, label: "ANALYTICS" },
-    { angle: -35, label: "AI / ML" },
-    { angle: -10, label: "STRATEGY" },
-    { angle:  20, label: "AUTOMATION" },
-    { angle:  50, label: "GOVERNANCE" },
+    { angle: -65, label: _rl[0] },
+    { angle: -35, label: _rl[1] },
+    { angle: -10, label: _rl[2] },
+    { angle:  20, label: _rl[3] },
+    { angle:  50, label: _rl[4] },
   ];
 
   return (
@@ -747,7 +805,7 @@ function AboutSchematic({ t, mode }) {
         <text x={cx} y={cy - 14} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="10"
           fill={t.modelInk} fillOpacity="0.5" letterSpacing="0.18em">METRICWAVE</text>
         <text x={cx} y={cy + 8} textAnchor="middle" fontFamily="'Inter', sans-serif" fontSize="20" fontWeight="900"
-          fill={t.modelInk} letterSpacing="-0.02em">PARTNERS</text>
+          fill={t.modelInk} letterSpacing="-0.02em">{t.lang==="ru"?"ПАРТНЁРЫ":t.lang==="ka"?"ᲞᲐᲠTᲜ.":"PARTNERS"}</text>
         <text x={cx} y={cy + 30} textAnchor="middle" fontFamily="'Courier New', monospace" fontSize="9"
           fill={t.modelInk} fillOpacity="0.55" letterSpacing="0.18em">EST. 2024</text>
         <circle cx={cx + 60} cy={cy - 56} r={4} fill={t.teal}
@@ -791,7 +849,7 @@ function AboutSchematic({ t, mode }) {
 function AboutPage() {
   const mode = useTheme();
   const lang = useLang();
-  const t = HERO_TOKENS[mode];
+  const t = { ...HERO_TOKENS[mode], lang };
   const T = ABOUT_T[lang] || ABOUT_T.en;
   const embedded = window.parent !== window;
 
